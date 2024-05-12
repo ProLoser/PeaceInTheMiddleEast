@@ -59,7 +59,7 @@
 
         .point {
             position: relative;
-            flex-basis: 7%;
+            flex-basis: 7.3%;
             flex-grow: 1;
         }
 
@@ -121,7 +121,7 @@
             }
             
             .point:hover::before {
-                border-top-color: blue !important;
+                border-left-color: blue !important;
             }
 
             .point::before {
@@ -132,23 +132,23 @@
             }
 
             :nth-child(-n+12 of .point)::before {
-                border-left: 40vh solid #f00;
+                border-left: 40vw solid #f00;
                 left: 0;
             }
 
             :nth-child(-n+12 of .point):nth-child(odd)::before {
                 border-left-color: lightcoral;
-                border-left-width: 30vh;
+                border-left-width: 30vw;
             }
 
             :nth-child(n+13 of .point):nth-child(even)::before {
                 border-right-color: lightcoral;
-                border-right-width: 30vh;
+                border-right-width: 30vw;
             }
 
             :nth-child(n+13 of .point)::before {
                 border-left: none;
-                border-right: 40vh solid #f00;
+                border-right: 40vw solid #f00;
                 right: 0;
             }
 
