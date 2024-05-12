@@ -1,195 +1,204 @@
 <html>
-
 <head>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" />
-    <style>
-        html, body {
-        }
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" />
+<style>
+    #board {
+        display: flex;
+        gap: 10px;
+        height: 100%;
+        flex-wrap: wrap;
+    }
 
-        /* all .point elements greater than slot 12 */
-        :nth-child(n+12 of .point) {}
+    .dice {
+        position: absolute;
+        left: 20%;
+        top: 50%;
+        transform: translateY(-50%);
+    }
 
-        #board {
-            display: flex;
-            gap: 10px;
-            height: 100%;
-            flex-wrap: wrap;
-        }
+    .bar {
+        /* position: absolute; */
+        /* left: 48%; */
+        /* top: 0; */
+        /* bottom: 0; */
+        /* right: 48%; */
+        background: lightblue;
+        /* height: 100%; */
+        width: 30px;
+    }
 
-        .dice {
-            position: absolute;
-            left: 20%;
-            top: 50%;
-            transform: translateY(-50%);
-        }
+    .home {
+        position: absolute;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        width: 20px;
+        background: lightblue;
+    }
 
-        .bar {
-            position: absolute;
-            left: 48%;
-            top: 0;
-            bottom: 0;
-            right: 48%;
-            background: lightblue;
-        }
+    .piece {
+        width: 20px;
+        height: 20px;
 
-        .home {
-            position: absolute;
-            right: 0;
-            top: 0;
-            bottom: 0;
-            width: 20px;
-            background: lightblue;
-        }
-
-        .piece {
-            width: 20px;
-            height: 20px;
-
-        }
-
-        .piece.white {
+        &.white {
             background: white;
         }
 
-        .piece.black {
+        &.black {
             background: black;
         }
 
-        .point {
-            position: relative;
-            flex-basis: 7.3%;
-            flex-grow: 1;
+    }
+    .point {
+        position: relative;
+        flex-basis: 7.3%;
+        flex-grow: 1;
+        &::before {
+            content: ' ';
+        display: block;
+        width: 0;
+        height: 0;
+        position: absolute;
+        }
+    }
+
+    /* landscape layout (tablet / computer) */
+    @media (min-aspect-ratio: 1) {
+        .point:hover::before {
+            border-top-color: blue !important;
         }
 
         .point::before {
-            content: ' ';
-            display: block;
-            width: 0;
-            height: 0;
-            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            border-left: 40px solid transparent;
+            border-right: 40px solid transparent;
         }
 
-        /* landscape layout (tablet / computer) */
-        @media (min-aspect-ratio: 1) {
-            .point:hover::before {
-                border-top-color: blue !important;
-            }
-
-            .point::before {
-                left: 50%;
-                transform: translateX(-50%);
-                border-left: 40px solid transparent;
-                border-right: 40px solid transparent;
-            }
-
-            :nth-child(-n+12 of .point)::before {
+        :nth-child(-n+12 of .point) {
+            &::before {
                 border-top: 40vh solid #f00;
             }
-
-            :nth-child(-n+12 of .point):nth-child(odd)::before {
+            &:nth-child(odd)::before {
                 border-top-color: lightcoral;
                 border-top-width: 30vh;
             }
+        }
 
-            :nth-child(n+13 of .point)::before {
+        :nth-child(n+13 of .point) {
+            &::before {
                 border-top: none;
                 border-bottom: 40vh solid #f00;
                 bottom: 0;
                 top: auto;
             }
-
-            :nth-child(n+13 of .point):nth-child(even)::before {
+            &:nth-child(even)::before {
                 border-bottom-color: lightcoral;
                 border-bottom-width: 30vh;
             }
 
-            :nth-child(n+13 of .point):hover::before {
+            &:hover::before {
                 border-bottom-color: blue !important;
             }
         }
+    }
 
-
-        /* Portrait layout (mobile phone) */
-        @media (max-aspect-ratio: 1) {
-            #board {
-                flex-direction: column;
-            }
-            
-            .point:hover::before {
+    /* Portrait layout (mobile phone) */
+    @media (max-aspect-ratio: 1) {
+        #board {
+            flex-direction: column;
+        }
+        
+        .point {
+            &:hover::before {
                 border-left-color: blue !important;
             }
 
-            .point::before {
+            &::before {
                 top: 50%;
                 transform: translateY(-50%);
                 border-top: 40px solid transparent;
                 border-bottom: 40px solid transparent;
             }
+        }
 
-            :nth-child(-n+12 of .point)::before {
+        :nth-child(-n+12 of .point){
+
+            &::before {
                 border-left: 40vw solid #f00;
                 left: 0;
             }
-
-            :nth-child(-n+12 of .point):nth-child(odd)::before {
+            &:nth-child(odd)::before {
                 border-left-color: lightcoral;
                 border-left-width: 30vw;
             }
+        }
 
-            :nth-child(n+13 of .point):nth-child(even)::before {
-                border-right-color: lightcoral;
-                border-right-width: 30vw;
-            }
-
-            :nth-child(n+13 of .point)::before {
+        :nth-child(n+13 of .point){
+            &::before {
                 border-left: none;
                 border-right: 40vw solid #f00;
                 right: 0;
             }
-
-            :nth-child(n+13 of .point):hover::before {
+            &:hover::before {
                 border-right-color: blue !important;
             }
-        }
-    </style>
-</head>
+            &:nth-child(even)::before {
+                border-right-color: lightcoral;
+                border-right-width: 30vw;
+            }
 
+        }
+
+    }
+</style>
+</head>
 <body>
     <div id="board">
         <div class="dice">
             <img src="images/digit-6-white.png" />
             <img src="images/digit-5-black.png" />
         </div>
-        <!-- <div class="bar"></div>
-                                                                                                                                                                                                        <div class="home"></div> -->
-        <div class="point" ondragover="event.preventDefault()"
-            ondragstart="event.dataTransfer.setData('text', event.target.id)"></div>
-        <div class="point" ondragover="event.preventDefault()"></div>
-        <div class="point" ondragover="event.preventDefault()"></div>
-        <div class="point" ondragover="event.preventDefault()"></div>
-        <div class="point" ondragover="event.preventDefault()"></div>
-        <div class="point" ondragover="event.preventDefault()"></div>
-        <div class="point" ondragover="event.preventDefault()"></div>
-        <div class="point" ondragover="event.preventDefault()"></div>
-        <div class="point" ondragover="event.preventDefault()"></div>
-        <div class="point" ondragover="event.preventDefault()"></div>
-        <div class="point" ondragover="event.preventDefault()"></div>
-        <div class="point" ondragover="event.preventDefault()"></div>
-        <div class="point" ondragover="event.preventDefault()"></div>
-        <div class="point" ondragover="event.preventDefault()"></div>
-        <div class="point" ondragover="event.preventDefault()"></div>
-        <div class="point" ondragover="event.preventDefault()"></div>
-        <div class="point" ondragover="event.preventDefault()"></div>
-        <div class="point" ondragover="event.preventDefault()"></div>
-        <div class="point" ondragover="event.preventDefault()"></div>
-        <div class="point" ondragover="event.preventDefault()"></div>
-        <div class="point" ondragover="event.preventDefault()"></div>
-        <div class="point" ondragover="event.preventDefault()"></div>
-        <div class="point" ondragover="event.preventDefault()"></div>
-        <div class="point" ondragover="event.preventDefault()"></div>
+        <!-- 13 -->
+        <!-- <div class="corner"> -->
+        <div class="point"></div>
+        <div class="point"></div>
+        <div class="point"></div>
+        <div class="point"></div>
+        <div class="point"></div>
+        <div class="point"></div>
+        <!-- </div> -->
+        <!-- 18 | 19 -->
+        <!-- <div class="bar"></div> -->
+        <!-- <div class="corner"> -->
+        <div class="point"></div>
+        <div class="point"></div>
+        <div class="point"></div>
+        <div class="point"></div>
+        <div class="point"></div>
+        <div class="point"></div>
+        <!-- </div> -->
+        <!-- 24 | 12 -->
+        <!-- <div class="corner"> -->
+        <div class="point"></div>
+        <div class="point"></div>
+        <div class="point"></div>
+        <div class="point"></div>
+        <div class="point"></div>
+        <div class="point"></div>
+        <!-- </div> -->
+        <!-- 7 | 6 -->
+        <!-- <div class="corner"> -->
+        <div class="point"></div>
+        <div class="point"></div>
+        <div class="point"></div>
+        <div class="point"></div>
+        <div class="point"></div>
+        <div class="point"></div>
+        <!-- </div> -->
+        <!-- 1 -->
     </div>
 </body>
-
 </html>
