@@ -1,0 +1,177 @@
+<html>
+
+<head>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" />
+    <style>
+        /* all .point elements greater than slot 12 */
+        :nth-child(n+12 of .point) {}
+
+        #board {
+            display: grid;
+            grid-template-columns: repeat(14, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            grid-column-gap: 5px;
+            height: 100%;
+        }
+
+        .dice {
+            position: absolute;
+            left: 20%;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .dice3d {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            display: none;
+        }
+
+        .dive3d>div {
+            width: 100%;
+            height: 100%;
+            background: #da0060;
+            border: 2px solid black;
+            position: absolute;
+            opacity: 0.7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .dive3d>div:before {
+            content: '';
+            width: 20%;
+            height: 20%;
+            background: black;
+            border-radius: 50%;
+        }
+
+        .bar {
+            position: absolute;
+            left: 48%;
+            top: 0;
+            bottom: 0;
+            right: 48%;
+            background: lightblue;
+        }
+
+        .home {
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            width: 20px;
+            background: lightblue;
+        }
+
+        .piece {
+            width: 20px;
+            height: 20px;
+
+        }
+
+        .piece.white {
+            background: white;
+        }
+
+        .piece.black {
+            background: black;
+        }
+
+        .point {
+            position: relative;
+        }
+
+        .point:hover::before {
+            border-top-color: blue !important;
+        }
+
+        .point::before {
+            content: ' ';
+            display: block;
+            width: 0;
+            height: 0;
+            border-left: 40px solid transparent;
+            border-right: 40px solid transparent;
+            border-top: 40vh solid #f00;
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        :nth-child(odd of .point)::before {
+            border-top-color: lightcoral;
+            border-top-width: 30vh;
+        }
+
+        :nth-child(n+13 of .point):nth-child(even)::before {
+            border-bottom-color: lightcoral;
+            border-bottom-width: 30vh;
+        }
+
+        :nth-child(n+13 of .point)::before {
+            border-top: none;
+            border-bottom: 40vh solid #f00;
+            bottom: 0;
+            top: auto;
+        }
+
+        :nth-child(n+13 of .point):hover::before {
+            border-bottom-color: blue !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="board">
+        <div class="dice">
+            <img src="images/digit-6-white.png" />
+            <img src="images/digit-5-black.png" />
+        </div>
+        <div class="dice3d">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <div class="bar"></div>
+        <div class="home"></div>
+        <div class="point" ondragover="event.preventDefault()"
+            ondragstart="event.dataTransfer.setData('text', event.target.id)"></div>
+        <div class="point" ondragover="event.preventDefault()"></div>
+        <div class="point" ondragover="event.preventDefault()"></div>
+        <div class="point" ondragover="event.preventDefault()"></div>
+        <div class="point" ondragover="event.preventDefault()"></div>
+        <div class="point" ondragover="event.preventDefault()"></div>
+        <div class="point" ondragover="event.preventDefault()"></div>
+        <div class="point" ondragover="event.preventDefault()"></div>
+        <div class="point" ondragover="event.preventDefault()"></div>
+        <div class="point" ondragover="event.preventDefault()"></div>
+        <div class="point" ondragover="event.preventDefault()"></div>
+        <div class="point" ondragover="event.preventDefault()"></div>
+        <div class="point" ondragover="event.preventDefault()"></div>
+        <div class="point" ondragover="event.preventDefault()"></div>
+        <div class="point" ondragover="event.preventDefault()"></div>
+        <div class="point" ondragover="event.preventDefault()"></div>
+        <div class="point" ondragover="event.preventDefault()"></div>
+        <div class="point" ondragover="event.preventDefault()"></div>
+        <div class="point" ondragover="event.preventDefault()"></div>
+        <div class="point" ondragover="event.preventDefault()"></div>
+        <div class="point" ondragover="event.preventDefault()"></div>
+        <div class="point" ondragover="event.preventDefault()"></div>
+        <div class="point" ondragover="event.preventDefault()"></div>
+        <div class="point" ondragover="event.preventDefault()"></div>
+    </div>
+</body>
+
+</html>
