@@ -5,15 +5,17 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" />
     <style>
+        html, body {
+        }
+
         /* all .point elements greater than slot 12 */
         :nth-child(n+12 of .point) {}
 
         #board {
-            display: grid;
-            grid-template-columns: repeat(14, 1fr);
-            grid-template-rows: repeat(2, 1fr);
-            grid-column-gap: 5px;
+            display: flex;
+            gap: 10px;
             height: 100%;
+            flex-wrap: wrap;
         }
 
         .dice {
@@ -87,10 +89,8 @@
 
         .point {
             position: relative;
-        }
-
-        .point:hover::before {
-            border-top-color: blue !important;
+            flex-basis: 7%;
+            flex-grow: 1;
         }
 
         .point::before {
@@ -98,34 +98,89 @@
             display: block;
             width: 0;
             height: 0;
-            border-left: 40px solid transparent;
-            border-right: 40px solid transparent;
-            border-top: 40vh solid #f00;
             position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
         }
 
-        :nth-child(odd of .point)::before {
-            border-top-color: lightcoral;
-            border-top-width: 30vh;
+        /* landscape layout (tablet / computer) */
+        @media (min-aspect-ratio: 1) {
+            .point:hover::before {
+                border-top-color: blue !important;
+            }
+
+            .point::before {
+                border-left: 40px solid transparent;
+                border-right: 40px solid transparent;
+                border-top: 40vh solid #f00;
+                top: 0;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+
+            :nth-child(odd of .point)::before {
+                border-top-color: lightcoral;
+                border-top-width: 30vh;
+            }
+
+            :nth-child(n+13 of .point):nth-child(even)::before {
+                border-bottom-color: lightcoral;
+                border-bottom-width: 30vh;
+            }
+
+            :nth-child(n+13 of .point)::before {
+                border-top: none;
+                border-bottom: 40vh solid #f00;
+                bottom: 0;
+                top: auto;
+            }
+
+            :nth-child(n+13 of .point):hover::before {
+                border-bottom-color: blue !important;
+            }
         }
 
-        :nth-child(n+13 of .point):nth-child(even)::before {
-            border-bottom-color: lightcoral;
-            border-bottom-width: 30vh;
-        }
 
-        :nth-child(n+13 of .point)::before {
-            border-top: none;
-            border-bottom: 40vh solid #f00;
-            bottom: 0;
-            top: auto;
-        }
+        /* Portrait layout (mobile phone) */
+        @media (max-aspect-ratio: 1) {
+            #board {
+                flex-direction: column;
+            }
+            .point {
+                width: 50%;
+            }
+            
+            .point:hover::before {
+                border-top-color: blue !important;
+            }
 
-        :nth-child(n+13 of .point):hover::before {
-            border-bottom-color: blue !important;
+            .point::before {
+                border-top: 40px solid transparent;
+                border-bottom: 40px solid transparent;
+                border-left: 40vh solid #f00;
+                left: 0;
+                top: 50%;
+                transform: translateY(-50%);
+            }
+
+            :nth-child(odd of .point)::before {
+                border-left-color: lightcoral;
+                border-left-width: 30vh;
+            }
+
+            :nth-child(n+13 of .point):nth-child(even)::before {
+                border-right-color: lightcoral;
+                border-right-width: 30vh;
+            }
+
+            :nth-child(n+13 of .point)::before {
+                border-left: none;
+                border-right: 40vh solid #f00;
+                right: 0;
+                top: auto;
+            }
+
+            :nth-child(n+13 of .point):hover::before {
+                border-right-color: blue !important;
+            }
         }
     </style>
 </head>
@@ -144,8 +199,8 @@
             <div></div>
             <div></div>
         </div>
-        <div class="bar"></div>
-        <div class="home"></div>
+        <!-- <div class="bar"></div>
+                                                                                                                                                                                                        <div class="home"></div> -->
         <div class="point" ondragover="event.preventDefault()"
             ondragstart="event.dataTransfer.setData('text', event.target.id)"></div>
         <div class="point" ondragover="event.preventDefault()"></div>
