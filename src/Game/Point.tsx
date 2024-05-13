@@ -1,6 +1,3 @@
-import "react";
-import "react-dom";
-
 export default function Point({ pieces, onDrop, position }) {
 
     const onDragStart = (event) => event.dataTransfer.setData('text', position);
