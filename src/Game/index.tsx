@@ -1,6 +1,6 @@
 import './Game.css';
 import Dice from './Dice';
-import Point from './Point';
+import Point from './Piece';
 import { useCallback, useState } from 'react';
 
 const DEFAULT_BOARD = [
@@ -26,10 +26,16 @@ export default function Game() {
         const fromPieces = board[from];
         if (!fromPieces) return;
 
-        if (board[to] === 1) {
+        // TODO: Validate moves against dice
+
+        if (to === -1) {
+            // TODO: bear off piece
+        } else if (board[to] === 1) {
             board[to] = -1;
+            // TODO: move piece to bar
         } else if (board[to] === -1) {
             board[to] = 1;
+            // TODO: move piece to bar
         } else if (board[to] > 0 && fromPieces > 0) {
             board[to]++;
             board[from]--;
@@ -48,40 +54,15 @@ export default function Game() {
         setDice([first, second])
     }, [])
 
-    const onDrop = useCallback((position: number, event: DragEvent) => {
-        move(event.dataTransfer.getData('text'), position);
-    }, [move])
 
     return <div id="board">
         <Dice onClick={roll} values={dice} />
-        <div className="point"></div>
-        <div className="point"></div>
-        <div className="point"></div>
-        <div className="point"></div>
-        <div className="point"></div>
-        <div className="point"></div>
-        <div className="point"></div>
-        <div className="point"></div>
-        <div className="point"></div>
-        <div className="point"></div>
-        <div className="point"></div>
-        <div className="point"></div>
+
+        {board.slice(0, 12).map((pieces, index) => <Point pieces={pieces} move={move} position={index} />)}
         <div className="bar"></div>
         <div className="bar"></div>
-        <div className="point"></div>
-        <div className="point"></div>
-        <div className="point"></div>
-        <div className="point"></div>
-        <div className="point"></div>
-        <div className="point"></div>
-        <div className="point"></div>
-        <div className="point"></div>
-        <div className="point"></div>
-        <div className="point"></div>
-        <div className="point"></div>
-        <div className="point"></div>
+        {board.slice(12).map((pieces, index) => <Point pieces={pieces} move={move} position={index} />)}
         <div className="home"></div>
         <div className="home"></div>
     </div >;
-    return <>{this.state.board.map((pieces, position) => <Point onDrop={this.onDrop.bind(this, position)} pieces={pieces} position={position} />)}</>;
 }

@@ -1,0 +1,12 @@
+.piece {
+    width: 20px;
+    height: 20px;
+
+    &.white {
+        background: white;
+    }
+
+    &.black {
+        background: black;
+    }
+}

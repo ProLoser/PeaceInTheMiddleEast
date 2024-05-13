@@ -5,14 +5,6 @@
     flex-wrap: wrap;
 }
 
-.dice {
-    position: absolute;
-    left: 20%;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 2;
-}
-
 .bar {
     background: lightblue;
     flex-basis: 4%;
@@ -21,19 +13,6 @@
 .home {
     background: lightblue;
     flex-basis: 4%;
-}
-
-.piece {
-    width: 20px;
-    height: 20px;
-
-    &.white {
-        background: white;
-    }
-
-    &.black {
-        background: black;
-    }
 }
 
 .point {
@@ -46,6 +25,7 @@
         width: 0;
         height: 0;
         position: absolute;
+        z-index: -1;
     }
 }
 

@@ -1,5 +1,6 @@
 import { MouseEventHandler } from 'react';
 import * as IMAGES from './images';
+import './Dice.css'
 
 type DiceProps = {
     onClick: MouseEventHandler,
@@ -9,6 +10,6 @@ type DiceProps = {
 export default function Dice({ onClick, values }: DiceProps) {
     return <div className="dice" onClick={onClick} style={{ cursor: 'pointer' }}>
         <img src={IMAGES[`black${values[0] || 6}`]} />
-        <img src={IMAGES[`white${values[1] || 3}`]} />
+        <img src={IMAGES[`white${values[1] || 6}`]} />
     </div>
 }
