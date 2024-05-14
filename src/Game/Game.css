@@ -31,8 +31,10 @@
 
 :nth-child(1 of .bar) {
     order: 3;
+    display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
 }
-
 :nth-child(2 of .bar) {
     order: 7;
 }
@@ -88,6 +90,9 @@
 
     /* bottom */
     :nth-child(n+13 of .point) {
+display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
         &::before {
             border-top: none;
             border-bottom: 40vh solid black;

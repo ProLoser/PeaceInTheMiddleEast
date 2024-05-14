@@ -1,5 +1,5 @@
-import { MouseEventHandler } from 'react';
-import * as IMAGES from './images';
+import type { MouseEventHandler } from 'react';
+import * as IMAGES from './images/dice';
 import './Dice.css'
 
 type DiceProps = {
