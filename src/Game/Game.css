@@ -34,8 +34,11 @@
 :nth-child(1 of .bar) {
     order: 3;
     display: flex;
-        flex-direction: column;
-        justify-content: flex-end;
+    flex-direction: column;
+    justify-content: flex-end;
+    @media (max-aspect-ratio: 1) {
+        flex-direction: row;
+    }
 }
 :nth-child(2 of .bar) {
     order: 7;
