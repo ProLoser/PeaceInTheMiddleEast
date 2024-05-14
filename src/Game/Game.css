@@ -16,7 +16,9 @@
 }
 
 .point {
+    display: flex;
     position: relative;
+    align-items: center;
     flex-basis: calc(100% / 14);
 
     &::before {
@@ -65,6 +67,9 @@
 
 /* landscape layout (tablet / computer) */
 @media (min-aspect-ratio: 1) {
+    .point {
+        flex-direction: column;
+    }
     .point:hover::before {
         border-top-color: blue !important;
     }
@@ -90,9 +95,10 @@
 
     /* bottom */
     :nth-child(n+13 of .point) {
-display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+
         &::before {
             border-top: none;
             border-bottom: 40vh solid black;
@@ -130,6 +136,7 @@ display: flex;
         }
     }
 
+    /* top */
     :nth-child(-n+12 of .point) {
         &::before {
             border-left: 40vw solid #f00;
@@ -141,8 +148,9 @@ display: flex;
             border-left-width: 30vw;
         }
     }
-
+    /* bottom */
     :nth-child(n+13 of .point) {
+        justify-content: flex-end;
         &::before {
             border-left: none;
             border-right: 40vw solid #f00;

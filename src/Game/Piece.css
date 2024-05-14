@@ -1,8 +1,8 @@
 .piece {
-    width: 100%;
+    width: 8vmin;
     aspect-ratio: 1;
     cursor: pointer;
-    border-radius: 50%;
+    /* border-radius: 50%; */
 
     &.white {
         /* background: white; */
