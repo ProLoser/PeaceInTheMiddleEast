@@ -16,4 +16,15 @@
         width: 100%;
         height: 100%;
     }
+    .bar & {
+        /* Portrait layout (mobile) */
+        @media (max-aspect-ratio: 1) {
+            height: 100%;
+        }
+    
+        /* Landscape layout (laptop / tablet ) */
+        @media (min-aspect-ratio: 1) {
+            width: 100%;
+        }
+    }
 }
