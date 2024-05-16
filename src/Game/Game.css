@@ -3,6 +3,7 @@
     gap: 0;
     height: 100%;
     flex-wrap: wrap;
+    touch-action: none;
 }
 
 .bar {
