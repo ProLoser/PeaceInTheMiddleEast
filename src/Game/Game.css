@@ -96,7 +96,7 @@ order:
     /* top */
     :nth-child(-n+12 of .point) {
         &::before {
-            border-top: 40vh solid #111;
+            border-top: 40vh solid #ffd8a0;
         }
 
         &:nth-child(odd)::before {
@@ -111,7 +111,7 @@ order:
 
         &::before {
             border-top: none;
-            border-bottom: 40vh solid black;
+            border-bottom: 40vh solid #ffd8a0;
             bottom: 0;
             top: auto;
         }
