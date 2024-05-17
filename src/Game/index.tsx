@@ -2,6 +2,7 @@ import './Game.css';
 import Dice from './Dice';
 import Point from './Point';
 import Piece from './Piece';
+import Toolbar from './Toolbar';
 import { useCallback, useState, type DragEventHandler } from 'react';
 
 
@@ -91,7 +92,7 @@ export default function Game() {
     }, [move])
 
     return <div id="board">
-        <div id="toolbar"></div>
+        <Toolbar />
         <Dice onClick={roll} values={dice} />
 
         <div className="bar">
