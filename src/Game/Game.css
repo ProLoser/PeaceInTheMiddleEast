@@ -4,32 +4,38 @@
     height: 100%;
     flex-wrap: wrap;
     touch-action: none;
+    > * {
+        display: flex;
+        align-items: center;
+        flex-basis: calc(100% / 15);
+        /* landscape layout (tablet / computer) */
+        @media (min-aspect-ratio: 1) {
+            flex-direction: column;
+            max-width: calc(100% / 15);
+        }
+    
+        /* portrait layout (mobile) */
+        @media (max-aspect-ratio: 1) {
+            flex-direction: row;
+            max-height: calc(100% / 15);
+        }
+    }
+}
+
+.toolbar {
+    order: 1;
 }
 
 .bar {
     background: lightblue;
-    flex-basis: 4%;
-    display: flex;
-    /* landscape layout (tablet / computer) */
-    @media (min-aspect-ratio: 1) {
-        flex-direction: column;
-    }
-    /* portrait layout (mobile) */
-    @media (max-aspect-ratio: 1) {
-        flex-direction: row;
-    }
 }
 
 .home {
     background: lightblue;
-    flex-basis: 4%;
 }
 
 .point {
-    display: flex;
     position: relative;
-    align-items: center;
-    flex-basis: calc(100% / 14);
 
     &::before {
         content: ' ';
@@ -41,18 +47,24 @@
     }
 }
 
+/*
+order:
+[toolbar1] [leftboard2] [bar3] [rightboard4] [home5]
+[dice6] [leftboard7] [bar8] [rightboard9] [home10]
+*/
+
 :nth-child(1 of .bar) {
     order: 3;
     justify-content: flex-end;
 }
 :nth-child(2 of .bar) {
-    order: 7;
+    order: 8;
 }
 :nth-child(1 of .home) {
     order: 5;
 }
 :nth-child(2 of .home) {
-    order: 9;
+    order: 10;
     justify-content: flex-end;
 }
 :nth-child(-n+12 of .point) {
@@ -70,9 +82,6 @@
 
 /* landscape layout (tablet / computer) */
 @media (min-aspect-ratio: 1) {
-    .point {
-        flex-direction: column;
-    }
     .point:hover::before {
         border-top-color: blue !important;
     }
@@ -98,8 +107,6 @@
 
     /* bottom */
     :nth-child(n+13 of .point) {
-        display: flex;
-        flex-direction: column;
         justify-content: flex-end;
 
         &::before {

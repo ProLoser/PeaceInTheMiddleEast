@@ -91,6 +91,7 @@ export default function Game() {
     }, [move])
 
     return <div id="board">
+        <div id="toolbar"></div>
         <Dice onClick={roll} values={dice} />
 
         <div className="bar">
