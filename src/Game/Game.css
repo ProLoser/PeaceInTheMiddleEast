@@ -101,7 +101,7 @@ order:
 
         &:nth-child(odd)::before {
             border-top-color: brown;
-            border-top-width: 30vh;
+            border-top-width: 40vh;
         }
     }
 
@@ -118,11 +118,14 @@ order:
 
         &:nth-child(even)::before {
             border-bottom-color: brown;
-            border-bottom-width: 30vh;
+            border-bottom-width: 40vh;
         }
 
-        &:hover::before {
-            border-bottom-color: blue !important;
+        &:nth-child(even):hover::before {
+            border-bottom-color: #2727ff !important;
+        }
+        &:nth-child(odd):hover::before {
+            border-bottom-color: rgb(128, 128, 211) !important;
         }
     }
 }
@@ -134,8 +137,12 @@ order:
     }
 
     .point {
-        &:hover::before {
-            border-left-color: blue !important;
+
+        &:nth-child(even):hover::before {
+            border-left-color: #2727ff !important;
+        }
+        &:nth-child(odd):hover::before {
+            border-left-color: rgb(128, 128, 211) !important;
         }
 
         &::before {
@@ -155,7 +162,7 @@ order:
 
         &:nth-child(odd)::before {
             border-left-color: lightcoral;
-            border-left-width: 30vw;
+            border-left-width: 40vw;
         }
     }
     /* bottom */
@@ -173,7 +180,7 @@ order:
 
         &:nth-child(even)::before {
             border-right-color: lightcoral;
-            border-right-width: 30vw;
+            border-right-width: 40vw;
         }
     }
 }

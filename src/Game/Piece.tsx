@@ -14,6 +14,7 @@ export default function Piece({ color, position }: PieceProps) {
     const onDragStart: DragEventHandler = useCallback((event) => {
         switch (position) {
             case undefined:
+                event.preventDefault()
                 break;
             case -1:
                 event.dataTransfer?.setData('text', color)
