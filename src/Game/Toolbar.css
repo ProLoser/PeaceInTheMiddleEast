@@ -1,6 +1,7 @@
 #toolbar {
     a {
         font-weight: bold;
-        font-size: 40px;
+        font-size: 30px;
+        padding: 20px;
     }
 }
