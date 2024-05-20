@@ -69,6 +69,7 @@ node_modules/
 .parcel-cache
 dist/
 
+
 ### Vite ###
 # Logs
 logs
@@ -82,6 +83,7 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+dev-dist
 *.local
 
 # Editor directories and files
