@@ -1,0 +1,202 @@
+#board {
+    --primary: brown;
+    --secondary: #ffd8a0;
+    --primary-hover: #2727ff;
+    --secondary-hover: rgb(128, 128, 211);
+    display: flex;
+    gap: 0;
+    height: 100%;
+    flex-wrap: wrap;
+    touch-action: none;
+    > * {
+        display: flex;
+        flex-wrap: wrap;
+        flex-basis: calc(100% / 15);
+        /* landscape layout (tablet / computer) */
+        @media (min-aspect-ratio: 1) {
+            flex-direction: row;
+            max-width: calc(100% / 15);
+        }
+        /* portrait layout (mobile) */
+        @media (max-aspect-ratio: 1) {
+            flex-direction: column;
+            max-height: calc(100% / 15);
+        }
+    }
+}
+
+.toolbar {
+    order: 1;
+}
+
+.bar {
+    background: lightblue;
+}
+
+.home {
+    background: lightblue;
+}
+
+.point {
+    position: relative;
+
+    &::before {
+        content: ' ';
+        display: block;
+        width: 0;
+        height: 0;
+        position: absolute;
+        z-index: -1;
+    }
+}
+
+/*
+order:
+[toolbar1] [leftboard2] [bar3] [rightboard4] [home5]
+[dice6] [leftboard7] [bar8] [rightboard9] [home10]
+*/
+
+:nth-child(1 of .bar) {
+    order: 3;
+    justify-content: flex-end;
+}
+:nth-child(2 of .bar) {
+    order: 8;
+}
+:nth-child(1 of .home) {
+    order: 5;
+}
+:nth-child(2 of .home) {
+    order: 10;
+    justify-content: flex-end;
+}
+:nth-child(-n+12 of .point) {
+    order: 4;
+}
+:nth-child(-n+6 of .point) {
+    order: 2;
+}
+:nth-child(n+13 of .point) {
+    order: 6;
+}
+:nth-child(n+19 of .point) {
+    order: 8;
+}
+
+/* landscape layout (tablet / computer) */
+@media (min-aspect-ratio: 1) {
+    .point {
+        height: 50%;
+        &:hover::before {
+            border-top-color: var(--primary-hover) !important;
+        }
+
+        &::before {
+            left: 50%;
+            transform: translateX(-50%);
+            border-left: 30px solid transparent;
+            border-right: 30px solid transparent;
+        }
+        /* top */
+        :nth-child(-n+12 of &) {
+            align-content: start;
+
+            &::before {
+                border-top: 40vh solid var(--secondary);
+                top: 0;
+            }
+
+            &:nth-child(odd)::before {
+                border-top-color: var(--primary);
+                border-top-width: 40vh;
+            }
+            .piece:nth-child(n+6) {
+                transform: translateY(-450%);
+            }
+        }
+        /* bottom */
+        :nth-child(n+13 of &) {
+            align-content: end;
+
+            &::before {
+                border-top: none;
+                border-bottom: 40vh solid var(--secondary);
+                bottom: 0;
+                top: auto;
+            }
+
+            &:nth-child(even)::before {
+                border-bottom-color: var(--primary);
+                border-bottom-width: 40vh;
+            }
+
+            &:nth-child(even):hover::before {
+                border-bottom-color: var(--primary-hover) !important;
+            }
+
+            &:nth-child(odd):hover::before {
+                border-bottom-color: var(--secondary-hover) !important;
+            }
+
+            .piece:nth-child(n+6) {
+                transform: translateY(450%);
+            }
+        }
+    }
+}
+
+/* Portrait layout (mobile phone) */
+@media (max-aspect-ratio: 1) {
+    #board {
+        flex-direction: column;
+    }
+
+    .point {
+        width: 50%;
+
+        &::before {
+            top: 50%;
+            transform: translateY(-50%);
+            border-top: 40px solid transparent;
+            border-bottom: 40px solid transparent;
+        }
+        &:nth-child(even):hover::before {
+            border-left-color: var(--primary-hover) !important;
+        }
+        &:nth-child(odd):hover::before {
+            border-left-color: var(--secondary-hover) !important;
+        }
+        /* top */
+        :nth-child(-n+12 of &) {
+            &::before {
+                border-left: 40vw solid var(--primary);
+                left: 0;
+            }
+
+            &:nth-child(odd)::before {
+                border-left-color: var(--secondary);
+                border-left-width: 40vw;
+            }
+        }
+
+        /* bottom */
+        :nth-child(n+13 of &) {
+            justify-content: flex-end;
+
+            &::before {
+                border-left: none;
+                border-right: 40vw solid var(--primary);
+                right: 0;
+            }
+
+            &:hover::before {
+                border-right-color: var(--primary-hover) !important;
+            }
+
+            &:nth-child(even)::before {
+                border-right-color: var(--secondary);
+                border-right-width: 40vw;
+            }
+        }
+    }
+}

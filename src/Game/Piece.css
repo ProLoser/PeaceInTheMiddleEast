@@ -1,7 +1,11 @@
 .piece {
     width: 8vmin;
+    /* flex-basis: 100%; */
     aspect-ratio: 1;
-    cursor: pointer;
+
+    &[draggable="true"] {
+        cursor: pointer;
+    }
     /* border-radius: 50%; */
 
     &.white {

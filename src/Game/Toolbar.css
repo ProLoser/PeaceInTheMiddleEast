@@ -1,7 +1,8 @@
 #toolbar {
+    gap: 5px;
+
     a {
         font-weight: bold;
-        font-size: 30px;
-        padding: 20px;
+        font-size: 3em;
     }
 }

@@ -1,3 +1,5 @@
 .dice {
     order: 6;
+    cursor: pointer;
+    justify-content: center;
 }
