@@ -2,4 +2,9 @@
     order: 6;
     cursor: pointer;
     justify-content: center;
+    img {
+        aspect-ratio: 1;
+        max-width: 100%;
+        max-height: 100%;
+    }
 }
