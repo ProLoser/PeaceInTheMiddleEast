@@ -3,6 +3,10 @@
     --secondary: #ffd8a0;
     --primary-hover: #2727ff;
     --secondary-hover: rgb(128, 128, 211);
+    .selected {
+        --primary: red;
+        --secondary: red;
+    }
     display: flex;
     gap: 0;
     height: 100%;

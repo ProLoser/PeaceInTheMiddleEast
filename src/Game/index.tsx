@@ -23,6 +23,18 @@ export default function Game() {
     const [whiteBar, setWhiteBar] = useState(0)
     const [board, setBoard] = useState(() => [...DEFAULT_BOARD])
     const [dice, setDice] = useState(() => [rollDie(), rollDie()])
+    const [selected, setSelected] = useState(null);
+
+    const onSelect = useCallback(position => {
+        if (position === null || selected === position) {
+            setSelected(null);
+        } else if (selected === null) {
+            setSelected(position);
+        } else {
+            move(selected, position);
+            setSelected(null);
+        }
+    }, [selected])
 
     // TODO: Validate moves against dice
     const move = useCallback((from: number | "white" | "black", to: number) => {
@@ -101,6 +113,6 @@ export default function Game() {
         <div className="home" onDragOver={onDragOver} onDrop={onDrop}>
             {Array.from({ length: whiteHome }, (_, index) => <Piece key={index} color="white" />)}
         </div>
-        {board.map((pieces, index) => <Point key={index} pieces={pieces} move={move} position={index} />)}
+        {board.map((pieces, index) => <Point key={index} pieces={pieces} move={move} position={index} selected={selected==index} onSelect={onSelect} />)}
     </div >;
 }

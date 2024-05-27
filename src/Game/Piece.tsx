@@ -7,11 +7,13 @@ const IMAGES = { black, white }
 
 type PieceProps = {
     color: 'black' | 'white',
-    position?: number
+    position?: number,
+    onSelect?: (position: number|null) => void,
 }
 
-export default function Piece({ color, position }: PieceProps) {
+export default function Piece({ color, position, onSelect }: PieceProps) {
     const onDragStart: DragEventHandler = useCallback((event) => {
+        if (onSelect) onSelect(null)
         switch (position) {
             case undefined:
                 event.preventDefault()
@@ -22,7 +24,7 @@ export default function Piece({ color, position }: PieceProps) {
             default:
                 event.dataTransfer?.setData('text', position.toString())
         }
-    }, [position, color]);
+    }, [position, color, onSelect]);
 
     return <div className={`piece ${color}`} onDragStart={onDragStart} draggable={position !== undefined}>
         <img src={IMAGES[color]} />
