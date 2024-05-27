@@ -1,4 +1,8 @@
 #board {
+    --primary: brown;
+    --secondary: #ffd8a0;
+    --primary-hover: #2727ff;
+    --secondary-hover: rgb(128, 128, 211);
     display: flex;
     gap: 0;
     height: 100%;
@@ -83,7 +87,7 @@ order:
 /* landscape layout (tablet / computer) */
 @media (min-aspect-ratio: 1) {
     .point:hover::before {
-        border-top-color: blue !important;
+        border-top-color: var(--primary-hover) !important;
     }
 
     .point::before {
@@ -96,11 +100,11 @@ order:
     /* top */
     :nth-child(-n+12 of .point) {
         &::before {
-            border-top: 40vh solid #ffd8a0;
+            border-top: 40vh solid var(--secondary);
         }
 
         &:nth-child(odd)::before {
-            border-top-color: brown;
+            border-top-color: var(--primary);
             border-top-width: 40vh;
         }
     }
@@ -111,21 +115,21 @@ order:
 
         &::before {
             border-top: none;
-            border-bottom: 40vh solid #ffd8a0;
+            border-bottom: 40vh solid var(--secondary);
             bottom: 0;
             top: auto;
         }
 
         &:nth-child(even)::before {
-            border-bottom-color: brown;
+            border-bottom-color: var(--primary);
             border-bottom-width: 40vh;
         }
 
         &:nth-child(even):hover::before {
-            border-bottom-color: #2727ff !important;
+            border-bottom-color: var(--primary-hover) !important;
         }
         &:nth-child(odd):hover::before {
-            border-bottom-color: rgb(128, 128, 211) !important;
+            border-bottom-color: var(--secondary-hover) !important;
         }
     }
 }
@@ -139,10 +143,10 @@ order:
     .point {
 
         &:nth-child(even):hover::before {
-            border-left-color: #2727ff !important;
+            border-left-color: var(--primary-hover) !important;
         }
         &:nth-child(odd):hover::before {
-            border-left-color: rgb(128, 128, 211) !important;
+            border-left-color: var(--secondary-hover) !important;
         }
 
         &::before {
@@ -156,12 +160,12 @@ order:
     /* top */
     :nth-child(-n+12 of .point) {
         &::before {
-            border-left: 40vw solid #f00;
+            border-left: 40vw solid var(--primary);
             left: 0;
         }
 
         &:nth-child(odd)::before {
-            border-left-color: lightcoral;
+            border-left-color: var(--secondary);
             border-left-width: 40vw;
         }
     }
@@ -170,16 +174,16 @@ order:
         justify-content: flex-end;
         &::before {
             border-left: none;
-            border-right: 40vw solid #f00;
+            border-right: 40vw solid var(--primary);
             right: 0;
         }
 
         &:hover::before {
-            border-right-color: blue !important;
+            border-right-color: var(--primary-hover) !important;
         }
 
         &:nth-child(even)::before {
-            border-right-color: lightcoral;
+            border-right-color: var(--secondary);
             border-right-width: 40vw;
         }
     }
