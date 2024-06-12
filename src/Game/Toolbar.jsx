@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react'
 import './Toolbar.css'
-import Login from './Login'
+import Login from '../Login'
+
 export default function Toolbar() {
     const [showLogin, setLogin] = useState(false)
     const [showChat, setChat] = useState(false)

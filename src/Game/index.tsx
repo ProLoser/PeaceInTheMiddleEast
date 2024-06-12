@@ -23,9 +23,9 @@ export default function Game() {
     const [whiteBar, setWhiteBar] = useState(0)
     const [board, setBoard] = useState(() => [...DEFAULT_BOARD])
     const [dice, setDice] = useState(() => [rollDie(), rollDie()])
-    const [selected, setSelected] = useState(null);
+    const [selected, setSelected] = useState<number|null>(null);
 
-    const onSelect = useCallback(position => {
+    const onSelect = useCallback((position:number) => {
         if (position === null || selected === position) {
             setSelected(null);
         } else if (selected === null) {

@@ -1,23 +1,19 @@
 import Game from './Game';
-import { useEffect } from 'react';
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { useEffect, useState } from 'react';
+import { User, getAuth, onAuthStateChanged } from 'firebase/auth';
 
 export default function App() {
   const auth = getAuth();
+  const [user, setUser] = useState<User|null>(null);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        // User is signed in
-        console.log('User is signed in:', user);
-      } else {
-        // User is signed out
-        console.log('User is signed out');
-      }
-    });
+    const unsubscribe = onAuthStateChanged(auth, setUser);
 
     return () => unsubscribe(); // Clean up the listener
   }, []);
 
+  // var displayName = user.displayName;
+  // var photoURL = user.photoURL;
+  // var uid = user.uid;
   return <Game />;
 }
