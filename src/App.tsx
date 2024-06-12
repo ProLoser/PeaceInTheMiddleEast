@@ -7,7 +7,10 @@ export default function App() {
   const [user, setUser] = useState<User|null>(null);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, setUser);
+    const unsubscribe = onAuthStateChanged(auth, user => {
+      setUser(user);
+    console.log({user});
+    });
 
     return () => unsubscribe(); // Clean up the listener
   }, []);

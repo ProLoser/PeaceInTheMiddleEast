@@ -4,7 +4,7 @@ import firebase from 'firebase/compat/app';
 import * as firebaseui from 'firebaseui'
 import 'firebaseui/dist/firebaseui.css';
 
-const Login = () => {
+const Login = ({ show }) => {
     // Initialize FirebaseUI
     useEffect(() => {
         const uiConfig = {
@@ -22,7 +22,7 @@ const Login = () => {
         ui.start('#firebaseui-auth-container', uiConfig);
     }, []);
 
-    return <div id="firebaseui-auth-container"></div>
+    return <div style={{display:show?'block':'none'}} id="firebaseui-auth-container"></div>
 };
 
 export default Login;

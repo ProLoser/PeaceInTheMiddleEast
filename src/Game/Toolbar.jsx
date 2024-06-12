@@ -19,6 +19,6 @@ export default function Toolbar() {
         <a onClick={toggleChat}>&#128488;</a>
         {showChat && <Chat />}
         <a onClick={toggleLogin}>&#127757;</a>
-        {showLogin && <Login />}
+        <Login show={showLogin} />
     </div>
 }
