@@ -1,12 +1,12 @@
 # Open Source BackGammon
 
 ## Goals
-- Works on phone, tablet, and computers
-- Simple SheshBesh Backgammon
-- My safta (grandma) can use it
-- My father can play with my grandmother
-- I can play with my father in law
-- No ads, no fee, no complexity
+- [ ] Works on phone, tablet, and computers
+- [ ] Simple SheshBesh Backgammon
+- [ ] My safta (grandma) can use it
+- [ ] My father can play with my grandmother
+- [ ] I can play with my father in law
+- [x] No ads, no fee, no complexity
 
 ## Contributing
 Try starting a Codespace since the project is open source it's free!
