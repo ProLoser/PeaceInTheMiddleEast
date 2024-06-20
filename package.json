@@ -23,6 +23,7 @@
     "firebaseui": "^6.1.0",
     "react": "^17.0.0 || ^18.0.0",
     "react-dom": "^17.0.0 || ^18.0.0",
+    "react-firebaseui": "^6.0.0",
     "styled-components": "^6.1.10"
   },
   "devDependencies": {

@@ -1,3 +1,4 @@
+// TODO: Upgrade to modular after firebaseui upgrades
 import firebase from 'firebase/compat/app';
 // import { initializeApp } from 'firebase/app';
 

@@ -49,3 +49,20 @@ body,
     background-color: #f9f9f9;
   }
 }
+
+.modal {
+  position: absolute;
+  bottom: 40px;
+  right: 40px;
+  /* Portrait layout (mobile) */
+  @media (max-aspect-ratio: 1) {
+    top: 100px;
+    left: 40px;
+  }
+
+  /* Landscape layout (laptop / tablet ) */
+  @media (min-aspect-ratio: 1) {
+    top: 40px;
+    left: 100px;
+  }
+}
