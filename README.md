@@ -1,7 +1,7 @@
 # Open Source BackGammon
 
 ## Goals
-- [ ] Works on phone, tablet, and computers
+- [x] Works on phone, tablet, and computers
 - [ ] Simple SheshBesh Backgammon
 - [ ] My safta (grandma) can use it
 - [ ] My father can play with my grandmother
