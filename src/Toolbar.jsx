@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react'
 import './Toolbar.css'
-import Login from '../Login'
-import Chat from '../Chat'
+import Friends from './Friends'
+import Chat from './Chat'
 
 export default function Toolbar() {
     const [showLogin, setLogin] = useState(false)
@@ -20,6 +20,6 @@ export default function Toolbar() {
         <a onClick={toggleChat}>&#128488;</a>
         {showChat && <Chat />}
         <a onClick={toggleLogin}>&#127757;</a>
-        <Login show={showLogin} />
+        <Friends show={showLogin} />
     </div>
 }

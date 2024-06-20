@@ -1,36 +1,38 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/database';
 import { useAuth } from '../AuthContext';
 import './index.css';
 
 export default function() {
-    const user = useAuth()
+    const user = useAuth();
     const [chats, setChats] = useState<firebase.database.DataSnapshot>([]);
+    const [selectedChat, setSelectedChat] = useState<firebase.database.DataSnapshot | null>(null);
 
-    useEffect(() => {
-        // Fetch chats from Firebase collection
-        const fetchChats = async () => {
-            const db = firebase.database();
-            const snapshot = await db.collection('chats').get();
-            const chatsData = snapshot.docs.map((doc) => doc.data());
-            setChats(chatsData);
-        };
-
-        fetchChats();
-    }, [user]);
+    const handleChatClick = (chat: firebase.database.DataSnapshot) => {
+        setSelectedChat(chat);
+    };
 
     return (
         <div id="chat" className='modal'>
             <h1>Chat List</h1>
             <ul>
-                {chats.map((chat: firebase.firestore.DocumentData) => (
-                    <li key={chat.id}>{chat.name}</li>
+                {chats.map((chat: firebase.database.DataSnapshot) => (
+                    <li key={chat.key} onClick={() => handleChatClick(chat)}>
+                        {chat.val().name}
+                    </li>
                 ))}
             </ul>
 
             <h1>Conversation</h1>
-            {/* Render conversation screen here */}
+            {selectedChat && (
+                <div>
+                    <h2>{selectedChat.val().name}</h2>
+                    {selectedChat.val().messages.map((message: string, index: number) => (
+                        <p key={index}>{message}</p>
+                    ))}
+                </div>
+            )}
         </div>
     );
 };

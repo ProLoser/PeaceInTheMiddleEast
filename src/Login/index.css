@@ -1,9 +1,0 @@
-#login {
-    position: absolute;
-    background: rgba(255,255,255,.8);
-    top: 100px;
-    right: 40px;
-    bottom: 40px;
-    left: 40px;
-    z-index: 1;
-}

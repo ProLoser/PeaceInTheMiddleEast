@@ -25,14 +25,15 @@ export default function Login({ show }: { show: boolean}) {
     const user = useAuth(); // Local signed-in state.
     if (!show) return null;
     return user ? (
-        <div id="login">
-            <h1>Online Play</h1>
-            <p>Welcome {user.displayName}! You are now signed-in!</p>
+        <div id="friends" className='modal'>
+            <h1>Friends</h1>
             <a onClick={() => firebase.auth().signOut()}>Sign-out</a>
+
+            <pre>{JSON.stringify(user.uid)}</pre>
         </div>
     ) : (
-        <div id="login">
-            <h1>Online Play</h1>
+        <div id="friends" className='modal'>
+            <h1>Play Online</h1>
             <p>Please sign-in:</p>
             <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={firebase.auth()} />
         </div>

@@ -2,7 +2,7 @@ import './Game.css';
 import Dice from './Dice';
 import Point from './Point';
 import Piece from './Piece';
-import Toolbar from './Toolbar';
+import Toolbar from '../Toolbar';
 import { useCallback, useState, type DragEventHandler } from 'react';
 
 
