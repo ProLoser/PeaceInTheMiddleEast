@@ -1,10 +1,10 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useState, useEffect } from 'react'
 import './Toolbar.css'
 import Friends from './Friends'
 import Chat from './Chat'
 
 export default function Toolbar() {
-    const [showLogin, setLogin] = useState(false)
+    const [showFriends, setLogin] = useState(false)
     const [showChat, setChat] = useState(false)
     const toggleFullscreen = useCallback(() => {
         if (document.fullscreenElement) 
@@ -12,14 +12,27 @@ export default function Toolbar() {
         else
             document.documentElement.requestFullscreen()
     }, [])
+    const [isFullscreen, setFullscreen] = useState(false);
 
+    useEffect(() => {
+        const handleFullscreenChange = () => {
+            setFullscreen(!!document.fullscreenElement);
+        };
+
+        document.addEventListener('fullscreenchange', handleFullscreenChange);
+
+        return () => {
+            document.removeEventListener('fullscreenchange', handleFullscreenChange);
+        };
+    }, []);
+    
     const toggleChat = useCallback(() => { setChat( previous => !previous)   }, [])
-    const toggleLogin = useCallback(() => { setLogin( previous => !previous)   }, [])
+    const toggleFriends = useCallback(() => { setLogin( previous => !previous)   }, [])
     return <div id="toolbar">
-        {document.fullscreenEnabled ? <a onClick={toggleFullscreen}>&#x26F6;</a> : null}
-        <a onClick={toggleChat}>&#128488;</a>
+        {document.fullscreenEnabled ? <a className="material-icons" onClick={toggleFullscreen}>{isFullscreen ?'fullscreen_exit':'fullscreen'}</a> : null}
+        <a className="material-icons" onClick={toggleChat}>chat</a>
         {showChat && <Chat />}
-        <a onClick={toggleLogin}>&#127757;</a>
-        <Friends show={showLogin} />
+        <a className="material-icons" onClick={toggleFriends}>account_circle</a>
+        <Friends show={showFriends} />
     </div>
 }
