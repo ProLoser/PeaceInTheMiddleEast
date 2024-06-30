@@ -87,6 +87,7 @@ export default function Game() {
     }, [board])
 
     const roll = useCallback(() => {
+        navigator.vibrate?.([50,50,60,30,90,20,110,10,150])
         setDice([rollDie(), rollDie()])
     }, [])
 
