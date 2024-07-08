@@ -4,5 +4,6 @@
     a {
         font-weight: bold;
         font-size: 3em;
+        cursor: pointer;
     }
 }

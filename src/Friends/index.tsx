@@ -26,10 +26,8 @@ export default function Login({ show }: { show: boolean}) {
     if (!show) return null;
     return user ? (
         <div id="friends" className='modal'>
-            <h1>Friends</h1>
-            <a onClick={() => firebase.auth().signOut()}>Sign-out</a>
-
-            <pre>{JSON.stringify(user.uid)}</pre>
+            <pre>{JSON.stringify(user.uid)}</pre> <a onClick={() => firebase.auth().signOut()}>Sign-out</a>
+            <Friends />
         </div>
     ) : (
         <div id="friends" className='modal'>
@@ -39,3 +37,42 @@ export default function Login({ show }: { show: boolean}) {
         </div>
     );
 }
+
+import { useState } from 'react';
+// import firebase from 'firebase/compat/app';
+// import { useAuth } from '../AuthContext';
+import 'firebase/compat/database';
+// import './index.css';
+
+export function Friends() {
+    const user = useAuth();
+    const [chats, setChats] = useState<firebase.database.DataSnapshot>([]);
+    const [selectedChat, setSelectedChat] = useState<firebase.database.DataSnapshot | null>(null);
+
+    const handleChatClick = (chat: firebase.database.DataSnapshot) => {
+        setSelectedChat(chat);
+    };
+
+    return (
+        <div id="chat">
+            <h1>Friends</h1>
+            <ul>
+                {chats.map((chat: firebase.database.DataSnapshot) => (
+                    <li key={chat.key} onClick={() => handleChatClick(chat)}>
+                        {chat.val().name}
+                    </li>
+                ))}
+            </ul>
+
+            <h1>Conversation</h1>
+            {selectedChat && (
+                <div>
+                    <h2>{selectedChat.val().name}</h2>
+                    {selectedChat.val().messages.map((message: string, index: number) => (
+                        <p key={index}>{message}</p>
+                    ))}
+                </div>
+            )}
+        </div>
+    );
+};
