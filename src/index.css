@@ -35,6 +35,10 @@ body,
     inset #bfecf7 0 0 0 23px;
 }
 
+[onClick], a {
+  cursor: pointer;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;

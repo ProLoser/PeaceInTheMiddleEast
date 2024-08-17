@@ -1,3 +1,9 @@
 #friends {
     background: rgba(255,255,255,.4);
+    padding: 0 2em;
+    input {
+        display: block;
+        width: 100%;
+        padding: 5px;
+    }
 }

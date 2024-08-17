@@ -1,9 +1,8 @@
 #toolbar {
     gap: 5px;
 
-    a {
+    > a {
         font-weight: bold;
         font-size: 3em;
-        cursor: pointer;
     }
 }
