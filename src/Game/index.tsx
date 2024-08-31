@@ -30,7 +30,7 @@ export default function Game() {
     const authUserSnapshot = useContext(AuthContext);
 
     useEffect(() => {
-        if (game) {
+        if (game?.exists()) {
             setBoard(game.val().state)
         } else {
             setBoard([...DEFAULT_BOARD])
