@@ -9,7 +9,7 @@ import 'firebase/compat/auth';
 import 'firebase/compat/database';
 import { AuthContext, UserData } from '../AuthContext';
 import './index.css'
-import { MultiplayerContext, ChatContext, Match } from '../MultiplayerContext';
+import { MultiplayerContext, ChatContext, FriendContext, Match } from '../MultiplayerContext';
 
 // Configure FirebaseUI.
 const uiConfig = {
@@ -42,6 +42,7 @@ type FriendsProps = {
 export default function Friends({ show }: FriendsProps) {
     const searchRef = useRef<HTMLInputElement>(null);
     const authUserSnapshot = useContext(AuthContext); // Local signed-in state.
+    const friend = useContext(FriendContext);
     const { matches, users, load } = useContext(MultiplayerContext);
     const [searchResults, setSearchResults] = useState<UserData[]>([]);
     const chat = useContext(ChatContext);
@@ -61,7 +62,9 @@ export default function Friends({ show }: FriendsProps) {
         if (!show) setSearchResults([])
     }, [show])
 
-    if (!show) return null;
+    const renderFriend = friend ? <h2>{users[friend]?.name}</h2> : null
+
+    if (!show) return renderFriend;
 
     const renderMatches: ReactNode[] = []
     matches?.forEach(match => {
@@ -88,29 +91,32 @@ export default function Friends({ show }: FriendsProps) {
     })
 
     return authUserSnapshot ? (
-        <div id="friends" className='modal'>
-            <h1>Matches</h1>
-            <a onClick={() => firebase.auth().signOut()}>Sign-out: </a>
-            <span>{authUserSnapshot.key}</span>
-            <input name="search" ref={searchRef} type="search" placeholder="Search for Friends" onChange={onSearch} />
-            <ul>
-                {searchResults.map( user => 
-                    <li key={user.uid}>
-                        <a onClick={() => load(user.uid)}>
-                            <Avatar user={user} />
-                            {user.name}
-                        </a>
-                    </li>
-                )}
-                {renderMatches}
-            </ul>
-            {/* {chat && (
+        <>
+            {renderFriend}
+            <div id="friends" className='modal'>
+                <h1>Matches</h1>
+                <a onClick={() => firebase.auth().signOut()}>Sign-out: </a>
+                <span>{authUserSnapshot.key}</span>
+                <input name="search" ref={searchRef} type="search" placeholder="Search for Friends" onChange={onSearch} />
+                <ul>
+                    {searchResults.map(user =>
+                        <li key={user.uid}>
+                            <a onClick={() => load(user.uid)}>
+                                <Avatar user={user} />
+                                {user.name}
+                            </a>
+                        </li>
+                    )}
+                    {renderMatches}
+                </ul>
+                {/* {chat && (
                 <div>
                     <h2>{users[chat].name}</h2>
                     {renderChat}
                 </div>
             )} */}
-        </div>
+            </div>
+        </>
     ) : (
         <div id="friends" className='modal'>
             <h1>Play Online</h1>

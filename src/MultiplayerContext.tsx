@@ -56,6 +56,7 @@ export const MultiplayerContext = createContext<MultiplayerContextType>({
 });
 export const ChatContext = createContext<firebase.database.DataSnapshot|null>(null);
 export const GameContext = createContext<firebase.database.DataSnapshot|null>(null);
+export const FriendContext = createContext<string | null>(null);
 
 export const MultiplayerProvider = ({ children }: PropsWithChildren) => {
 
@@ -64,6 +65,7 @@ export const MultiplayerProvider = ({ children }: PropsWithChildren) => {
     const [match, setMatch] = useState<Match | null>(null);
     const [game, setGame] = useState<firebase.database.DataSnapshot | null>(null);
     const [chat, setChat] = useState<firebase.database.DataSnapshot | null>(null);
+    const [friend, setFriend] = useState<string | null>(null); 
     const [matches, setMatches] = useState<MultiplayerContextType["matches"]>(null);
     const [users, setUsers] = useState<MultiplayerContextType["users"]>({});
     const authUser = useContext(AuthContext); // Local signed-in state.
@@ -72,10 +74,16 @@ export const MultiplayerProvider = ({ children }: PropsWithChildren) => {
         users,
         load: async (userId?: string) => {
             console.log('Loading', userId);
-            setGame(null);
-            setChat(null);
+        
+            if (!authUser || !userId) {
+                setGame(null);
+                setChat(null);
+                setFriend(null);
+                return;
+            }
 
-            if (!authUser || !userId) return;
+            setFriend(userId);
+            window.history.pushState(null, '', `${userId}`);
             const userSnapshot = await database.ref(`users/${userId}`).get();
             if (!userSnapshot.exists()) {
                 console.error('User not found', userId);
@@ -105,6 +113,9 @@ export const MultiplayerProvider = ({ children }: PropsWithChildren) => {
     useEffect(() => {
         if (!authUser) return;
 
+        const friendLocation = location.pathname.split('/').pop()
+        if (friendLocation) context.load(friendLocation);
+
         const queryMatches = firebase.database().ref(`matches/${authUser.key}`).orderByChild('sort').limitToLast(100);
         const subscriber = (snapshot: firebase.database.DataSnapshot) => {
             setMatches(snapshot);
@@ -124,7 +135,7 @@ export const MultiplayerProvider = ({ children }: PropsWithChildren) => {
         }
     }, [authUser]);
 
-    // Synchronize Game and Chat
+    // Synchronize Selected Match
     useEffect(() => {
         if (!authUser || !match) return;
         database.ref(`games/${match.game}`).get().then(setGame);
@@ -137,11 +148,13 @@ export const MultiplayerProvider = ({ children }: PropsWithChildren) => {
 
     return (
         <MultiplayerContext.Provider value={context}>
-            <ChatContext.Provider value={chat}>
-                <GameContext.Provider value={game}>
-                    {children}
-                </GameContext.Provider>
-            </ChatContext.Provider>
+            <FriendContext.Provider value={friend}>
+                <ChatContext.Provider value={chat}>
+                    <GameContext.Provider value={game}>
+                        {children}
+                    </GameContext.Provider>
+                </ChatContext.Provider>
+            </FriendContext.Provider>
         </MultiplayerContext.Provider>
     );
 }
