@@ -99,7 +99,7 @@ export const MultiplayerProvider = ({ children }: PropsWithChildren) => {
                 setMatch(await matchSnapshot.val())
             }
         },
-    }), [matches, authUser]);
+    }), [matches, authUser, users]);
 
     // Synchronize Matches
     useEffect(() => {

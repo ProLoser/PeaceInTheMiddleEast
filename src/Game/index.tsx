@@ -2,8 +2,10 @@ import './Game.css';
 import Dice from './Dice';
 import Point from './Point';
 import Piece from './Piece';
-import Toolbar from '../Toolbar';
-import { useCallback, useState, type DragEventHandler } from 'react';
+import Toolbar from '../Toolbar'
+import { useCallback, useContext, useEffect, useState, type DragEventHandler } from 'react';
+import { GameContext } from '../MultiplayerContext';
+import { AuthContext } from '../AuthContext';
 
 
 // White = Positive, Black = Negative
@@ -24,6 +26,16 @@ export default function Game() {
     const [board, setBoard] = useState(() => [...DEFAULT_BOARD])
     const [dice, setDice] = useState(() => [rollDie(), rollDie()])
     const [selected, setSelected] = useState<number|null>(null);
+    const game = useContext(GameContext);
+    const authUserSnapshot = useContext(AuthContext);
+
+    useEffect(() => {
+        if (game) {
+            setBoard(game.val().state)
+        } else {
+            setBoard([...DEFAULT_BOARD])
+        }
+    }, [game])
 
     const onSelect = useCallback((position:number) => {
         if (position === null || selected === position) {
@@ -83,8 +95,15 @@ export default function Game() {
             nextBoard[from] -= Math.sign(offense)
         }
 
-        setBoard([...nextBoard]);
-    }, [board])
+        setBoard(nextBoard);
+        if (game?.key) {
+            game.ref.child('moves').push({
+                player: authUserSnapshot?.val().uid,
+                move: `${from}/${to}`
+            })
+            game.ref.update({ state: nextBoard })
+        }
+    }, [board, game, authUserSnapshot])
 
     const roll = useCallback(() => {
         navigator.vibrate?.([50,50,60,30,90,20,110,10,150])

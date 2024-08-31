@@ -1,5 +1,5 @@
 // Import FirebaseAuth and firebase.
-import { useState, useCallback, useRef, useContext, ReactNode } from 'react';
+import { useState, useCallback, useRef, useContext, ReactNode, useEffect } from 'react';
 import type { ChangeEventHandler } from 'react';
 import * as firebaseui from 'firebaseui';
 import StyledFirebaseAuth from '../StyledFirebaseAuth';
@@ -56,6 +56,10 @@ export default function Friends({ show }: FriendsProps) {
         })
         setSearchResults(results)
     }, [authUserSnapshot]);
+
+    useEffect(() => {
+        if (!show) setSearchResults([])
+    }, [show])
 
     if (!show) return null;
 
