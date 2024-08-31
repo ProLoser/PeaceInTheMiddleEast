@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/database';
-import { useAuth } from '../AuthContext';
+import { AuthContext } from '../AuthContext';
 import './index.css';
 
 export default function() {
-    const user = useAuth();
+    const user = useContext(AuthContext);
     const [chats, setChats] = useState<firebase.database.DataSnapshot>([]);
     const [selectedChat, setSelectedChat] = useState<firebase.database.DataSnapshot | null>(null);
 
