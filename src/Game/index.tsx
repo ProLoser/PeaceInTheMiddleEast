@@ -6,6 +6,7 @@ import Toolbar from '../Toolbar'
 import { useCallback, useContext, useEffect, useState, type DragEventHandler } from 'react';
 import { GameContext } from '../MultiplayerContext';
 import { AuthContext } from '../AuthContext';
+import firebase from 'firebase/compat/app';
 
 
 // White = Positive, Black = Negative
@@ -32,6 +33,13 @@ export default function Game() {
     useEffect(() => {
         if (game?.exists()) {
             setBoard(game.val().state)
+            const subscriber = (snapshot: firebase.database.DataSnapshot) => {
+                setBoard(snapshot.val().state)
+            }
+            game.ref.on('value', subscriber)
+            return () => {
+                game.ref.off('value', subscriber)
+            }
         } else {
             setBoard([...DEFAULT_BOARD])
         }
