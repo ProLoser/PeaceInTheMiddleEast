@@ -50,7 +50,7 @@ export default function Friends({ show }: FriendsProps) {
     const chat = useContext(ChatContext);
 
     const onSearch: ChangeEventHandler<HTMLInputElement> = useCallback(async() => {
-        if (!authUserSnapshot || !searchRef.current?.value) return;
+        if (!searchRef.current?.value) return;
         const search = searchRef.current.value
         const searchSnapshot = await firebase.database().ref('users').orderByChild('name').startAt(search).get();
         const results: UserData[] = []
@@ -58,7 +58,7 @@ export default function Friends({ show }: FriendsProps) {
             results.push(result.val())
         })
         setSearchResults(results)
-    }, [authUserSnapshot]);
+    }, []);
 
     useEffect(() => {
         if (!show) setSearchResults([])
@@ -96,7 +96,16 @@ export default function Friends({ show }: FriendsProps) {
         <>
             {renderFriend}
             <div id="friends" className='modal'>
-                <h1>Matches</h1>
+                <h1>
+                    {authUserSnapshot.val().name}'s
+                    Matches 
+                    <a onClick={() => load(authUserSnapshot.key)}>
+                        <svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="square" stroke-linejoin="round" stroke-width="2" d="M7 19H5a1 1 0 0 1-1-1v-1a3 3 0 0 1 3-3h1m4-6a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm7.441 1.559a1.907 1.907 0 0 1 0 2.698l-6.069 6.069L10 19l.674-3.372 6.07-6.07a1.907 1.907 0 0 1 2.697 0Z" />
+                        </svg>
+                    </a>
+
+                </h1>
                 <a onClick={() => firebase.auth().signOut()}>Sign-out: </a>
                 <span>{authUserSnapshot.key}</span>
                 <input name="search" ref={searchRef} type="search" placeholder="Search for Friends" onChange={onSearch} />
