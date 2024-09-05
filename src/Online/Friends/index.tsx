@@ -87,7 +87,7 @@ export default function Friends() {
     })
     searchResults.forEach(result => {
         const resultData: UserData = result.val()
-        if (friends.includes(result.key) || searchReject(resultData)) {
+        if (result.key === authUser.key || friends.includes(result.key) || searchReject(resultData)) {
             return;
         }
         renderFriends.push(row(resultData))
