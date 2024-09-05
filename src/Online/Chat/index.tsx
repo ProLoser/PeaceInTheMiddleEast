@@ -1,7 +1,7 @@
 import { useContext, useState } from 'react';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/database';
-import { AuthContext } from '../AuthContext';
+import { AuthContext } from '../Contexts';
 import './index.css';
 
 export default function() {

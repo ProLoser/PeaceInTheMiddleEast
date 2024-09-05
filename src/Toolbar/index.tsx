@@ -1,9 +1,9 @@
-import { useCallback, useState, useEffect } from 'react'
-import './Toolbar.css'
-import Friends from './Friends'
+import { useCallback, useState, useEffect, useContext } from 'react'
+import './index.css'
+import { FriendContext, SwitcherContext } from '../Online/Contexts'
 
 export default function Toolbar() {
-    const [showFriends, setLogin] = useState(false)
+    const {state, toggle} = useContext(SwitcherContext)
     const toggleFullscreen = useCallback(() => {
         if (document.fullscreenElement) 
             document.exitFullscreen()
@@ -12,22 +12,25 @@ export default function Toolbar() {
     }, [])
     const [isFullscreen, setFullscreen] = useState(false);
 
+    // Mirror the document.fullscreenElement to react state
     useEffect(() => {
         const handleFullscreenChange = () => {
             setFullscreen(!!document.fullscreenElement);
         };
-
         document.addEventListener('fullscreenchange', handleFullscreenChange);
-
         return () => {
             document.removeEventListener('fullscreenchange', handleFullscreenChange);
         };
     }, []);
+    const friend = useContext(FriendContext);
+
+    const renderFriend = friend ? <h2>{friend.val().name}</h2> : null;
     
-    const toggleFriends = useCallback(() => { setLogin( previous => !previous)   }, [])
+    const toggleFriends = useCallback(() => { toggle(!state) }, [state])
+    
     return <div id="toolbar">
         {document.fullscreenEnabled ? <a className="material-icons" onClick={toggleFullscreen}>{isFullscreen ?'fullscreen_exit':'fullscreen'}</a> : null}
-        <a className="material-icons" onClick={toggleFriends}>account_circle</a>
-        <Friends show={showFriends} />
+        <a className={`material-icons ${state&&'active'||''}`} onClick={toggleFriends}>account_circle</a>
+        {renderFriend}
     </div>
 }

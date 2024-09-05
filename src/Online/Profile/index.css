@@ -1,0 +1,30 @@
+.avatar {
+    max-width: 100px;
+    max-height: 100px;
+}
+
+#profile {
+    label {
+        display: flex;
+        margin: 1em 0;
+        flex-basis: 100%;
+        flex-direction: row;
+
+        >* {
+            flex: 1;
+            margin-left: 1em;
+        }
+    }
+
+    h1 {
+        vertical-align: text-top;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    [type="submit"] {
+        /* margin-top: 1em;
+        width: 100%; */
+        padding: 1em;
+    }
+}

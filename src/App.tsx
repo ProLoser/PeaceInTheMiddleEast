@@ -1,12 +1,13 @@
 import Game from './Game';
-import { AuthProvider } from './AuthContext';
-import { MultiplayerProvider } from './MultiplayerContext';
-import '../src/firebaseConfig';
+import Online, { Provider as OnlineProvider } from './Online';
+
+import './Online/firebaseConfig';
 
 export default function App() {
-  return <AuthProvider>
-    <MultiplayerProvider>
+  return (
+    <OnlineProvider>
       <Game />
-    </MultiplayerProvider>
-  </AuthProvider>;
+      <Online />
+    </OnlineProvider>
+  );
 }

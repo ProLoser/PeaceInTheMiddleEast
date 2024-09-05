@@ -4,8 +4,7 @@ import Point from './Point';
 import Piece from './Piece';
 import Toolbar from '../Toolbar'
 import { useCallback, useContext, useEffect, useState, type DragEventHandler } from 'react';
-import { GameContext } from '../MultiplayerContext';
-import { AuthContext } from '../AuthContext';
+import { GameContext, MultiplayerContext } from '../Online/Contexts';
 import firebase from 'firebase/compat/app';
 
 
@@ -28,7 +27,7 @@ export default function Game() {
     const [dice, setDice] = useState(() => [rollDie(), rollDie()])
     const [selected, setSelected] = useState<number|null>(null);
     const game = useContext(GameContext);
-    const authUserSnapshot = useContext(AuthContext);
+    const { move: sendMove } = useContext(MultiplayerContext);
 
     useEffect(() => {
         if (game?.exists()) {
@@ -45,7 +44,7 @@ export default function Game() {
         }
     }, [game])
 
-    const onSelect = useCallback((position:number) => {
+    const onSelect = useCallback((position:number|null) => {
         if (position === null || selected === position) {
             setSelected(null);
         } else if (selected === null) {
@@ -60,6 +59,8 @@ export default function Game() {
     const move = useCallback((from: number | "white" | "black", to: number) => {
         if (from == to) return; // no move
         const nextBoard = [...board];
+        const moveLabel = from + "/" + to;
+        // @TODO Make the moveLabel more descriptive https://en.wikipedia.org/wiki/Backgammon_notation
         if (from == "white") { // white re-enter
             if (board[to] == -1) { // hit
                 setBlackBar(bar => bar + 1)
@@ -104,14 +105,8 @@ export default function Game() {
         }
 
         setBoard(nextBoard);
-        if (game?.key) {
-            game.ref.child('moves').push({
-                player: authUserSnapshot?.val().uid,
-                move: `${from}/${to}`
-            })
-            game.ref.update({ state: nextBoard })
-        }
-    }, [board, game, authUserSnapshot])
+        sendMove(nextBoard, moveLabel);
+    }, [board, game])
 
     const roll = useCallback(() => {
         navigator.vibrate?.([50,50,60,30,90,20,110,10,150])

@@ -1,0 +1,25 @@
+#friends {
+    background: rgba(255,255,255,.4);
+    padding: 0 2em;
+    input {
+        display: block;
+        width: 100%;
+        padding: 5px;
+    }
+    ul {
+        list-style: none;
+        padding: 0;
+    }
+    h1 {
+        vertical-align: text-top;
+        display: flex;
+        justify-content: space-between;
+        span {
+            display: flex;
+            overflow: hidden;
+            span {
+                margin-right: .2em;
+            }
+        }
+    }
+}
