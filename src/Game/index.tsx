@@ -18,6 +18,10 @@ function rollDie() {
     return Math.floor(Math.random() * 6) + 1
 }
 
+function vibrate() {
+    navigator.vibrate?.([50, 50, 60, 30, 90, 20, 110, 10, 150])
+}
+
 export default function Game() {
     const [blackHome, setBlackHome] = useState(0)
     const [whiteHome, setWhiteHome] = useState(0)
@@ -29,11 +33,20 @@ export default function Game() {
     const game = useContext(GameContext);
     const { move: sendMove } = useContext(MultiplayerContext);
 
+    // Subscribe to Game
     useEffect(() => {
         if (game?.exists()) {
             setBoard(game.val().state)
             const subscriber = (snapshot: firebase.database.DataSnapshot) => {
-                setBoard(snapshot.val().state)
+                const value = snapshot.val()
+                setBoard(value.state)
+                if (value.dice)
+                    setDice(oldDice => {
+                        const newDice = value.dice.split('-').map(Number)
+                        if (oldDice[0] === newDice[0] && oldDice[1] === newDice[1]) return oldDice;
+                        vibrate()
+                        return newDice;
+                    })
             }
             game.ref.on('value', subscriber)
             return () => {
@@ -44,7 +57,77 @@ export default function Game() {
         }
     }, [game])
 
-    const onSelect = useCallback((position:number|null) => {
+    const roll = useCallback(() => {
+        vibrate()
+        const newDice = [rollDie(), rollDie()]
+        game?.ref.update({ dice: newDice.join('-') })
+        setDice(newDice)
+    }, [game])
+
+    // TODO: Validate moves against dice
+    const move = useCallback((from: number | "white" | "black", to: number) => {
+        if (from == to) return; // no move
+        const nextBoard = [...board];
+        let moveLabel; // @see https://en.wikipedia.org/wiki/Backgammon_notation
+        if (from == "white") { // white re-enter
+            if (board[to] == -1) { // hit
+                moveLabel = `bar/${to}*`
+                setBlackBar(bar => bar + 1)
+                setWhiteBar(bar => bar - 1)
+                nextBoard[to] = 1
+            } else if (board[to] >= -1) { // move
+                moveLabel = `bar/${to}`
+                setWhiteBar(bar => bar - 1)
+                nextBoard[to]++
+            } else { return; } // blocked
+        } else if (from == 'black') { // black re-enter
+            if (board[to] == 1) { // hit
+                moveLabel = `bar/${to}*`
+                setWhiteBar(bar => bar + 1)
+                setBlackBar(bar => bar - 1)
+                nextBoard[to] = -1
+            } else if (board[to] <= 1) { // move
+                moveLabel = `bar/${to}`
+                setBlackBar(bar => bar - 1)
+                nextBoard[to]--
+            } else { return; } // blocked
+        } else {
+            const offense = board[from];
+            const defense = board[to];
+
+            if (defense === undefined) {  // bear off
+                moveLabel = `${from}/off`
+                if (offense > 0) {
+                    setWhiteHome(count => count + 1)
+                } else {
+                    setBlackHome(count => count + 1)
+                }
+            } else if (!defense || Math.sign(defense) === Math.sign(offense)) { // move
+                moveLabel = `${from}/${to}`
+                nextBoard[to] += Math.sign(offense)
+            } else if (Math.abs(defense) === 1) { // hit
+                moveLabel = `${from}/${to}*`
+                nextBoard[to] = -Math.sign(defense);
+                if (offense > 0)
+                    setBlackBar(bar => bar + 1)
+                else
+                    setWhiteBar(bar => bar + 1)
+            } else { return; } // blocked
+
+            nextBoard[from] -= Math.sign(offense)
+        }
+
+        setBoard(nextBoard);
+        sendMove(nextBoard, moveLabel);
+    }, [board, game, sendMove])
+
+    const onDragOver: DragEventHandler = useCallback((event) => { event.preventDefault(); }, [])
+    const onDrop: DragEventHandler = useCallback((event) => {
+        event.preventDefault();
+        let from = parseInt(event.dataTransfer?.getData("text")!)
+        return move(from, -1,)
+    }, [move])
+    const onSelect = useCallback((position: number | null) => {
         if (position === null || selected === position) {
             setSelected(null);
         } else if (selected === null) {
@@ -53,72 +136,7 @@ export default function Game() {
             move(selected, position);
             setSelected(null);
         }
-    }, [selected])
-
-    // TODO: Validate moves against dice
-    const move = useCallback((from: number | "white" | "black", to: number) => {
-        if (from == to) return; // no move
-        const nextBoard = [...board];
-        const moveLabel = from + "/" + to;
-        // @TODO Make the moveLabel more descriptive https://en.wikipedia.org/wiki/Backgammon_notation
-        if (from == "white") { // white re-enter
-            if (board[to] == -1) { // hit
-                setBlackBar(bar => bar + 1)
-                nextBoard[to] = 0
-            }
-            if (board[to] >= -1) { // move
-                setWhiteBar(bar => bar - 1)
-                nextBoard[to]++
-            }
-        } else if (from == 'black') { // black re-enter
-            if (board[to] == 1) { // hit
-                setWhiteBar(bar => bar + 1)
-                nextBoard[to] = 0
-            }
-            if (board[to] <= 1) { // move
-                setBlackBar(bar => bar - 1)
-                nextBoard[to]--
-            }
-        } else {
-            const offense = board[from];
-            const defense = board[to];
-
-            if (defense === undefined) {  // bear off
-                if (offense > 0) {
-                    setWhiteHome(count => count + 1)
-                } else {
-                    setBlackHome(count => count + 1)
-                }
-            } else if (!defense || Math.sign(defense) === Math.sign(offense)) { // move
-                nextBoard[to] += Math.sign(offense)
-            } else if (Math.abs(defense) === 1) { // hit
-                nextBoard[to] = -Math.sign(defense);
-                if (offense > 0)
-                    setBlackBar(bar => bar + 1)
-                else
-                    setWhiteBar(bar => bar + 1)
-            } else { // stalemate
-                return
-            }
-
-            nextBoard[from] -= Math.sign(offense)
-        }
-
-        setBoard(nextBoard);
-        sendMove(nextBoard, moveLabel);
-    }, [board, game])
-
-    const roll = useCallback(() => {
-        navigator.vibrate?.([50,50,60,30,90,20,110,10,150])
-        setDice([rollDie(), rollDie()])
-    }, [])
-
-    const onDragOver: DragEventHandler = useCallback((event) => { event.preventDefault(); }, [])
-    const onDrop: DragEventHandler = useCallback((event) => {
-        event.preventDefault();
-        let from = parseInt(event.dataTransfer?.getData("text")!)
-        return move(from, -1,)
-    }, [move])
+    }, [selected, move])
 
     return <div id="board">
         <Toolbar />
