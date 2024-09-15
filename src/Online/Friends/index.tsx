@@ -7,7 +7,7 @@ import 'firebase/compat/auth';
 import 'firebase/compat/database';
 import { AuthContext, UserData } from '../Contexts';
 import './index.css'
-import { MultiplayerContext, Match, SwitcherContext } from '../Contexts';
+import { MultiplayerContext, Match, ModalContext } from '../Contexts';
 import { Avatar } from '../Profile';
 
 type Users = {[key: string]: UserData}
@@ -17,7 +17,7 @@ export default function Friends() {
     const authUser = useContext(AuthContext); // Local signed-in state.
     const [users, setUsers] = useState<Users>({});
     const { load } = useContext(MultiplayerContext);
-    const { toggle } = useContext(SwitcherContext);
+    const { toggle } = useContext(ModalContext);
     const [matches, setMatches] = useState<firebase.database.DataSnapshot>([]);
     const [searchResults, setSearchResults] = useState<firebase.database.DataSnapshot>([]);
 
@@ -114,7 +114,7 @@ export default function Friends() {
             </a>
         </h1>
         <div id="people">
-            <input name="search" ref={searchRef} type="search" placeholder="Search for Friends" onChange={onSearch} />
+            <input name="search" ref={searchRef} type="search" autoComplete="off" placeholder="Search for Friends" onChange={onSearch} />
             <ul>
                 {renderFriends}
             </ul>

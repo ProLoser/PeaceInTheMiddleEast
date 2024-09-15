@@ -1,9 +1,9 @@
 import { useCallback, useState, useEffect, useContext } from 'react'
 import './index.css'
-import { FriendContext, SwitcherContext } from '../Online/Contexts'
+import { FriendContext, ModalContext } from '../Online/Contexts'
 
 export default function Toolbar() {
-    const {state, toggle} = useContext(SwitcherContext)
+    const {state, toggle} = useContext(ModalContext)
     const toggleFullscreen = useCallback(() => {
         if (document.fullscreenElement) 
             document.exitFullscreen()

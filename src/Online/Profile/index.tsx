@@ -4,7 +4,7 @@ import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/database';
 import { AuthContext, UserData } from '../Contexts';
-import { SwitcherContext } from '../Contexts';
+import { ModalContext } from '../Contexts';
 import './index.css'
 
 export const LANGUAGES = ["af", "af-NA", "af-ZA", "agq", "agq-CM", "ak", "ak-GH", "am",
@@ -118,7 +118,7 @@ export const Avatar = ({ user }: AvatarProps) =>
         : <img className="avatar" src="https://i.pravatar.cc/100" />
         
 export default function Profile() {
-    const { toggle } = useContext(SwitcherContext);
+    const { toggle } = useContext(ModalContext);
     const authUserSnapshot = useContext(AuthContext); // Local signed-in state.
     const [editing, setEditing] = useState<UserData>(authUserSnapshot?.val() || { uid: '', name: '', language: '', photoURL: '' });
 

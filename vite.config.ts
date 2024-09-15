@@ -28,5 +28,5 @@ export default defineConfig({
       }
 })
   ],
-  base: '/PeaceInTheMiddleEast/'
+  // base: '/PeaceInTheMiddleEast/'
 })

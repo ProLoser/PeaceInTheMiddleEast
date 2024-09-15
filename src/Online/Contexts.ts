@@ -11,11 +11,11 @@ export type UserData = {
     language: string;
 }
 
-export type SwitcherState = 'chat' | 'profile' | 'friends' | 'login' | boolean;
+export type ModalState = 'chat' | 'profile' | 'friends' | 'login' | boolean;
 
-export type SwitcherContextType = {
-    toggle: (newState: SwitcherState) => void;
-    state: SwitcherState;
+export type ModalContextType = {
+    toggle: (newState: ModalState) => void;
+    state: ModalState;
 };
 
 export type Match = {
@@ -57,7 +57,7 @@ export type Chat = {
 
 export type ChatContextType = {
     send: (message: string) => void;
-    state: Chat | null;
+    state: SnapshotOrNullType;
 }
 
 export const AuthContext = createContext<SnapshotOrNullType>(null);
@@ -71,7 +71,7 @@ export const ChatContext = createContext<ChatContextType>({
 });
 export const GameContext = createContext<SnapshotOrNullType>(null);
 export const FriendContext = createContext<SnapshotOrNullType>(null);
-export const SwitcherContext = createContext<SwitcherContextType>({
-    toggle: (newState: SwitcherState) => { },
+export const ModalContext = createContext<ModalContextType>({
+    toggle: (newState: ModalState) => { },
     state: false
 });
