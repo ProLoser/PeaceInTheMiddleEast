@@ -2,8 +2,8 @@ import Friends from "./Friends";
 import Chat from "./Chat";
 import Profile from "./Profile";
 import Login from "./Login";
-import { useContext, useEffect, useState, PropsWithChildren, useCallback, useMemo } from "react";
-import { ModalContext, AuthContext, ChatContext, FriendContext, GameContext, Match, MultiplayerContext, SnapshotOrNullType, UserData, ModalState } from "./Contexts";
+import { useContext, useEffect, useState, PropsWithChildren, useCallback } from "react";
+import { ModalContext, AuthContext, ChatContext, FriendContext, MatchContext, Match, Game, MultiplayerContext, SnapshotOrNullType, UserData, ModalState, Move } from "./Contexts";
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/database';
 
@@ -33,10 +33,8 @@ export function Provider({ children }: PropsWithChildren) {
     const [state, setState] = useState<ModalState>(false);
     const [lastState, setLastState] = useState<ModalState>('friends');
     const [match, setMatch] = useState<Match | null>(null);
-    const [game, setGame] = useState<SnapshotOrNullType>(null);
-    const [chat, setChat] = useState<SnapshotOrNullType>(null);
+    const [chats, setChats] = useState<SnapshotOrNullType>(null);
     const [friend, setFriend] = useState<SnapshotOrNullType>(null);
-
 
     const toggle = (newState: ModalState) => {
         if (newState === true) {
@@ -52,36 +50,42 @@ export function Provider({ children }: PropsWithChildren) {
         }
     };
 
-    const send = useCallback((message: string) => {
+    const chat = useCallback((message: string) => {
         if (match && user) {
             database.ref(`chats/${match.chat}`).push({
                 message,
-                author: user.key
+                author: user.key,
+                time: new Date().toISOString()
             })
         }
     }, [match, user]);
 
-    const move = useCallback((nextBoard: number[], move: string) => {
-        if (game?.key) {
-            game.ref.child('moves').push({
+    const move = useCallback((game: Game, move: Move["move"]) => {
+        if (match?.game) {
+            const time = new Date().toISOString();
+            const nextMove: Move = {
                 player: user?.val().uid,
-                move
-            })
-            game.ref.update({ state: nextBoard })
+                game: match.game,
+                move,
+                time,
+            }
             const update = {
-                sort: new Date().toISOString(),
+                sort: time,
             };
+            database.ref('moves').push(nextMove)
+            database.ref(`games/${match.game}`).update(game)
             database.ref(`matches/${user?.key}/${friend?.key}`).update(update);
             database.ref(`matches/${friend?.key}/${user?.key}`).update(update);
 
         }
-    }, [game, user, friend]);
+    }, [match, user, friend]);
+
     const load = useCallback(async (userId?: string) => {
         console.log('Loading', userId);
 
         if (!user || !userId) {
-            setGame(null);
-            setChat(null);
+            setMatch(null);
+            setChats(null);
             setFriend(null);
             return;
         }
@@ -114,6 +118,7 @@ export function Provider({ children }: PropsWithChildren) {
         toggle(false);
     }, [user]);
 
+    // Autoload Match upon Login
     useEffect(() => {
         if (!user) return;
 
@@ -121,20 +126,8 @@ export function Provider({ children }: PropsWithChildren) {
         if (friendLocation && friendLocation !== 'PeaceInTheMiddleEast') load(friendLocation);
     }, [load, user]);
 
-    // Synchronize Selected Match
+    // onLogin/Logout
     useEffect(() => {
-        if (!user || !match) return;
-        database.ref(`games/${match.game}`).get().then(setGame);
-        database.ref(`chats/${match.chat}`).orderByKey().limitToLast(1000).on('value', setChat);
-
-        return () => {
-            database.ref(`chats/${match.chat}`).off('value', setChat);
-        }
-    }, [user, match]);
-
-
-    useEffect(() => {
-        // onAuthStateChanged
         const unregisterAuthObserver = firebase.auth().onAuthStateChanged(async authUser => {
             if (authUser) {
                 const userRef = firebase.database().ref(`users/${authUser.uid}`)
@@ -161,12 +154,12 @@ export function Provider({ children }: PropsWithChildren) {
     return (
         <AuthContext.Provider value={user}>
             <ModalContext.Provider value={{ toggle, state }}>
-                <MultiplayerContext.Provider value={{ load, move }}>
+                <MultiplayerContext.Provider value={{ load, move, chat }}>
                     <FriendContext.Provider value={friend}>
-                        <ChatContext.Provider value={{ send, state:chat }}>
-                            <GameContext.Provider value={game}>
+                        <ChatContext.Provider value={chats}>
+                            <MatchContext.Provider value={match}>
                                 {children}
-                            </GameContext.Provider>
+                            </MatchContext.Provider>
                         </ChatContext.Provider>
                     </FriendContext.Provider>
                 </MultiplayerContext.Provider>

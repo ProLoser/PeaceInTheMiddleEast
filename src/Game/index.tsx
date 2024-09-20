@@ -4,7 +4,7 @@ import Point from './Point';
 import Piece from './Piece';
 import Toolbar from '../Toolbar'
 import { useCallback, useContext, useEffect, useState, type DragEventHandler } from 'react';
-import { GameContext, MultiplayerContext } from '../Online/Contexts';
+import { GameType, MatchContext, MultiplayerContext } from '../Online/Contexts';
 import firebase from 'firebase/compat/app';
 
 
@@ -22,104 +22,109 @@ function vibrate() {
     navigator.vibrate?.([50, 50, 60, 30, 90, 20, 110, 10, 150])
 }
 
+const newGame = (oldGame?: GameType) => ({
+    status: '',
+    board: [...(oldGame?.board || DEFAULT_BOARD)],
+    dice: oldGame?.dice || [6,6],
+    prison: oldGame?.prison || {
+        black: 0,
+        white: 0,
+    },
+    home: oldGame?.home || {
+        black: 0,
+        white: 0,
+    },
+} as GameType)
+
 export default function Game() {
-    const [blackHome, setBlackHome] = useState(0)
-    const [whiteHome, setWhiteHome] = useState(0)
-    const [blackBar, setBlackBar] = useState(0)
-    const [whiteBar, setWhiteBar] = useState(0)
-    const [board, setBoard] = useState(() => [...DEFAULT_BOARD])
-    const [dice, setDice] = useState(() => [rollDie(), rollDie()])
+    const database = firebase.database();
+    const [game, setGame] = useState<GameType>(newGame);
     const [selected, setSelected] = useState<number|null>(null);
-    const game = useContext(GameContext);
+    const match = useContext(MatchContext);
     const { move: sendMove } = useContext(MultiplayerContext);
 
     // Subscribe to Game
     useEffect(() => {
-        if (game?.exists()) {
-            setBoard(game.val().state)
+        if (match?.game) {
             const subscriber = (snapshot: firebase.database.DataSnapshot) => {
                 const value = snapshot.val()
-                setBoard(value.state)
-                if (value.dice)
-                    setDice(oldDice => {
-                        const newDice = value.dice.split('-').map(Number)
-                        if (oldDice[0] === newDice[0] && oldDice[1] === newDice[1]) return oldDice;
-                        vibrate()
-                        return newDice;
-                    })
+                if (!value) return;
+                setGame(value)
+                // TODO: vibrate if enemy rolls?
             }
-            game.ref.on('value', subscriber)
+            database.ref(`games/${match.game}`).on('value', subscriber)
             return () => {
-                game.ref.off('value', subscriber)
+                database.ref(`games/${match.game}`).off('value', subscriber)
             }
         } else {
-            setBoard([...DEFAULT_BOARD])
+            setGame(newGame())
         }
-    }, [game])
+    }, [match])
 
     const roll = useCallback(() => {
         vibrate()
         const newDice = [rollDie(), rollDie()]
-        game?.ref.update({ dice: newDice.join('-') })
-        setDice(newDice)
-    }, [game])
+        if (match?.game)
+            database.ref(`games/${match.game}`).update({ dice: newDice })
+        setGame(game => ({...game, dice: newDice}))
+    }, [match])
 
     // TODO: Validate moves against dice
     const move = useCallback((from: number | "white" | "black", to: number) => {
         if (from == to) return; // no move
-        const nextBoard = [...board];
+        const nextGame: GameType = newGame(game);
         let moveLabel; // @see https://en.wikipedia.org/wiki/Backgammon_notation
         if (from == "white") { // white re-enter
-            if (board[to] == -1) { // hit
+            if (nextGame.board[to] == -1) { // hit
                 moveLabel = `bar/${to}*`
-                setBlackBar(bar => bar + 1)
-                setWhiteBar(bar => bar - 1)
-                nextBoard[to] = 1
-            } else if (board[to] >= -1) { // move
+                nextGame.prison!.black++
+                nextGame.prison!.white--
+                nextGame.board[to] = 1
+            } else if (nextGame.board[to] >= -1) { // move
                 moveLabel = `bar/${to}`
-                setWhiteBar(bar => bar - 1)
-                nextBoard[to]++
+                nextGame.prison!.white--
+                nextGame.board[to]++
             } else { return; } // blocked
         } else if (from == 'black') { // black re-enter
-            if (board[to] == 1) { // hit
+            if (nextGame.board[to] == 1) { // hit
                 moveLabel = `bar/${to}*`
-                setWhiteBar(bar => bar + 1)
-                setBlackBar(bar => bar - 1)
-                nextBoard[to] = -1
-            } else if (board[to] <= 1) { // move
+                nextGame.prison!.white++
+                nextGame.prison!.black--
+                nextGame.board[to] = -1
+            } else if (nextGame.board[to] <= 1) { // move
                 moveLabel = `bar/${to}`
-                setBlackBar(bar => bar - 1)
-                nextBoard[to]--
+                nextGame.prison!.black--
+                nextGame.board[to]--
             } else { return; } // blocked
         } else {
-            const offense = board[from];
-            const defense = board[to];
+            const offense = nextGame.board[from];
+            const defense = nextGame.board[to];
 
             if (defense === undefined) {  // bear off
                 moveLabel = `${from}/off`
                 if (offense > 0) {
-                    setWhiteHome(count => count + 1)
+                    nextGame.home!.white++
                 } else {
-                    setBlackHome(count => count + 1)
+                    nextGame.home!.black++
                 }
             } else if (!defense || Math.sign(defense) === Math.sign(offense)) { // move
                 moveLabel = `${from}/${to}`
-                nextBoard[to] += Math.sign(offense)
+                nextGame.board[to] += Math.sign(offense)
             } else if (Math.abs(defense) === 1) { // hit
                 moveLabel = `${from}/${to}*`
-                nextBoard[to] = -Math.sign(defense);
+                nextGame.board[to] = -Math.sign(defense);
                 if (offense > 0)
-                    setBlackBar(bar => bar + 1)
+                    nextGame.prison!.black++
                 else
-                    setWhiteBar(bar => bar + 1)
+                    nextGame.prison!.white++
             } else { return; } // blocked
 
-            nextBoard[from] -= Math.sign(offense)
+            nextGame.board[from] -= Math.sign(offense)
         }
 
-        setBoard(nextBoard);
-        sendMove(nextBoard, moveLabel);
-    }, [board, game, sendMove])
+        setGame(nextGame);
+        sendMove(nextGame, `${nextGame.dice.join('-')}: ${moveLabel}`);
+    }, [game, sendMove])
 
     const onDragOver: DragEventHandler = useCallback((event) => { event.preventDefault(); }, [])
     const onDrop: DragEventHandler = useCallback((event) => {
@@ -140,20 +145,20 @@ export default function Game() {
 
     return <div id="board">
         <Toolbar />
-        <Dice onClick={roll} values={dice} />
+        <Dice onClick={roll} values={game.dice} />
 
         <div className="bar">
-            {Array.from({ length: whiteBar }, (_, index) => <Piece key={index} position={-1} color="white" />)}
+            {Array.from({ length: game.prison.white }, (_, index) => <Piece key={index} position={-1} color="white" />)}
         </div>
         <div className="bar">
-            {Array.from({ length: blackBar }, (_, index) => <Piece key={index} position={-1} color="black" />)}
+            {Array.from({ length: game.prison.black }, (_, index) => <Piece key={index} position={-1} color="black" />)}
         </div>
         <div className="home" onDragOver={onDragOver} onDrop={onDrop}>
-            {Array.from({ length: blackHome }, (_, index) => <Piece key={index} color="black" />)}
+            {Array.from({ length: game.home.black }, (_, index) => <Piece key={index} color="black" />)}
         </div>
         <div className="home" onDragOver={onDragOver} onDrop={onDrop}>
-            {Array.from({ length: whiteHome }, (_, index) => <Piece key={index} color="white" />)}
+            {Array.from({ length: game.home.white }, (_, index) => <Piece key={index} color="white" />)}
         </div>
-        {board.map((pieces, index) => <Point key={index} pieces={pieces} move={move} position={index} selected={selected==index} onSelect={onSelect} />)}
+        {game.board.map((pieces, index) => <Point key={index} pieces={pieces} move={move} position={index} selected={selected===index} onSelect={onSelect} />)}
     </div >;
 }

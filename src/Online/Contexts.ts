@@ -27,20 +27,25 @@ export type Match = {
     lastMove?: number;
 }
 
-export type Game = {
-    moves: {
-        // timestamp
-        [key: number]: {
-            // 13/10, 10/8
-            moves: string,
-            // cj123
-            player: string
-        }
-    },
-    state: {
-        // 1: -2
-        [key: number]: number
-    }
+export type Move = {
+    player: string;
+    game: string;
+    move: string;
+    time: string;
+}
+
+export type GameType = {
+    status?: string;
+    board: number[];
+    dice: number[];
+    prison: {
+        black: number;
+        white: number;
+    };
+    home: {
+        black: number;
+        white: number;
+    };
 };
 
 export type Chat = {
@@ -63,13 +68,11 @@ export type ChatContextType = {
 export const AuthContext = createContext<SnapshotOrNullType>(null);
 export const MultiplayerContext = createContext({ 
     load: (userId: UserData["uid"]) => { },
-    move: (nextBoard: number[], move: string) => { },
+    move: (game: GameType, move: string) => { },
+    chat: (message: string) => { },
 });
-export const ChatContext = createContext<ChatContextType>({
-    send: (message: string) => { },
-    state: null
-});
-export const GameContext = createContext<SnapshotOrNullType>(null);
+export const ChatContext = createContext<SnapshotOrNullType>(null);
+export const MatchContext = createContext<Match|null>(null);
 export const FriendContext = createContext<SnapshotOrNullType>(null);
 export const ModalContext = createContext<ModalContextType>({
     toggle: (newState: ModalState) => { },
