@@ -2,8 +2,8 @@ import Friends from "./Friends";
 import Chat from "./Chat";
 import Profile from "./Profile";
 import Login from "./Login";
-import { useContext, useEffect, useState, PropsWithChildren, useCallback } from "react";
-import { ModalContext, AuthContext, ChatContext, FriendContext, MatchContext, Match, Game, MultiplayerContext, SnapshotOrNullType, UserData, ModalState, Move } from "./Contexts";
+import { useContext, useEffect, useState, PropsWithChildren, useCallback, useMemo } from "react";
+import { ModalContext, AuthContext, ChatContext, FriendContext, MatchContext, Match, GameType, MultiplayerContext, SnapshotOrNullType, UserData, ModalState, Move } from "./Contexts";
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/database';
 
@@ -36,19 +36,24 @@ export function Provider({ children }: PropsWithChildren) {
     const [chats, setChats] = useState<SnapshotOrNullType>(null);
     const [friend, setFriend] = useState<SnapshotOrNullType>(null);
 
-    const toggle = (newState: ModalState) => {
+    const toggle = useCallback((newState: ModalState) => {
         if (newState === true) {
-            setState(lastState);
+            setState(prevState => {
+                if (prevState) setLastState(prevState);
+                return lastState;
+            });
         } else if (newState === false) {
             setState(prevState => {
-                if (prevState)
-                    setLastState(prevState);
+                if (prevState) setLastState(prevState);
                 return false;
             });
         } else {
-            setState(newState);
+            setState(prevState => {
+                if (prevState) setLastState(prevState);
+                return newState
+            });
         }
-    };
+    }, [lastState]);
 
     const chat = useCallback((message: string) => {
         if (match && user) {
@@ -60,7 +65,7 @@ export function Provider({ children }: PropsWithChildren) {
         }
     }, [match, user]);
 
-    const move = useCallback((game: Game, move: Move["move"]) => {
+    const move = useCallback((game: GameType, move: Move["move"]) => {
         if (match?.game) {
             const time = new Date().toISOString();
             const nextMove: Move = {
@@ -151,10 +156,11 @@ export function Provider({ children }: PropsWithChildren) {
         return () => unregisterAuthObserver();
     }, []);
 
+
     return (
         <AuthContext.Provider value={user}>
-            <ModalContext.Provider value={{ toggle, state }}>
-                <MultiplayerContext.Provider value={{ load, move, chat }}>
+            <ModalContext.Provider value={useMemo(() => ({ toggle, state }), [toggle, state])}>
+                <MultiplayerContext.Provider value={useMemo(() => ({ load, move, chat }), [load, move, chat])}>
                     <FriendContext.Provider value={friend}>
                         <ChatContext.Provider value={chats}>
                             <MatchContext.Provider value={match}>

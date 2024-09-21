@@ -14,6 +14,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "date-fns": "^4.1.0",
     "firebase": "^10.12.2",
     "firebaseui": "^6.1.0",
     "react": "^17.0.0 || ^18.0.0",
