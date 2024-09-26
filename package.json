@@ -1,5 +1,5 @@
 {
-  "name": "Backgammon",
+  "name": "backgammon.family",
   "description": "Open Source Backgammon with auto-translation to enable meaningful conversations across generations",
   "version": "1.0.0",
   "private": "true",
@@ -7,7 +7,7 @@
   "repository": "https://github.com/ProLoser/PeaceInTheMiddleEast",
   "license": "MIT",
   "scripts": {
-    "dev": "vite",
+    "start": "vite",
     "build": "vite build",
     "tsc": "tsc",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",

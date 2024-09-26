@@ -65,7 +65,7 @@ export default function Game() {
         vibrate()
         const newDice = [rollDie(), rollDie()]
         if (match?.game)
-            database.ref(`games/${match.game}`).update({ dice: newDice })
+            database.ref(`games/${match.game}/dice`).set(newDice)
         setGame(game => ({...game, dice: newDice}))
     }, [match])
 

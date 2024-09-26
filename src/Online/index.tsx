@@ -123,6 +123,16 @@ export function Provider({ children }: PropsWithChildren) {
         toggle(false);
     }, [user]);
 
+    const reset = useCallback(async () => {
+        if (match?.game) {
+            if (confirm('Are you sure you want to reset the match?')) {
+                console.log('Resetting', match.game);
+                database.ref(`games/${match.game}`).remove();
+                // TODO: update state
+            }
+        }
+    }, [match]);
+
     // Autoload Match upon Login
     useEffect(() => {
         if (!user) return;
@@ -160,7 +170,7 @@ export function Provider({ children }: PropsWithChildren) {
     return (
         <AuthContext.Provider value={user}>
             <ModalContext.Provider value={useMemo(() => ({ toggle, state }), [toggle, state])}>
-                <MultiplayerContext.Provider value={useMemo(() => ({ load, move, chat }), [load, move, chat])}>
+                <MultiplayerContext.Provider value={useMemo(() => ({ load, move, chat, reset }), [load, move, chat, reset])}>
                     <FriendContext.Provider value={friend}>
                         <ChatContext.Provider value={chats}>
                             <MatchContext.Provider value={match}>

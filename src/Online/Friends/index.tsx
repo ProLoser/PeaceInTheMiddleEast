@@ -11,16 +11,30 @@ import { MultiplayerContext, Match, ModalContext } from '../Contexts';
 import { Avatar } from '../Profile';
 import { formatDistance } from 'date-fns';
 
+const toggleFullscreen = () => document.fullscreenElement 
+    ? document.exitFullscreen() 
+    : document.documentElement.requestFullscreen()
+
 type Users = {[key: string]: UserData}
 
 export default function Friends() {
     const searchRef = useRef<HTMLInputElement>(null);
     const authUser = useContext(AuthContext); // Local signed-in state.
     const [users, setUsers] = useState<Users>({});
-    const { load } = useContext(MultiplayerContext);
+    const [isExpanded, setIsExpanded] = useState(false);
+    const { load, reset } = useContext(MultiplayerContext);
     const { toggle } = useContext(ModalContext);
     const [matches, setMatches] = useState<firebase.database.DataSnapshot>([]);
     const [searchResults, setSearchResults] = useState<firebase.database.DataSnapshot>([]);
+    const [fullscreen, setFullscreen] = useState(!!document.fullscreenElement);
+    
+    // Synchronize Fullscreen Icon
+    useEffect(() => {
+        const fullscreenchange = () => setFullscreen(!!document.fullscreenElement);
+        document.addEventListener('fullscreenchange', fullscreenchange);
+        return () => document.removeEventListener('fullscreenchange', fullscreenchange);
+    })
+    
 
     // Synchronize Matches
     useEffect(() => {
@@ -97,32 +111,47 @@ export default function Friends() {
     })
 
     return <div id="friends" className='modal'>
+        <button
+            aria-haspopup="menu"
+            aria-expanded={isExpanded}
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="material-icons"
+        >
+            settings
+        </button>
+        <menu>
+            {document.fullscreenEnabled ? 
+            <li>
+                <a onClick={toggleFullscreen}>
+                    <span className="material-icons">{fullscreen ? 'fullscreen_exit' : 'fullscreen'}</span>
+                    Fullscreen
+                </a>
+            </li>
+             : null}
+            <li>
+                <a onClick={() => toggle('profile')}>
+                    <span className="material-icons">manage_accounts</span>
+                    Edit Profile
+                </a>
+            </li>
+            <li>
+                <a onClick={reset}>
+                    <span className="material-icons">restart_alt</span>
+                    Reset Match
+                </a>
+            </li>
+            <li>
+                <a onClick={() => firebase.auth().signOut()}>
+                    <span className="material-icons">logout</span>
+                    Logout
+                </a>
+            </li>
+        </menu>
         <h1>
-            <a onClick={() => toggle('profile')}>
-                <svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="none" viewBox="0 0 24 24">
-                    <path stroke="currentColor" strokeLinecap="square" strokeLinejoin="round" strokeWidth="2" d="M7 19H5a1 1 0 0 1-1-1v-1a3 3 0 0 1 3-3h1m4-6a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm7.441 1.559a1.907 1.907 0 0 1 0 2.698l-6.069 6.069L10 19l.674-3.372 6.07-6.07a1.907 1.907 0 0 1 2.697 0Z" />
-                </svg>
-            </a>
             <span>
                 <span>{authUser.val().name}'s</span>
                 Matches
             </span>
-            <a onClick={() => firebase.auth().signOut()}>
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                    <path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2" />
-                    <path d="M9 12h12l-3 -3" />
-                    <path d="M18 15l3 -3" />
-                </svg>
-            </a>
-            <a>
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                    <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
-                    <path d="M12 19m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
-                    <path d="M12 5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
-                </svg>
-            </a>
         </h1>
         <div id="people">
             <input name="search" ref={searchRef} type="search" autoComplete="off" placeholder="Search for Friends" onChange={onSearch} />

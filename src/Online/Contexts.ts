@@ -70,6 +70,7 @@ export const MultiplayerContext = createContext({
     load: (userId: UserData["uid"]) => { },
     move: (game: GameType, move: string) => { },
     chat: (message: string) => { },
+    reset: () => { },
 });
 export const ChatContext = createContext<SnapshotOrNullType>(null);
 export const MatchContext = createContext<Match|null>(null);
