@@ -6,6 +6,7 @@ import { useContext, useEffect, useState, PropsWithChildren, useCallback, useMem
 import { ModalContext, AuthContext, ChatContext, FriendContext, MatchContext, Match, GameType, MultiplayerContext, SnapshotOrNullType, UserData, ModalState, Move } from "./Contexts";
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/database';
+import { newGame } from "../Game/useGameState";
 
 /**
  * The rendered component tree
@@ -127,8 +128,8 @@ export function Provider({ children }: PropsWithChildren) {
         if (match?.game) {
             if (confirm('Are you sure you want to reset the match?')) {
                 console.log('Resetting', match.game);
-                database.ref(`games/${match.game}`).remove();
-                // TODO: update state
+                database.ref(`games/${match.game}`).set(newGame());
+                // TODO: update state?
             }
         }
     }, [match]);
