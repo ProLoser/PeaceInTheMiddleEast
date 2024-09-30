@@ -4,7 +4,7 @@
 - [x] Works on phone, tablet, and computers
 - [ ] Simple SheshBesh Backgammon (rules)
 - [ ] My safta (grandma) can use it (intuitive ui)
-- [ ] My father can play with my grandmother (multiplayer)
+- [x] My father can play with my grandmother (multiplayer)
 - [ ] I can play with my father in law (automatic translation)
 - [x] No ads, no fee, no complexity
 
