@@ -11,10 +11,9 @@ import { MultiplayerContext, Match, ModalContext } from '../Contexts';
 import { Avatar } from '../Profile';
 import { formatDistance } from 'date-fns';
 
-const toggleFullscreen = () => document.fullscreenElement 
-    ? document.exitFullscreen() 
-    : document.documentElement.requestFullscreen()
-
+// const toggleFullscreen = () => document.fullscreenElement
+//     ? document.exitFullscreen()
+//     : document.documentElement.requestFullscreen()
 type Users = {[key: string]: UserData}
 
 export default function Friends() {
@@ -26,15 +25,15 @@ export default function Friends() {
     const { toggle } = useContext(ModalContext);
     const [matches, setMatches] = useState<firebase.database.DataSnapshot>([]);
     const [searchResults, setSearchResults] = useState<firebase.database.DataSnapshot>([]);
-    const [fullscreen, setFullscreen] = useState(!!document.fullscreenElement);
-    
-    // Synchronize Fullscreen Icon
-    useEffect(() => {
-        const fullscreenchange = () => setFullscreen(!!document.fullscreenElement);
-        document.addEventListener('fullscreenchange', fullscreenchange);
-        return () => document.removeEventListener('fullscreenchange', fullscreenchange);
-    })
-    
+    // const [fullscreen, setFullscreen] = useState(!!document.fullscreenElement);
+
+    // // Synchronize Fullscreen Icon
+    // useEffect(() => {
+    //     const fullscreenchange = () => setFullscreen(!!document.fullscreenElement);
+    //     document.addEventListener('fullscreenchange', fullscreenchange);
+    //     return () => document.removeEventListener('fullscreenchange', fullscreenchange);
+    // })
+
 
     // Synchronize Matches
     useEffect(() => {
@@ -110,6 +109,17 @@ export default function Friends() {
         renderFriends.push(row(resultData))
     })
 
+    const invite = () => {
+        if (authUser.key) {
+            const shareUrl = (new URL(authUser.key, location.href)).toString()
+            navigator.clipboard?.writeText?.(shareUrl)
+            navigator.share?.({
+                url: shareUrl,
+                title: 'Dean invited you to play Backgammon'
+            })
+        }
+    }
+
     return <div id="friends" className='modal'>
         <button
             aria-haspopup="menu"
@@ -120,14 +130,20 @@ export default function Friends() {
             settings
         </button>
         <menu>
-            {document.fullscreenEnabled ? 
             <li>
-                <a onClick={toggleFullscreen}>
-                    <span className="material-icons">{fullscreen ? 'fullscreen_exit' : 'fullscreen'}</span>
-                    Fullscreen
+                <a onClick={invite}>
+                    <span className="material-icons">group</span>
+                    Invite Friend
                 </a>
             </li>
-             : null}
+            {document.fullscreenEnabled ?
+                <li>
+                    <a onClick={toggleFullscreen}>
+                        <span className="material-icons">{fullscreen ? 'fullscreen_exit' : 'fullscreen'}</span>
+                        Fullscreen
+                    </a>
+                </li>
+                : null}
             <li>
                 <a onClick={() => toggle('profile')}>
                     <span className="material-icons">manage_accounts</span>

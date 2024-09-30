@@ -168,6 +168,8 @@ export default function useGameState(gameId?: string) {
 	const rollDice = () => {
 		const newDice = [rollDie(), rollDie()];
 		dispatch({ type: Actions.ROLL, data: { dice: newDice } });
+		const audio = new Audio('./shake-and-roll-dice-soundbible.mp3');
+		audio.play();
 		vibrate();
 		if (gameId)
 			firebase.database().ref(`games/${gameId}/dice`).set(newDice);
