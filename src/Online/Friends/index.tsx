@@ -136,14 +136,14 @@ export default function Friends() {
                     Invite Friend
                 </a>
             </li>
-            {/* {document.fullscreenEnabled ?
+            {document.fullscreenEnabled ?
                 <li>
                     <a onClick={toggleFullscreen}>
                         <span className="material-icons">{fullscreen ? 'fullscreen_exit' : 'fullscreen'}</span>
                         Fullscreen
                     </a>
                 </li>
-                : null} */}
+            : null}
             <li>
                 <a onClick={() => toggle('profile')}>
                     <span className="material-icons">manage_accounts</span>
