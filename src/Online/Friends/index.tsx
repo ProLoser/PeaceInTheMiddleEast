@@ -11,9 +11,10 @@ import { MultiplayerContext, Match, ModalContext } from '../Contexts';
 import { Avatar } from '../Profile';
 import { formatDistance } from 'date-fns';
 
-const toggleFullscreen = () => document.fullscreenElement
-    ? document.exitFullscreen()
-    : document.documentElement.requestFullscreen()
+const toggleFullscreen = () => 
+    document.fullscreenElement
+        ? document.exitFullscreen()
+        : document.documentElement.requestFullscreen()
 type Users = {[key: string]: UserData}
 
 export default function Friends() {
@@ -32,7 +33,7 @@ export default function Friends() {
         const fullscreenchange = () => setFullscreen(!!document.fullscreenElement);
         document.addEventListener('fullscreenchange', fullscreenchange);
         return () => document.removeEventListener('fullscreenchange', fullscreenchange);
-    })
+    }, [])
 
 
     // Synchronize Matches
