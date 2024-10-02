@@ -187,7 +187,8 @@ export default function useGameState(gameId?: string) {
 		if (confirm('Are you sure you want to reset the match?')) {
 			console.log('Resetting', gameId);
 			let data = newGame()
-			firebase.database().ref(`games/${gameId}`).set(data);
+			if (gameId)
+				firebase.database().ref(`games/${gameId}`).set(data);
 			dispatch({ type: Actions.SET_GAME, data });
 		}
 	}
