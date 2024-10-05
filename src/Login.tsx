@@ -6,6 +6,7 @@ import 'firebaseui/dist/firebaseui.css';
 import * as firebaseui from 'firebaseui';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
+import ToggleFullscreen from './ToggleFullscreen';
 
 // Configure FirebaseUI.
 const uiConfig = {
@@ -39,9 +40,10 @@ interface Props {
 }
 
 
-export default function Login() {
+export default function Login({ reset }) {
     const [userSignedIn, setUserSignedIn] = useState(false);
     const elementRef = useRef(null);
+    const [isExpanded, setIsExpanded] = useState(false);
 
     useEffect(() => {
         // Get or Create a firebaseUI instance.
@@ -68,7 +70,36 @@ export default function Login() {
 
     return (
         <section id="login">
-            <h1>Play Online</h1>
+            <header>
+                <button
+                    aria-haspopup="menu"
+                    aria-expanded={isExpanded}
+                    onClick={() => setIsExpanded(!isExpanded)}
+                    className="material-icons"
+                >
+                    settings
+                </button>
+                <menu>
+                    {document.fullscreenEnabled ?
+                        <li>
+                            <ToggleFullscreen />
+                        </li>
+                        : null}
+                    <li>
+                        <a onClick={reset}>
+                            <span className="material-icons">restart_alt</span>
+                            Reset Match
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://github.com/ProLoser/PeaceInTheMiddleEast/issues/new" target="_blank">
+                            <span className="material-icons">bug_report</span>
+                            Report Bug
+                        </a>
+                    </li>
+                </menu>
+                <h1>Play Online</h1>
+            </header>
             <div ref={elementRef} />
         </section>
     );

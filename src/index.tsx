@@ -237,7 +237,7 @@ export function App() {
               : state === 'chat'
                 ? <Chat chats={chats} user={user} />
                 : null
-          : <Login />}
+          : <Login reset={reset} />}
       </dialog>
 
       <div id="board">

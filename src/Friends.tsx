@@ -138,6 +138,12 @@ export default function Friends({ authUser, toggle, load, reset }) {
                     </a>
                 </li>
                 <li>
+                    <a href="https://github.com/ProLoser/PeaceInTheMiddleEast/issues/new" target="_blank">
+                        <span className="material-icons">bug_report</span>
+                        Report Bug
+                    </a>
+                </li>
+                <li>
                     <a onClick={() => firebase.auth().signOut()}>
                         <span className="material-icons">logout</span>
                         Logout
