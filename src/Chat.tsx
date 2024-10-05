@@ -1,20 +1,28 @@
-import { useContext, useState } from 'react';
+import { useState, useCallback } from 'react';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/database';
-import { AuthContext } from '../Contexts';
-import './index.css';
+import './Chat.css';
 
-export default function() {
-    const user = useContext(AuthContext);
-    const [chats, setChats] = useState<firebase.database.DataSnapshot>([]);
+export default function ({ chats, user }) {
+    // TODO: Implement Chat form
     const [selectedChat, setSelectedChat] = useState<firebase.database.DataSnapshot | null>(null);
 
     const handleChatClick = (chat: firebase.database.DataSnapshot) => {
         setSelectedChat(chat);
     };
 
+    const chat = useCallback((chatId: string, message: string) => {
+        if (chatId && user) {
+            firebase.database().ref(`chats/${chatId}`).push({
+                message,
+                author: user.key,
+                time: new Date().toISOString()
+            })
+        }
+    }, [user]);
+
     return (
-        <div id="chat" className='modal'>
+        <div id="chat">
             <h1>Chat List</h1>
             <ul>
                 {chats.map((chat: firebase.database.DataSnapshot) => (

@@ -54,14 +54,13 @@ body,
   }
 }
 
-.modal {
-  position: absolute;
-  padding: .5em 1em;
+dialog {
   z-index: 1;
-  bottom: 40px;
-  right: 40px;
   background: rgba(255, 255, 255, 0.4);
   backdrop-filter: blur(10px);
+  header h1:first-of-type {
+      margin-block-start: 0;
+    }
   /* Portrait layout (mobile) */
   @media (max-aspect-ratio: 1) {
     top: 100px;

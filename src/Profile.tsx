@@ -3,9 +3,9 @@ import { useState, useCallback, useContext, ChangeEvent } from 'react';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/database';
-import { AuthContext, UserData } from '../Contexts';
-import { ModalContext } from '../Contexts';
-import './index.css'
+import { AuthContext, UserData } from './Types';
+import { ModalContext } from './Types';
+import './Profile.css'
 
 export const LANGUAGES = ["af", "af-NA", "af-ZA", "agq", "agq-CM", "ak", "ak-GH", "am",
     "am-ET", "ar", "ar-001", "ar-AE", "ar-BH", "ar-DJ", "ar-DZ",
@@ -116,33 +116,33 @@ export const Avatar = ({ user }: AvatarProps) =>
     user
         ? <img className="avatar" src={user.photoURL || `https://i.pravatar.cc/100?u=${user.uid}`} alt={user.name} />
         : <img className="avatar" src="https://i.pravatar.cc/100" />
-        
-export default function Profile() {
-    const { toggle } = useContext(ModalContext);
-    const authUserSnapshot = useContext(AuthContext); // Local signed-in state.
-    const [editing, setEditing] = useState<UserData>(authUserSnapshot?.val() || { uid: '', name: '', language: '', photoURL: '' });
+
+export default function Profile({ authUser, toggle }) {
+    const [editing, setEditing] = useState<UserData>(authUser?.val() || { uid: '', name: '', language: '', photoURL: '' });
 
     const save = useCallback(async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         if (!editing) return;
-        const userRef = firebase.database().ref(`users/${authUserSnapshot!.key}`);
+        const userRef = firebase.database().ref(`users/${authUser!.key}`);
         userRef.set(editing);
         toggle('friends')
-    }, [editing, authUserSnapshot]);
+    }, [editing, authUser]);
 
     const generateOnChange = (key: string) => (event: ChangeEvent<HTMLInputElement>) => {
         setEditing(editing => ({ ...editing, [key]: event.target.value }));
     };
 
-    return <div id="profile" className='modal'>
+    return <section id="profile">
         <form onSubmit={save}>
-            <h1>
-                <a onClick={() => toggle('friends')}>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-x"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M18 6l-12 12" /><path d="M6 6l12 12" /></svg>
-                </a>
-                Edit Profile
-                <button type="submit">Save</button>
-            </h1>
+            <header>
+                <h1>
+                    <a onClick={() => toggle('friends')}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-x"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M18 6l-12 12" /><path d="M6 6l12 12" /></svg>
+                    </a>
+                    Edit Profile
+                    <button type="submit">Save</button>
+                </h1>
+            </header>
             <label>
                 Name
                 <input type="text" name="name" value={editing.name} onChange={generateOnChange('name')} placeholder="Name" />
@@ -161,5 +161,5 @@ export default function Profile() {
             </label>
             <Avatar user={editing} />
         </form>
-    </div>
+    </section>
 }

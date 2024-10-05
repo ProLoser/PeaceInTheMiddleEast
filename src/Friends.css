@@ -1,14 +1,16 @@
 #friends {
-    background: rgba(255,255,255,.4);
-    padding: 0 2em;
+    padding: 0 1em;
+
     input {
         display: block;
         width: 100%;
         padding: 5px;
     }
+
     #people ul {
         list-style: none;
         padding: 0;
+
         li {
             display: flex;
             align-items: center;
@@ -28,18 +30,22 @@
             object-fit: cover;
         }
     }
+
     h1 {
         vertical-align: text-top;
         display: flex;
         justify-content: space-between;
+
         span {
             display: flex;
             overflow: hidden;
+
             span {
                 margin-right: .2em;
             }
         }
     }
+
     [aria-haspopup="menu"] {
         float: right;
     }
