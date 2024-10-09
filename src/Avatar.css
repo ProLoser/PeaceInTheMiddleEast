@@ -1,0 +1,7 @@
+.avatar {
+    width: 5em;
+    border-radius: 50%;
+    aspect-ratio: 1;
+    /* border: 2px solid #AAA; */
+    object-fit: cover;
+}

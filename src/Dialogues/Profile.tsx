@@ -1,10 +1,10 @@
 // Import FirebaseAuth and firebase.
-import { useState, useCallback, useContext, ChangeEvent } from 'react';
+import { useState, useCallback, ChangeEvent } from 'react';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/database';
-import { AuthContext, UserData } from '../Types';
-import { ModalContext } from '../Types';
+import Avatar from '../Avatar';
+import type { UserData } from '../Types';
 import './Profile.css'
 
 export const LANGUAGES = ["af", "af-NA", "af-ZA", "agq", "agq-CM", "ak", "ak-GH", "am",
@@ -108,14 +108,6 @@ export const LANGUAGES = ["af", "af-NA", "af-ZA", "agq", "agq-CM", "ak", "ak-GH"
     "zh-Hans-MO", "zh-Hans-SG", "zh-Hant", "zh-Hant-HK", "zh-Hant-MO",
     "zh-Hant-TW", "zu", "zu-ZA"];
 
-export type AvatarProps = {
-    user?: UserData;
-}
-
-export const Avatar = ({ user }: AvatarProps) =>
-    user
-        ? <img className="avatar" src={user.photoURL || `https://i.pravatar.cc/100?u=${user.uid}`} alt={user.name} />
-        : <img className="avatar" src="https://i.pravatar.cc/100" />
 
 export default function Profile({ authUser, toggle }) {
     const [editing, setEditing] = useState<UserData>(authUser?.val() || { uid: '', name: '', language: '', photoURL: '' });

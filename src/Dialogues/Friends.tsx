@@ -6,7 +6,7 @@ import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/database';
 import { UserData, Match } from '../Types';
-import { Avatar } from './Profile';
+import Avatar from '../Avatar';
 import './Friends.css'
 import ToggleFullscreen from '../ToggleFullscreen';
 type Users = { [key: string]: UserData }

@@ -5,6 +5,7 @@ import 'firebase/compat/database';
 // TODO: Upgrade to modular after firebaseui upgrades
 // import { initializeApp } from 'firebase/app';
 import type { Match, Move, GameType, SnapshotOrNullType, UserData, ModalState } from "./Types";
+import Avatar from "./Avatar";
 import Friends from "./Dialogues/Friends";
 import Chat from "./Dialogues/Chat";
 import Profile from "./Dialogues/Profile";
@@ -237,7 +238,7 @@ export function App() {
     }
   }, [selected, move])
 
-  const renderFriend = friend ? <h2>{friend.val().name}</h2> : null;
+  const friendData = friend?.val();
 
   const toggleFriends = useCallback(() => { toggle(!state) }, [state])
 
@@ -257,8 +258,10 @@ export function App() {
 
       <div id="board">
         <div id="toolbar">
-          <a className={`material-icons ${state && 'active' || ''}`} onClick={toggleFriends}>account_circle</a>
-          {renderFriend}
+          {friendData
+            ? <Avatar user={friendData} onClick={toggleFriends} />
+            : <a className={`material-icons ${state && 'active' || ''}`} onClick={toggleFriends}>account_circle</a>}
+          <h2>{friendData?.name}</h2>
         </div>
 
         <Dice onClick={rollDice} values={game.dice} color={game.color} />
