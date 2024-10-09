@@ -123,11 +123,14 @@ dialog {
 
     /*** MENU ITEM ***/
     [role="menuitem"],
-    menu>li {
-      padding: .5em;
-      text-decoration: none;
-      display: block;
+    li {
       white-space: nowrap;
+      a {
+        display: block;
+        padding: .5em;
+        text-decoration: none;
+        color: black;
+      }
     }
   }
 

@@ -19,6 +19,8 @@ export const newGame = (oldGame?: GameType) => ({
     status: "",
     board: [...(oldGame?.board || DEFAULT_BOARD)],
     dice: oldGame?.dice || [6, 6],
+    color: oldGame?.color || null,
+    turn: oldGame?.turn || null,
     prison: oldGame?.prison || {
         black: 0,
         white: 0,

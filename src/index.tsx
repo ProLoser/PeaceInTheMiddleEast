@@ -33,6 +33,8 @@ firebase.initializeApp({
 // Start React
 ReactDOM.createRoot(document.getElementById('root')!).render(<StrictMode><App /></StrictMode>)
 
+const diceSound = new Audio('./shake-and-roll-dice-soundbible.mp3');
+
 // React App
 export function App() {
   const database = firebase.database();
@@ -146,13 +148,20 @@ export function App() {
     return () => unregisterAuthObserver();
   }, []);
 
+  // Subscribe to match
   useEffect(() => {
     if (match?.game) {
       const gameRef = firebase.database().ref(`games/${match?.game}`)
       const onValue = (snapshot: firebase.database.DataSnapshot) => {
         const value = snapshot.val();
         if (value) {
-          setGame(value);
+          setGame(game => {
+            if (game.color && game.color !== value.color) {
+              diceSound.play();
+              vibrate();
+            }
+            return value
+          });
         } else {
           const blankGame = newGame();
           setGame(blankGame);
@@ -187,8 +196,7 @@ export function App() {
       });
     }
 
-    const audio = new Audio('./shake-and-roll-dice-soundbible.mp3');
-    audio.play();
+    diceSound.play();
     vibrate();
   }, [match?.game, game, user]);
 

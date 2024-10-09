@@ -1,5 +1,20 @@
 #friends {
     padding: 0 1em;
+    
+    h1 {
+        vertical-align: text-top;
+        display: flex;
+        justify-content: space-between;
+
+        span {
+            display: flex;
+            overflow: hidden;
+            margin-right: .2em;
+        }
+    }  
+    menu {
+        right: 30px;
+    } 
 
     input {
         display: block;
@@ -10,32 +25,17 @@
     #people ul {
         list-style: none;
         padding: 0;
-
         li {
             display: flex;
             align-items: center;
             margin-bottom: 1em;
-
             h3 {
                 margin: 0;
-                
-                    img {
+                img {
                     margin-right: 1em;
-                
 
-                                                h1 {
-                                                        vertical-align: text-top;
-                                                        display: flex;
-                                                        justify-content: space-between;
-
-                span {
-                        display: flex;
-                        overflow: hidden;
-
-                    span {
-                            margin-right: .2em;
-                    
+                }
             }
         }
-                }
+    }
 }
