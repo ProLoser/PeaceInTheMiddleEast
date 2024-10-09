@@ -100,17 +100,17 @@ order:
         &::before {
             left: 50%;
             transform: translateX(-50%);
-            border-left: 30px solid transparent;
-            border-right: 30px solid transparent;
+            border-left: 3vmax solid transparent;
+                border-right: 3vmax solid transparent;
         }
         :nth-child(-n+12 of &) {/* top */
             &::before {
-                border-top: 40vh solid var(--secondary);
+                border-top: 40vmin solid var(--secondary);
             }
     
             &:nth-child(odd)::before {
                 border-top-color: var(--primary);
-                border-top-width: 40vh;
+                border-top-width: 40vmin;
             }
             /* Stack Pieces */
             .piece:nth-child(n+6) {
@@ -131,13 +131,13 @@ order:
             flex-direction: column-reverse !important;
             &::before {
                 border-top: none;
-                border-bottom: 40vh solid var(--secondary);
+                border-bottom: 40vmin solid var(--secondary);
                 bottom: 0;
                 top: auto;
             }
             &:nth-child(even)::before {
                 border-bottom-color: var(--primary);
-                border-bottom-width: 40vh;
+                border-bottom-width: 40vmin;
             }
     
             &:nth-child(even):hover::before {
@@ -185,18 +185,18 @@ order:
         &::before {
             top: 50%;
             transform: translateY(-50%);
-            border-top: 40px solid transparent;
-            border-bottom: 40px solid transparent;
+            border-top: 3vmax solid transparent;
+                border-bottom: 3vmax solid transparent;
         }
         :nth-child(-n+12 of &) {/* top */
             &::before {
-                border-left: 40vw solid var(--primary);
+                border-left: 40vmin solid var(--primary);
                 left: 0;
             }
     
             &:nth-child(odd)::before {
                 border-left-color: var(--secondary);
-                border-left-width: 40vw;
+                border-left-width: 40vmin;
             }
             /* Stack Pieces */
             .piece:nth-child(n+6) {
@@ -217,7 +217,7 @@ order:
             flex-direction: row-reverse !important;
             &::before {
                 border-left: none;
-                border-right: 40vw solid var(--primary);
+                border-right: 40vmin solid var(--primary);
                 right: 0;
             }
             &:hover::before {
@@ -225,7 +225,7 @@ order:
             }
             &:nth-child(even)::before {
                 border-right-color: var(--secondary);
-                border-right-width: 40vw;
+                border-right-width: 40vmin;
             }
             /* Stack Pieces */
             .piece:nth-child(n+6) {
