@@ -5,15 +5,15 @@ import 'firebase/compat/database';
 // TODO: Upgrade to modular after firebaseui upgrades
 // import { initializeApp } from 'firebase/app';
 import type { Match, Move, GameType, SnapshotOrNullType, UserData, ModalState } from "./Types";
-import Friends from "./Friends";
-import Chat from "./Chat";
-import Profile from "./Profile";
-import Login from "./Login";
-import Dice from './Dice';
-import Point from './Point';
-import Piece from './Piece';
+import Friends from "./Dialogues/Friends";
+import Chat from "./Dialogues/Chat";
+import Profile from "./Dialogues/Profile";
+import Login from "./Dialogues/Login";
+import Dice from './Board/Dice';
+import Point from './Board/Point';
+import Piece from './Board/Piece';
 import './index.css'
-import './Board.css';
+import './Board/Board.css';
 import './Toolbar.css'
 import { calculate, newGame, rollDie, vibrate } from './Utils';
 
@@ -167,14 +167,31 @@ export function App() {
   }, [match?.game]);
 
   const rollDice = useCallback(() => {
-    const newDice = [rollDie(), rollDie()];
-    setGame(game => ({ ...game, dice: newDice }));
+    if (game.turn === user?.val().uid) {
+      console.log("You cannot roll the dice twice in a row.");
+      return;
+    }
+
+    const dice = [rollDie(), rollDie()];
+    if (match?.game) {
+      // online
+      firebase.database().ref(`games/${match?.game}`).update({
+        dice,
+        color: game.color === 'white' ? 'black' : 'white',
+        turn: user?.val().uid,
+      });
+    } else {
+      // local
+      setGame({
+        ...game,
+        dice
+      });
+    }
+
     const audio = new Audio('./shake-and-roll-dice-soundbible.mp3');
     audio.play();
     vibrate();
-    if (match?.game)
-      firebase.database().ref(`games/${match?.game}/dice`).set(newDice);
-  }, [match?.game]);
+  }, [match?.game, game, user]);
 
   const move = useCallback((from: number | "white" | "black", to: number) => {
     const { state: nextState, moveLabel } = calculate(game, from, to);
@@ -246,7 +263,7 @@ export function App() {
           {renderFriend}
         </div>
 
-        <Dice onClick={rollDice} values={game.dice} />
+        <Dice onClick={rollDice} values={game.dice} color={game.color} />
 
         <div className="bar">
           {Array.from({ length: game.prison?.white }, (_, index) =>

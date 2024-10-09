@@ -5,10 +5,10 @@ import { formatDistance } from 'date-fns';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/database';
-import { UserData, Match } from './Types';
+import { UserData, Match } from '../Types';
 import { Avatar } from './Profile';
 import './Friends.css'
-import ToggleFullscreen from './ToggleFullscreen';
+import ToggleFullscreen from '../ToggleFullscreen';
 type Users = { [key: string]: UserData }
 
 export default function Friends({ authUser, toggle, load, reset }) {

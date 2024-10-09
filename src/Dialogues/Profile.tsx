@@ -3,8 +3,8 @@ import { useState, useCallback, useContext, ChangeEvent } from 'react';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/database';
-import { AuthContext, UserData } from './Types';
-import { ModalContext } from './Types';
+import { AuthContext, UserData } from '../Types';
+import { ModalContext } from '../Types';
 import './Profile.css'
 
 export const LANGUAGES = ["af", "af-NA", "af-ZA", "agq", "agq-CM", "ak", "ak-GH", "am",

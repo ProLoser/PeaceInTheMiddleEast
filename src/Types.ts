@@ -37,6 +37,8 @@ export type GameType = {
     status?: string;
     board: number[];
     dice: number[];
+    color: string;
+    turn: string;
     prison: {
         black: number;
         white: number;

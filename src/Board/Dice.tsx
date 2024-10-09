@@ -4,13 +4,14 @@ import './Dice.css'
 
 type DiceProps = {
     onClick: MouseEventHandler,
-    values: [number?, number?]
+    values: [number?, number?],
+    color?: 'black' | 'white'
 }
 type ImageKey = keyof typeof IMAGES
 
-export default function Dice({ onClick, values }: DiceProps) {
-    const left: ImageKey = `black${values[0] || 6}`
-    const right: ImageKey = `white${values[1] || 6}`
+export default function Dice({ onClick, values, color }: DiceProps) {
+    const left: ImageKey = `${color ?? 'black'}${values[0] || 6}`
+    const right: ImageKey = `${color ?? 'white'}${values[1] || 6}`
     return <div className="dice" onClick={onClick}>
         <img src={IMAGES[left]} />
         <img src={IMAGES[right]} />
