@@ -167,14 +167,12 @@ export function App() {
   }, [match?.game]);
 
   const rollDice = useCallback(() => {
-    if (game.turn === user?.val().uid) {
-      console.log("You cannot roll the dice twice in a row.");
-      return;
-    }
-
     const dice = [rollDie(), rollDie()];
     if (match?.game) {
       // online
+      if (game.turn === user?.val().uid)
+        return console.log("You cannot roll the dice twice in a row.");
+
       firebase.database().ref(`games/${match?.game}`).update({
         dice,
         color: game.color === 'white' ? 'black' : 'white',
