@@ -249,22 +249,22 @@ export function App() {
         <Dice onClick={rollDice} values={game.dice} />
 
         <div className="bar">
-          {Array.from({ length: game.prison.white }, (_, index) =>
+          {Array.from({ length: game.prison?.white }, (_, index) =>
             <Piece key={index} position={-1} color="white" />
           )}
         </div>
         <div className="bar">
-          {Array.from({ length: game.prison.black }, (_, index) =>
+          {Array.from({ length: game.prison?.black }, (_, index) =>
             <Piece key={index} position={-1} color="black" />
           )}
         </div>
         <div className="home" onDragOver={onDragOver} onDrop={onDrop}>
-          {Array.from({ length: game.home.black }, (_, index) =>
+          {Array.from({ length: game.home?.black }, (_, index) =>
             <Piece key={index} color="black" />
           )}
         </div>
         <div className="home" onDragOver={onDragOver} onDrop={onDrop}>
-          {Array.from({ length: game.home.white }, (_, index) =>
+          {Array.from({ length: game.home?.white }, (_, index) =>
             <Piece key={index} color="white" />
           )}
         </div>
