@@ -74,7 +74,7 @@ export default function Login({ reset }) {
                 <button
                     aria-haspopup="menu"
                     aria-expanded={isExpanded}
-                    onClick={() => setIsExpanded(!isExpanded)}
+                    onPointerUp={() => setIsExpanded(!isExpanded)}
                     className="material-icons"
                 >
                     settings
@@ -86,7 +86,7 @@ export default function Login({ reset }) {
                         </li>
                         : null}
                     <li>
-                        <a onClick={reset}>
+                        <a onPointerUp={reset}>
                             <span className="material-icons">restart_alt</span>
                             Reset Match
                         </a>

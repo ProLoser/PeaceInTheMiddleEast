@@ -48,22 +48,21 @@ export function App() {
   const [selected, setSelected] = useState<number | null>(null);
 
   const toggle = useCallback((newState: ModalState) => {
-    if (newState === true) {
-      setState(prevState => {
-        if (prevState) setLastState(prevState);
-        return lastState;
-      });
-    } else if (newState === false) {
-      setState(prevState => {
-        if (prevState) setLastState(prevState);
-        return false;
-      });
-    } else {
-      setState(prevState => {
+    setState(prevState => {
+      if (typeof newState === 'string') { // Open
         if (prevState) setLastState(prevState);
         return newState
-      });
-    }
+      } else if (newState === true) { // Back
+        if (prevState) setLastState(prevState);
+        return lastState;
+      } else if (newState === false) { // Close
+        if (prevState) setLastState(prevState);
+        return false;
+      } else { // Toggle
+        setLastState(prevState);
+        return prevState === 'friends' ? false : 'friends';
+      }
+    });
   }, [lastState]);
 
   const load = useCallback(async (userId?: string) => {
@@ -101,7 +100,6 @@ export function App() {
     } else {
       setMatch(await matchSnapshot.val())
     }
-    toggle(false);
   }, [user]);
 
   const reset = useCallback(() => {
@@ -248,8 +246,6 @@ export function App() {
 
   const friendData = friend?.val();
 
-  const toggleFriends = useCallback(() => { toggle(!state) }, [state])
-
   return (
     <>
       <dialog open={!!state}>
@@ -265,14 +261,14 @@ export function App() {
       </dialog>
 
       <div id="board">
-        <div id="toolbar">
+        <div id="toolbar" onPointerUp={toggle}>
           {friendData
-            ? <Avatar user={friendData} onClick={toggleFriends} />
-            : <a className={`material-icons ${state && 'active' || ''}`} onClick={toggleFriends}>account_circle</a>}
+            ? <Avatar user={friendData} />
+            : <a className={`material-icons ${state && 'active' || ''}`}>account_circle</a>}
           <h2>{friendData?.name}</h2>
         </div>
 
-        <Dice onClick={rollDice} values={game.dice} color={game.color} />
+        <Dice onPointerUp={rollDice} values={game.dice} color={game.color} />
 
         <div className="bar">
           {Array.from({ length: game.prison?.white }, (_, index) =>

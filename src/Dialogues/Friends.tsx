@@ -62,14 +62,15 @@ export default function Friends({ authUser, toggle, load, reset }) {
 
     const NOW = new Date()
 
-    const row = (user: UserData, match?: Match) => <li key={user.uid} onClick={() => load(user.uid)}>
-        <Avatar user={user} />
-        <div>
-            <h3>{user.name}</h3>
-            <time>{match?.sort && formatDistance(new Date(match.sort), NOW, { addSuffix: true })}</time>
-            {match?.lastMessage}
-        </div>
-    </li>
+    const row = (user: UserData, match?: Match) => 
+        <li key={user.uid} onPointerUp={() => { load(user.uid); toggle() }}>
+            <Avatar user={user} />
+            <div>
+                <h3>{user.name}</h3>
+                <time>{match?.sort && formatDistance(new Date(match.sort), NOW, { addSuffix: true })}</time>
+                {match?.lastMessage}
+            </div>
+        </li>
 
     const searchReject = (user: UserData) =>
         searchRef.current?.value
@@ -108,14 +109,14 @@ export default function Friends({ authUser, toggle, load, reset }) {
             <button
                 aria-haspopup="menu"
                 aria-expanded={isExpanded}
-                onClick={() => setIsExpanded(!isExpanded)}
+                onPointerUp={() => setIsExpanded(!isExpanded)}
                 className="material-icons"
             >
                 settings
             </button>
             <menu>
                 <li>
-                    <a onClick={invite}>
+                    <a onPointerUp={invite}>
                         <span className="material-icons">person_add_alt_1</span>
                         Invite Friend
                     </a>
@@ -126,13 +127,13 @@ export default function Friends({ authUser, toggle, load, reset }) {
                     </li>
                     : null}
                 <li>
-                    <a onClick={() => toggle('profile')}>
+                    <a onPointerUp={() => toggle('profile')}>
                         <span className="material-icons">manage_accounts</span>
                         Edit Profile
                     </a>
                 </li>
                 <li>
-                    <a onClick={reset}>
+                    <a onPointerUp={reset}>
                         <span className="material-icons">restart_alt</span>
                         Reset Match
                     </a>
@@ -144,7 +145,7 @@ export default function Friends({ authUser, toggle, load, reset }) {
                     </a>
                 </li>
                 <li>
-                    <a onClick={() => firebase.auth().signOut()}>
+                    <a onPointerUp={() => firebase.auth().signOut()}>
                         <span className="material-icons">logout</span>
                         Logout
                     </a>

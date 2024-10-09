@@ -20,12 +20,12 @@ export default function Point({ pieces, move, position, onSelect, selected }: Po
 
     const color = pieces > 0 ? 'white' : 'black';
 
-    const onClick = useCallback(() => {
+    const onPointerUp = useCallback(() => {
         if (pieces !== 0 || selected !== null)
             onSelect(position)
     }, [pieces, position, onSelect])
 
-    return <div className={`point ${selected === position ? 'selected' : ''}`} onClick={onClick} onDragOver={onDragOver} onDrop={onDrop}>
+    return <div className={`point ${selected === position ? 'selected' : ''}`} onPointerUp={onPointerUp} onDragOver={onDragOver} onDrop={onDrop}>
         {Array.from({ length: Math.abs(pieces) }, (_, index) => <Piece key={index} color={color} position={position} onSelect={onSelect} />)}
     </div>
 }

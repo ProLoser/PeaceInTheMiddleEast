@@ -15,7 +15,7 @@ export default function ToggleFullscreen() {
         return () => document.removeEventListener('fullscreenchange', fullscreenchange);
     }, [])
 
-    return <a onClick={toggleFullscreen}>
+    return <a onPointerUp={toggleFullscreen}>
         <span className="material-icons">{fullscreen ? 'fullscreen_exit' : 'fullscreen'}</span>
         {fullscreen ? 'Exit Fullscreen' : 'Fullscreen'}
     </a>

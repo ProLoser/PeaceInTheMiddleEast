@@ -26,7 +26,7 @@ export default function ({ chats, user }) {
             <h1>Chat List</h1>
             <ul>
                 {chats.map((chat: firebase.database.DataSnapshot) => (
-                    <li key={chat.key} onClick={() => handleChatClick(chat)}>
+                    <li key={chat.key} onPointerUp={() => handleChatClick(chat)}>
                         {chat.val().name}
                     </li>
                 ))}
