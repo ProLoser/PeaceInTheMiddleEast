@@ -3,6 +3,7 @@
     --secondary: #ffd8a0;
     --primary-hover: #2727ff;
     --secondary-hover: rgb(128, 128, 211);
+    user-select: none;
     .selected {
         --primary: red;
         --secondary: red;
