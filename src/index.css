@@ -104,10 +104,6 @@ dialog {
   color: black;
   cursor: pointer;
 
-  &:hover {
-    color: blue;
-  }
-
   &+menu,
   &+[role="menu"] {
     display: none;

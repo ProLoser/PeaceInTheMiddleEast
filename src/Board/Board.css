@@ -95,7 +95,7 @@ order:
     .point {
         height: 50%;
         &:hover::before {
-            border-top-color: var(--primary-hover) !important;
+            /* border-top-color: var(--primary-hover) !important; */
         }
         &::before {
             left: 50%;
@@ -141,10 +141,10 @@ order:
             }
     
             &:nth-child(even):hover::before {
-                border-bottom-color: var(--primary-hover) !important;
+                /* border-bottom-color: var(--primary-hover) !important; */
             }
             &:nth-child(odd):hover::before {
-                border-bottom-color: var(--secondary-hover) !important;
+                /* border-bottom-color: var(--secondary-hover) !important; */
             }
             /* Stack Pieces */
             .piece:nth-child(n+6) {
@@ -176,10 +176,10 @@ order:
     .point {
         width: 50%;
         &:nth-child(even):hover::before {
-            border-left-color: var(--primary-hover) !important;
+            /* border-left-color: var(--primary-hover) !important; */
         }
         &:nth-child(odd):hover::before {
-            border-left-color: var(--secondary-hover) !important;
+            /* border-left-color: var(--secondary-hover) !important; */
         }
 
         &::before {
@@ -221,7 +221,7 @@ order:
                 right: 0;
             }
             &:hover::before {
-                border-right-color: var(--primary-hover) !important;
+                /* border-right-color: var(--primary-hover) !important; */
             }
             &:nth-child(even)::before {
                 border-right-color: var(--secondary);
