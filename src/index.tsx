@@ -65,40 +65,41 @@ export function App() {
     });
   }, [lastState]);
 
-  const load = useCallback(async (userId?: string) => {
-    console.log('Loading', userId);
+  const load = useCallback(async (friendId?: string) => {
+    console.log('Loading', friendId);
 
-    if (!user || !userId) {
+    if (!friendId) {
       setMatch(null);
       setChats(null);
       setFriend(null);
       return;
     }
 
-    window.history.pushState(null, '', `${userId}`);
-    const userSnapshot = await database.ref(`users/${userId}`).get();
-    if (!userSnapshot.exists()) {
-      console.error('User not found', userId);
+    window.history.pushState(null, '', `${friendId}`);
+    const friendSnapshot = await database.ref(`users/${friendId}`).get();
+    if (!friendSnapshot.exists()) {
+      console.error('User not found', friendId);
       return;
     }
 
-    setFriend(userSnapshot);
-    const matchSnapshot = await database.ref(`matches/${user.key}/${userId}`).get();
-    if (!matchSnapshot.exists()) {
+    setFriend(friendSnapshot);
+    if (!user) return;
+    const matchSnapshot = await database.ref(`matches/${user.key}/${friendId}`).get();
+    if (matchSnapshot.exists()) {
+      setMatch(await matchSnapshot.val());
+    } else {
       // Create new match
       const gameRef = database.ref('games').push();
       const chatRef = database.ref('chats').push();
       // Point match to game
       const data: Match = {
-        sort: new Date().toISOString(),
-        game: gameRef.key!,
-        chat: chatRef.key!,
+      sort: new Date().toISOString(),
+      game: gameRef.key!,
+      chat: chatRef.key!,
       };
-      database.ref(`matches/${user.key}/${userId}`).set(data);
-      database.ref(`matches/${userId}/${user.key}`).set(data);
+      database.ref(`matches/${user.key}/${friendId}`).set(data);
+      database.ref(`matches/${friendId}/${user.key}`).set(data);
       setMatch(data);
-    } else {
-      setMatch(await matchSnapshot.val())
     }
   }, [user]);
 
@@ -115,10 +116,16 @@ export function App() {
 
   // Autoload Match upon Login
   useEffect(() => {
-    if (!user) return;
+    const friendId = location.pathname.split('/').pop()
+    if (friendId && friendId !== 'PeaceInTheMiddleEast') {
+      if (user) {
+        load(friendId)
+      } else {
+        load(friendId);
+        toggle('friends');
+      }
+    }
 
-    const friendLocation = location.pathname.split('/').pop()
-    if (friendLocation && friendLocation !== 'PeaceInTheMiddleEast') load(friendLocation);
   }, [load, user]);
 
   // onLogin/Logout
@@ -257,7 +264,7 @@ export function App() {
               : state === 'chat'
                 ? <Chat chats={chats} user={user} />
                 : null
-          : <Login reset={reset} />}
+          : <Login reset={reset} friend={friendData} toggle={toggle} load={load} />}
       </dialog>
 
       <div id="board">

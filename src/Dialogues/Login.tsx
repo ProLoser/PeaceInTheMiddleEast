@@ -1,12 +1,13 @@
 // TODO: Cleanup this file 
 // https://github.com/firebase/firebaseui-web-react/pull/173#issuecomment-1151532176
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
 import 'firebaseui/dist/firebaseui.css';
 import * as firebaseui from 'firebaseui';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import ToggleFullscreen from '../ToggleFullscreen';
+import './Login.css';
 
 // Configure FirebaseUI.
 const uiConfig = {
@@ -39,8 +40,12 @@ interface Props {
     className?: string;
 }
 
+type LoginProps = {
+    reset: () => void;
+    friend?: { name: string };
+};
 
-export default function Login({ reset }) {
+export default function Login({ reset, friend, load, toggle }: LoginProps) {
     const [userSignedIn, setUserSignedIn] = useState(false);
     const elementRef = useRef(null);
     const [isExpanded, setIsExpanded] = useState(false);
@@ -67,6 +72,11 @@ export default function Login({ reset }) {
             firebaseUiWidget.reset();
         };
     }, [firebaseui, uiConfig]);
+
+    const decline = useCallback(() => {
+        load()
+        toggle(false)
+    }, [load]);
 
     return (
         <section id="login">
@@ -98,9 +108,13 @@ export default function Login({ reset }) {
                         </a>
                     </li>
                 </menu>
-                <h1>Play Online</h1>
+                <h1>Play {friend?friend.name:'Online'}</h1>
             </header>
             <div ref={elementRef} />
+            {friend ? <>
+                <h1>Play Locally</h1>
+                <button className="local" onPointerUp={decline}>Decline Invitation</button>
+            </>:null}
         </section>
     );
 }
