@@ -65,8 +65,13 @@ export function App() {
     });
   }, [lastState]);
 
-  const load = useCallback(async (friendId?: string) => {
+  const load = useCallback(async (friendId: string = '') => {
     console.log('Loading', friendId);
+
+    // Update URL
+    if (window.location.pathname !== `/${friendId}`) {
+      window.history.pushState(null, '', `/${friendId}`);
+    }
 
     if (!friendId) {
       setMatch(null);
@@ -75,7 +80,6 @@ export function App() {
       return;
     }
 
-    window.history.pushState(null, '', `${friendId}`);
     const friendSnapshot = await database.ref(`users/${friendId}`).get();
     if (!friendSnapshot.exists()) {
       console.error('User not found', friendId);
@@ -118,15 +122,9 @@ export function App() {
   useEffect(() => {
     const friendId = location.pathname.split('/').pop()
     if (friendId && friendId !== 'PeaceInTheMiddleEast') {
-      if (user) {
-        load(friendId)
-      } else {
-        load(friendId);
-        toggle('friends');
-      }
+      load(friendId)
     }
-
-  }, [load, user]);
+  }, []);
 
   // onLogin/Logout
   useEffect(() => {
@@ -255,7 +253,7 @@ export function App() {
 
   return (
     <>
-      <dialog open={!!state}>
+      <dialog open={(friendData&&!user)||!!state}>
         {user
           ? state === 'friends'
             ? <Friends authUser={user} load={load} toggle={toggle} reset={reset} />
@@ -264,7 +262,7 @@ export function App() {
               : state === 'chat'
                 ? <Chat chats={chats} user={user} />
                 : null
-          : <Login reset={reset} friend={friendData} toggle={toggle} load={load} />}
+          : <Login reset={reset} friend={friendData} load={load} />}
       </dialog>
 
       <div id="board">

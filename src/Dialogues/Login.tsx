@@ -45,7 +45,7 @@ type LoginProps = {
     friend?: { name: string };
 };
 
-export default function Login({ reset, friend, load, toggle }: LoginProps) {
+export default function Login({ reset, friend, load }: LoginProps) {
     const [userSignedIn, setUserSignedIn] = useState(false);
     const elementRef = useRef(null);
     const [isExpanded, setIsExpanded] = useState(false);
@@ -75,7 +75,6 @@ export default function Login({ reset, friend, load, toggle }: LoginProps) {
 
     const decline = useCallback(() => {
         load()
-        toggle(false)
     }, [load]);
 
     return (
