@@ -265,7 +265,7 @@ export function App() {
           {friendData
             ? <Avatar user={friendData} />
             : <a className={`material-icons ${state && 'active' || ''}`}>account_circle</a>}
-          <h2>{friendData?.name}</h2>
+          <h2>{friendData?.name ?? 'Offline'}</h2>
         </div>
 
         <Dice onPointerUp={rollDice} values={game.dice} color={game.color} />
