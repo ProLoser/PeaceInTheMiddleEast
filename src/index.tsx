@@ -190,6 +190,7 @@ export function App() {
         dice,
         color: game.color === 'white' ? 'black' : 'white',
         turn: user?.val().uid,
+        status: 'rolled'
       });
     } else {
       // local
