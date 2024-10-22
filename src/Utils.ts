@@ -98,6 +98,8 @@ export function calculate(state: GameType, from: number | "white" | "black", to:
 
         // remove from previous position
         nextGame.board[from] -= Math.sign(nextGame.board[from]);
+
+        nextGame.status = 'moved'
     }
     return { state: nextGame, moveLabel };
 }
