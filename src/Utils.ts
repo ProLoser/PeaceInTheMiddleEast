@@ -29,6 +29,7 @@ export const newGame = (oldGame?: GameType) => ({
         black: 0,
         white: 0,
     },
+    status: oldGame?.status || ''
 } as GameType);
 
 export function calculate(state: GameType, from: number | "white" | "black", to: number) {
