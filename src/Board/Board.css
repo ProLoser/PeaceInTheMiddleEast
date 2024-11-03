@@ -170,17 +170,25 @@ order:
 @media (max-aspect-ratio: 1) {/* Portrait layout (mobile phone) */
     #board {
         flex-direction: column;
+        flex-wrap: wrap-reverse;
+    }
+    #toolbar {
+        order: 6;
+    }
+    .dice {
+        order: 1;
     }
     .home {
         width: 50%;
     }
     .point {
         width: 50%;
+        
         &:nth-child(even):hover::before {
-            /* border-left-color: var(--primary-hover) !important; */
+            /* border-right-color: var(--primary-hover) !important; */
         }
         &:nth-child(odd):hover::before {
-            /* border-left-color: var(--secondary-hover) !important; */
+            /* border-right-color: var(--secondary-hover) !important; */
         }
 
         &::before {
@@ -190,14 +198,16 @@ order:
                 border-bottom: 3vmax solid transparent;
         }
         :nth-child(-n+12 of &) {/* top */
+            flex-direction: row-reverse !important;
+            
             &::before {
-                border-left: 40vmin solid var(--primary);
-                left: 0;
+                border-right: 40vmin solid var(--primary);
+                right: 0;
             }
     
             &:nth-child(odd)::before {
-                border-left-color: var(--secondary);
-                border-left-width: 40vmin;
+                border-right-color: var(--secondary);
+                border-right-width: 40vmin;
             }
             /* Stack Pieces */
             .piece:nth-child(n+6) {
@@ -215,18 +225,17 @@ order:
         }
         
         :nth-child(n+13 of &) {/* bottom */
-            flex-direction: row-reverse !important;
             &::before {
-                border-left: none;
-                border-right: 40vmin solid var(--primary);
-                right: 0;
+                border-right: none;
+                border-left: 40vmin solid var(--primary);
+                left: 0;
             }
             &:hover::before {
-                /* border-right-color: var(--primary-hover) !important; */
+                /* border-left-color: var(--primary-hover) !important; */
             }
             &:nth-child(even)::before {
-                border-right-color: var(--secondary);
-                border-right-width: 40vmin;
+                border-left-color: var(--secondary);
+                border-left-width: 40vmin;
             }
             /* Stack Pieces */
             .piece:nth-child(n+6) {

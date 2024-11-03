@@ -31,6 +31,13 @@ export const newGame = (oldGame?: GameType) => ({
     status: oldGame?.status || null
 } as GameType);
 
+/**
+ * 
+ * @param state 
+ * @param from 
+ * @param to 
+ * @returns moveLabel is not returned if the move is blocked
+ */
 export function calculate(state: GameType, from: number | "white" | "black", to: number) {
     if (from === to) return { state }; // no move
     const nextGame: GameType = newGame(state);
