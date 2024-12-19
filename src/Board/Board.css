@@ -4,28 +4,25 @@
     --primary-hover: #2727ff;
     --secondary-hover: rgb(128, 128, 211);
     user-select: none;
-    .selected {
-        --primary: red;
-        --secondary: red;
-    }
     display: flex;
     gap: 0;
     height: 100%;
     flex-wrap: wrap;
     touch-action: none;
+    .selected {
+        --primary: red;
+        --secondary: red;
+    }
     > * {
         display: flex;
         align-items: center;
         flex-basis: calc(100% / 15);
-        /* landscape layout (tablet / computer) */
-        @media (min-aspect-ratio: 1) {
-            flex-direction: column;
+        
+        @media (min-aspect-ratio: 1) { /* landscape layout (tablet / computer) */
             max-width: calc(100% / 15);
         }
-    
-        /* portrait layout (mobile) */
-        @media (max-aspect-ratio: 1) {
-            flex-direction: row;
+        
+        @media (max-aspect-ratio: 1) { /* portrait layout (mobile) */
             max-height: calc(100% / 15);
         }
     }
@@ -102,9 +99,10 @@ order:
             left: 50%;
             transform: translateX(-50%);
             border-left: 3vmax solid transparent;
-                border-right: 3vmax solid transparent;
+            border-right: 3vmax solid transparent;
         }
         :nth-child(-n+12 of &) {/* top */
+            flex-direction: column;
             &::before {
                 border-top: 40vmin solid var(--secondary);
             }
@@ -129,7 +127,7 @@ order:
         }
     
         :nth-child(n+13 of &) {/* bottom */
-            flex-direction: column-reverse !important;
+            flex-direction: column-reverse;
             &::before {
                 border-top: none;
                 border-bottom: 40vmin solid var(--secondary);
@@ -198,7 +196,7 @@ order:
                 border-bottom: 3vmax solid transparent;
         }
         :nth-child(-n+12 of &) {/* top */
-            flex-direction: row-reverse !important;
+            flex-direction: row-reverse;
             
             &::before {
                 border-right: 40vmin solid var(--primary);
