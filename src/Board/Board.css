@@ -211,16 +211,16 @@ order:
             }
             /* Stack Pieces */
             .piece:nth-child(n+6) {
-                transform: translateX(-450%);
+                transform: translateX(450%);
             }
             .piece:nth-child(n+10) {
-                transform: translateX(-800%);
+                transform: translateX(800%);
             }
             .piece:nth-child(n+13) {
-                transform: translateX(-1050%);
+                transform: translateX(1050%);
             }
             .piece:nth-child(n+15) {
-                transform: translateX(-1200%);
+                transform: translateX(1200%);
             }
         }
         
@@ -239,16 +239,16 @@ order:
             }
             /* Stack Pieces */
             .piece:nth-child(n+6) {
-                transform: translateX(450%);
+                transform: translateX(-450%);
             }
             .piece:nth-child(n+10) {
-                transform: translateX(800%);
+                transform: translateX(-800%);
             }
             .piece:nth-child(n+13) {
-                transform: translateX(1050%);
+                transform: translateX(-1050%);
             }
             .piece:nth-child(n+15) {
-                transform: translateX(1200%);
+                transform: translateX(-1200%);
             }
         }
     }
