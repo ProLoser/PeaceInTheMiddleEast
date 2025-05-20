@@ -88,7 +88,7 @@ dialog {
         }
       }
   /* Portrait layout (mobile) */
-  @media (max-aspect-ratio: 1) {
+  @media (orientation: portrait) {
     top: 100px;
     left: 40px;
     right: 40px;
@@ -97,7 +97,7 @@ dialog {
     }
   }
   /* Landscape layout (laptop / tablet ) */
-  @media (min-aspect-ratio: 1) {
+  @media (orientation: landscape) {
     top: 40px;
     left: 100px;
     right: 100px;
