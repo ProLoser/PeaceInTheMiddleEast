@@ -18,11 +18,11 @@
         align-items: center;
         flex-basis: calc(100% / 15);
         
-        @media (min-aspect-ratio: 1) { /* landscape layout (tablet / computer) */
+        @media (orientation: landscape) { /* landscape layout (tablet / computer) */
             max-width: calc(100% / 15);
         }
         
-        @media (max-aspect-ratio: 1) { /* portrait layout (mobile) */
+        @media (orientation: portrait) { /* portrait layout (mobile) */
             max-height: calc(100% / 15);
         }
     }
@@ -86,7 +86,7 @@ order:
     order: 8;
 }
 
-@media (min-aspect-ratio: 1) {/* landscape layout (tablet / computer) */
+@media (orientation: landscape) {/* landscape layout (tablet / computer) */
     .home {
         height: 50%;
     }
@@ -165,7 +165,7 @@ order:
     }
 }
    
-@media (max-aspect-ratio: 1) {/* Portrait layout (mobile phone) */
+@media (orientation: portrait) {/* Portrait layout (mobile phone) */
     #board {
         flex-direction: column;
         flex-wrap: wrap-reverse;
