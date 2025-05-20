@@ -8,8 +8,7 @@
       width: 4em;
     }
 
-  /* Portrait layout (mobile) */
-  @media (max-aspect-ratio: 1) {
+  @media (orientation: portrait) {
       max-width: 50%;
       h2 {
         text-overflow: ellipsis;
@@ -17,8 +16,7 @@
       }
   }
 
-  /* Landscape layout (laptop / tablet ) */
-  @media (min-aspect-ratio: 1) {
+  @media (orientation: landscape) {
       max-height: 50%;
       h2 {
         text-overflow: ellipsis;
