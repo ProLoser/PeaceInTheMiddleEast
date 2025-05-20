@@ -158,11 +158,9 @@ export default function Friends({ authUser, toggle, load, reset }) {
                 </span>
             </h1>
         </header>
-        <div id="people">
-            <input name="search" ref={searchRef} type="search" autoComplete="off" placeholder="Search for Friends" onChange={onSearch} />
-            <ul>
-                {renderFriends}
-            </ul>
-        </div>
+        <input name="search" ref={searchRef} type="search" autoComplete="off" placeholder="Search for Friends" onChange={onSearch} />
+        <ul>
+            {renderFriends}
+        </ul>
     </section>
 }
