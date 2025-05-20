@@ -10,10 +10,10 @@
     } */
     aspect-ratio: 1;
     @media (max-aspect-ratio: 1) { /* Portrait layout (mobile) */
-        height: 100%;
+        width: calc(100% / 6);
     }
     @media (min-aspect-ratio: 1) { /* Landscape layout (laptop / tablet ) */
-        width: 100%;
+        height: calc(100% / 6);
     }
 
     &[draggable="true"] {
