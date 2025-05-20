@@ -90,6 +90,7 @@ dialog {
   @media (max-aspect-ratio: 1) {
     top: 100px;
     left: 40px;
+    right: 40px;
     > :first-child {
       margin-top: 0;
     }
@@ -98,6 +99,7 @@ dialog {
   @media (min-aspect-ratio: 1) {
     top: 40px;
     left: 100px;
+    right: 100px;
   }
 }
 /*** MENU BUTTON ***/
