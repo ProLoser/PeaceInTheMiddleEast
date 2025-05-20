@@ -85,7 +85,7 @@ dialog {
           font-size: 1.5em;
           cursor: pointer;
         }
-        }
+      }
   /* Portrait layout (mobile) */
   @media (max-aspect-ratio: 1) {
     top: 100px;
@@ -125,6 +125,8 @@ dialog {
     [role="menuitem"],
     li {
       white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
       a {
         display: block;
         padding: .5em;
