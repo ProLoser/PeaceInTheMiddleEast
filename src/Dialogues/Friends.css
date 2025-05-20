@@ -30,8 +30,13 @@
             align-items: center;
             margin-bottom: 1em;
             gap: 10px;
+            div {
+                overflow: hidden;
+            }
             h3 {
                 margin: 0;
+                overflow: hidden;
+                text-overflow: ellipsis;
                 img {
                     margin-right: 1em;
 
