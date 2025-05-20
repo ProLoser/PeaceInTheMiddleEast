@@ -29,6 +29,7 @@
             display: flex;
             align-items: center;
             margin-bottom: 1em;
+            gap: 10px;
             h3 {
                 margin: 0;
                 img {
