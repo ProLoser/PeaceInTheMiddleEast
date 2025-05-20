@@ -1,5 +1,4 @@
 .piece {
-    /* flex-basis: 100%; */
     /* border-radius: 50%; */
     /* &.white {
         background: white;
@@ -9,12 +8,7 @@
         background: black;
     } */
     aspect-ratio: 1;
-    @media (max-aspect-ratio: 1) { /* Portrait layout (mobile) */
-        width: calc(100% / 6);
-    }
-    @media (min-aspect-ratio: 1) { /* Landscape layout (laptop / tablet ) */
-        height: calc(100% / 6);
-    }
+    flex: 0 0 calc(100% / 6);
 
     &[draggable="true"] {
         cursor: pointer;
