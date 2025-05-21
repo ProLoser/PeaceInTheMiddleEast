@@ -13,6 +13,7 @@ export default defineConfig({
       },
       manifest: {
         theme_color: '#ed7560',
+        orientation: 'portrait',
         icons: [
           {
             src: 'android-chrome-192x192.png',
