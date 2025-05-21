@@ -38,11 +38,13 @@ export default function Login({ show }: { show: boolean}) {
     );
 }
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 // import firebase from 'firebase/compat/app';
 // import { useAuth } from '../AuthContext';
-import 'firebase/compat/database';
+import {getDatabase, ref, onChildAdded } from 'firebase/database';
 // import './index.css';
+
+
 
 export function Friends() {
     const user = useAuth();
@@ -52,6 +54,25 @@ export function Friends() {
     const handleChatClick = (chat: firebase.database.DataSnapshot) => {
         setSelectedChat(chat);
     };
+
+    useEffect(() => {
+        if (!selectedChat) return;
+        // Listen for comments.
+
+        const database = getDatabase();
+        const commentsRef = ref(database, `chats/${selectedChat}`);
+        let offChildAdded = onChildAdded(commentsRef, function (data) {
+            // addCommentElement(
+            //     postElement,
+            //     data.key,
+            //     data.val().text,
+            //     data.val().author,
+            // );
+        });
+        return () => {
+            offChildAdded()
+        }
+    }, [selectedChat])
 
     return (
         <div id="chat">

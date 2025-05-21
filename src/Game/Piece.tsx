@@ -13,7 +13,7 @@ type PieceProps = {
 
 export default function Piece({ color, position, onSelect }: PieceProps) {
     const onDragStart: DragEventHandler = useCallback((event) => {
-        if (onSelect) onSelect(null)
+        if (onSelect && position) onSelect(position)
         switch (position) {
             case undefined:
                 event.preventDefault()
