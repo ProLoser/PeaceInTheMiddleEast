@@ -44,6 +44,9 @@
 
 .point {
     --point-piece-size: calc(100%/5.5);
+    --point-size: 43vmin;
+    --point-primary: solid var(--point-size) var(--primary);
+    --point-secondary: solid var(--point-size) var(--secondary);
     position: relative;
 
     &::before {
@@ -108,12 +111,11 @@ order:
         :nth-child(-n+12 of &) {/* top */
             flex-direction: column;
             &::before {
-                border-top: 40vmin solid var(--secondary);
+                border-top: var(--point-secondary);
             }
     
             &:nth-child(odd)::before {
                 border-top-color: var(--primary);
-                border-top-width: 40vmin;
             }
             /* Stack Pieces */
             .piece:nth-child(n+6) {
@@ -133,14 +135,12 @@ order:
         :nth-child(n+13 of &) {/* bottom */
             flex-direction: column-reverse;
             &::before {
-                border-top: none;
-                border-bottom: 40vmin solid var(--secondary);
+                border-bottom: var(--point-secondary);
                 bottom: 0;
                 top: auto;
             }
             &:nth-child(even)::before {
                 border-bottom-color: var(--primary);
-                border-bottom-width: 40vmin;
             }
     
             &:nth-child(even):hover::before {
@@ -207,13 +207,12 @@ order:
             flex-direction: column;
             
             &::before {
-                border-right: 40vmin solid var(--primary);
+                border-right: var(--point-primary);
                 right: 0;
             }
     
             &:nth-child(odd)::before {
                 border-right-color: var(--secondary);
-                border-right-width: 40vmin;
             }
             /* Stack Pieces */
             .piece:nth-child(n+6) {
@@ -233,8 +232,7 @@ order:
         :nth-child(n+13 of &) {/* bottom */
             flex-direction: column-reverse;
             &::before {
-                border-right: none;
-                border-left: 40vmin solid var(--primary);
+                border-left: var(--point-primary);
                 left: 0;
             }
             &:hover::before {
@@ -242,7 +240,6 @@ order:
             }
             &:nth-child(even)::before {
                 border-left-color: var(--secondary);
-                border-left-width: 40vmin;
             }
             /* Stack Pieces */
             .piece:nth-child(n+6) {
