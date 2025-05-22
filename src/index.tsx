@@ -114,6 +114,7 @@ export function App() {
       if (match?.game)
         firebase.database().ref(`games/${match?.game}`).set(data);
       setGame(data);
+      toggle(false)
     }
   }, [match?.game])
 
