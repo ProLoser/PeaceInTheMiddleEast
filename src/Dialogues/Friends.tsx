@@ -63,7 +63,7 @@ export default function Friends({ authUser, toggle, load, reset }) {
     const NOW = new Date()
 
     const row = (user: UserData, match?: Match) => 
-        <li key={user.uid} onPointerUp={() => { load(user.uid); toggle() }}>
+        <li key={user.uid} onPointerUp={() => { load(user.uid, authUser.key); toggle() }}>
             <Avatar user={user} />
             <div>
                 <h3>{user.name}</h3>

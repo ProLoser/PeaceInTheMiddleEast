@@ -52,9 +52,12 @@ export function App() {
       if (typeof newState === 'string') { // Open
         if (prevState) setLastState(prevState);
         return newState
-      } else if (newState === true) { // Back
-        if (prevState) setLastState(prevState);
-        return lastState;
+      } else if (newState == true) { // Back
+        setLastState(lastState => {
+          newState = lastState;
+          return prevState;
+        });
+        return newState;
       } else if (newState === false) { // Close
         if (prevState) setLastState(prevState);
         return false;
@@ -63,9 +66,10 @@ export function App() {
         return prevState === 'friends' ? false : 'friends';
       }
     });
-  }, [lastState]);
+  }, []);
 
-  const load = useCallback(async (friendId: string = '') => {
+  const load = useCallback(async (friendId: string = '', authUser?: string) => {
+    if (friendId === 'PeaceInTheMiddleEast') return;
     console.log('Loading', friendId);
 
     // Update URL
@@ -87,8 +91,8 @@ export function App() {
     }
 
     setFriend(friendSnapshot);
-    if (!user) return;
-    const matchSnapshot = await database.ref(`matches/${user.key}/${friendId}`).get();
+    if (!authUser) return;
+    const matchSnapshot = await database.ref(`matches/${authUser}/${friendId}`).get();
     if (matchSnapshot.exists()) {
       setMatch(await matchSnapshot.val());
     } else {
@@ -97,15 +101,16 @@ export function App() {
       const chatRef = database.ref('chats').push();
       // Point match to game
       const data: Match = {
-      sort: new Date().toISOString(),
-      game: gameRef.key!,
-      chat: chatRef.key!,
+        sort: new Date().toISOString(),
+        game: gameRef.key!,
+        chat: chatRef.key!,
       };
-      database.ref(`matches/${user.key}/${friendId}`).set(data);
-      database.ref(`matches/${friendId}/${user.key}`).set(data);
+      database.ref(`matches/${authUser}/${friendId}`).set(data);
+      database.ref(`matches/${friendId}/${authUser}`).set(data);
       setMatch(data);
     }
-  }, [user]);
+    toggle(false)
+  }, [toggle]);
 
   const reset = useCallback(() => {
     if (confirm('Are you sure you want to reset the match?')) {
@@ -116,19 +121,16 @@ export function App() {
       setGame(data);
       toggle(false)
     }
-  }, [match?.game])
+  }, [match?.game, toggle])
 
 
-  // Autoload Match upon Login
   useEffect(() => {
+    // Autoload Match upon Login
     const friendId = location.pathname.split('/').pop()
-    if (friendId && friendId !== 'PeaceInTheMiddleEast') {
-      load(friendId)
-    }
-  }, []);
+    if (friendId) load(friendId)
+    
 
-  // onLogin/Logout
-  useEffect(() => {
+    // onLogin/Logout
     const unregisterAuthObserver = firebase.auth().onAuthStateChanged(async authUser => {
       if (authUser) {
         const userRef = firebase.database().ref(`users/${authUser.uid}`)
@@ -144,9 +146,13 @@ export function App() {
           console.log('Creating user', data);
           userRef.set(data);
         }
-        userRef.on('value', setUser);
+        userRef.on('value', user => {
+          setUser(user);
+          if (friendId) load(friendId, authUser.uid)
+        });
       } else {
         setUser(null);
+        setMatch(null);
       }
     });
     return () => unregisterAuthObserver();
