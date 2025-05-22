@@ -4,9 +4,11 @@
     --primary-hover: #2727ff;
     --secondary-hover: rgb(128, 128, 211);
     user-select: none;
-    display: flex;
-    gap: 0;
+    display: grid;
+    grid-template-columns: repeat(15, 1fr);
+    grid-template-rows: repeat(2, 50%);
     height: 100%;
+    width: 100%;
     flex-wrap: wrap;
     touch-action: none;
     .selected {
@@ -14,17 +16,10 @@
         --secondary: red;
     }
     > * {
-        display: flex;
+        height: 100%;
+        width: 100%;
         align-items: center;
-        flex-basis: calc(100% / 15);
-        
-        @media (orientation: landscape) { /* landscape layout (tablet / computer) */
-            max-width: calc(100% / 15);
-        }
-        
-        @media (orientation: portrait) { /* portrait layout (mobile) */
-            max-height: calc(100% / 15);
-        }
+        display: flex;
     }
 }
 
@@ -34,13 +29,21 @@
 
 .bar {
     background: lightblue;
+    justify-content: center;
+    flex-direction: column;
 }
 
 .home {
     background: lightblue;
+    flex-direction: column;
+    .piece {
+        min-width: 0;
+        min-height: 0;
+    }
 }
 
 .point {
+    --point-piece-size: calc(100%/5.5);
     position: relative;
 
     &::before {
@@ -61,7 +64,6 @@ order:
 
 :nth-child(1 of .bar) {
     order: 3;
-    justify-content: flex-end;
 }
 :nth-child(2 of .bar) {
     order: 8;
@@ -90,8 +92,10 @@ order:
     .home {
         height: 50%;
     }
+    .piece {
+        height: var(--point-piece-size);
+    }
     .point {
-        height: 50%;
         &:hover::before {
             /* border-top-color: var(--primary-hover) !important; */
         }
@@ -169,9 +173,11 @@ order:
     #board {
         flex-direction: column;
         flex-wrap: wrap-reverse;
+        writing-mode: sideways-rl;
     }
     #toolbar {
         order: 6;
+        writing-mode: horizontal-tb;
     }
     .dice {
         order: 1;
@@ -179,8 +185,10 @@ order:
     .home {
         width: 50%;
     }
+    .piece {
+        width: var(--point-piece-size);
+    }
     .point {
-        width: 50%;
         
         &:nth-child(even):hover::before {
             /* border-right-color: var(--primary-hover) !important; */
@@ -193,10 +201,10 @@ order:
             top: 50%;
             transform: translateY(-50%);
             border-top: 3vmax solid transparent;
-                border-bottom: 3vmax solid transparent;
+            border-bottom: 3vmax solid transparent;
         }
         :nth-child(-n+12 of &) {/* top */
-            flex-direction: row-reverse;
+            flex-direction: column;
             
             &::before {
                 border-right: 40vmin solid var(--primary);
@@ -223,6 +231,7 @@ order:
         }
         
         :nth-child(n+13 of &) {/* bottom */
+            flex-direction: column-reverse;
             &::before {
                 border-right: none;
                 border-left: 40vmin solid var(--primary);

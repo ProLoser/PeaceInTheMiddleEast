@@ -2,6 +2,8 @@
     order: 6;
     cursor: pointer;
     justify-content: center;
+    flex-direction: column;
+    
     img {
         aspect-ratio: 1;
         max-width: 100%;

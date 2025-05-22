@@ -1,28 +1,29 @@
 #toolbar {
-    gap: 5px;
-    > a {
-        font-weight: bold;
-        font-size: 3em;
-    }
-    .avatar {
-      width: 4em;
-    }
+  gap: 5px;
+  
+  > a {
+      font-weight: bold;
+      font-size: 3em;
+  }
+  .avatar {
+    width: 4em;
+  }
 
   @media (orientation: portrait) {
-      max-width: 50%;
-      h2 {
-        text-overflow: ellipsis;
-        overflow: hidden;
-      }
+    h2 {
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
   }
 
   @media (orientation: landscape) {
-      max-height: 50%;
-      h2 {
-        text-overflow: ellipsis;
-        overflow: hidden;
-        writing-mode: vertical-rl;
-        text-orientation: mixed;
-      }
+    flex-direction: column;
+
+    h2 {
+      text-overflow: ellipsis;
+      overflow: hidden;
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+    }
   }
 }
