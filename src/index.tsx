@@ -17,6 +17,9 @@ import './index.css'
 import './Board/Board.css';
 import './Toolbar.css'
 import { calculate, newGame, rollDie, vibrate } from './Utils';
+import { registerSW } from 'virtual:pwa-register';
+
+
 
 // Start Firebase
 firebase.initializeApp({
