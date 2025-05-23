@@ -152,15 +152,29 @@ export function App() {
         }
         userRef.on('value', user => {
           setUser(user);
-          if (friendId) load(friendId, authUser.uid)
+          if (friendId) load(friendId, authUser.uid);
+
+          // Notify Service Worker of User ID
+          if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+            navigator.serviceWorker.controller.postMessage({ type: 'SET_USER_ID', userId: authUser.uid });
+          } else {
+            console.log('Service worker controller not available to set user ID.');
+          }
         });
       } else {
         setUser(null);
         setMatch(null);
+
+        // Notify Service Worker to clear User ID
+        if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+          navigator.serviceWorker.controller.postMessage({ type: 'CLEAR_USER_ID' });
+        } else {
+          console.log('Service worker controller not available to clear user ID.');
+        }
       }
     });
     return () => unregisterAuthObserver();
-  }, []);
+  }, [load]); // Added load to dependency array as it's used in the effect
 
   // Subscribe to match
   useEffect(() => {
@@ -203,6 +217,8 @@ export function App() {
         turn: user?.val().uid,
         status: 'rolled'
       });
+
+      // Dice roll notification queueing removed as per new requirements.
     } else {
       // local
       setGame({
@@ -231,15 +247,20 @@ export function App() {
         game: match.game,
         move: `${nextState.dice.join("-")}: ${moveLabel}`,
         time,
-      }
+        recipientId: friend?.key // Renamed from recipientPlayerId
+      };
+
+      // Conditional addition of recipientPlayerId removed as it's now part of the direct definition.
+
       const update = {
         sort: time,
       };
-      database.ref('moves').push(nextMove)
+      database.ref('moves').push(nextMove) // This now pushes the move with recipientPlayerId
       database.ref(`games/${match.game}`).set(nextState)
       database.ref(`matches/${user?.key}/${friend?.key}`).update(update);
       database.ref(`matches/${friend?.key}/${user?.key}`).update(update);
 
+      // The separate block for queueing notifications to /user-moves/ has been removed.
     }
   }, [game, match?.game, user, friend]);
 

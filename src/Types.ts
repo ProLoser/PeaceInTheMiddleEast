@@ -32,6 +32,7 @@ export type Move = {
     game: string;
     move: string;
     time: string;
+    recipientId?: string; // Renamed from recipientPlayerId
 }
 
 export type GameType = {
