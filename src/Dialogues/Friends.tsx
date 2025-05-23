@@ -44,7 +44,7 @@ export default function Friends({ authUser, toggle, load, reset }) {
     const onSearch: ChangeEventHandler<HTMLInputElement> = useCallback(async () => {
         if (searchRef.current?.value) {
             const search = searchRef.current.value
-            const searchSnapshot = await firebase.database().ref('users').orderByChild('name').startAt(search).get();
+            const searchSnapshot = await firebase.database().ref('users').orderByChild('search').startAt(search.toLocaleLowerCase()).get();
             // const results: UserData[] = []
             // searchSnapshot.forEach(result => {
             //     results.push(result.val())

@@ -140,6 +140,7 @@ export function App() {
           const data: UserData = {
             uid: authUser.uid,
             name: authUser.displayName || authUser.uid,
+            search: (authUser.displayName || authUser.uid).toLocaleLowerCase(),
             photoURL: authUser.photoURL,
             language: navigator.language,
           };

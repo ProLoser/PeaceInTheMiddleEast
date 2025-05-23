@@ -6,6 +6,7 @@ export type SnapshotOrNullType = firebase.database.DataSnapshot | null
 export type UserData = {
     uid: string;
     name: string;
+    search: string;
     photoURL: string | null;
     language: string;
 }
