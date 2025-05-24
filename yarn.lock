@@ -5588,6 +5588,18 @@ utility-types@^3.10.0:
   resolved "https://registry.yarnpkg.com/utility-types/-/utility-types-3.11.0.tgz#607c40edb4f258915e901ea7995607fdf319424c"
   integrity sha512-6Z7Ma2aVEWisaL6TvBCy7P8rm2LQoPv6dJ7ecIaIixHcwfbJ0x7mWdbcwlIM5IGQxPZSFYeqRCqlOOeKoJYMkw==
 
+uuid@^11.1.0:
+  version "11.1.0"
+  resolved "https://artifactory.sie.sony.com/artifactory/api/npm/ce-sie-private-npm-prod-virtual/uuid/-/uuid-11.1.0.tgz#9549028be1753bb934fc96e2bca09bb4105ae912"
+  integrity sha512-0/A9rDy9P7cJ+8w1c9WD9V//9Wj15Ce2MPz8Ri6032usz+NfePxx5AcN3bN+r6ZL6jEo066/yNYB3tn4pQEx+A==
+
+vite-plugin-devtools-json@^0.1.0:
+  version "0.1.0"
+  resolved "https://artifactory.sie.sony.com/artifactory/api/npm/ce-sie-private-npm-prod-virtual/vite-plugin-devtools-json/-/vite-plugin-devtools-json-0.1.0.tgz#a9275a20ad9df3bbcaa5ee2880c9ad83e4fec72c"
+  integrity sha512-KvdgPBUAAhwnpOgXmJhs6KI4/IPn6xUppLGm20D0Uvp/doZ9TpTYYfzSHX0TgvdsSlTAwzZfzDse+ujGskp68g==
+  dependencies:
+    uuid "^11.1.0"
+
 vite-plugin-pwa@^0.20.0:
   version "0.20.0"
   resolved "https://registry.yarnpkg.com/vite-plugin-pwa/-/vite-plugin-pwa-0.20.0.tgz#1785c8cc8c11c89c0ba8c6557f29e2b58b14dd6d"
