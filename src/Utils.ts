@@ -1,5 +1,6 @@
 
 import { type GameType } from "./Types";
+import { isValidMove } from "../GameLogic/validation"; // Added import
 
 // White = Positive, Black = Negative
 export const DEFAULT_BOARD = [
@@ -108,5 +109,84 @@ export function calculate(state: GameType, from: number | "white" | "black", to:
 
         nextGame.status = 'moved'
     }
+    return { state: nextGame, moveLabel };
+}
+
+// New function as per prompt
+export function calculateNewMove(state: GameType, from: number | "white" | "black", to: number | "off", dieValueUsed: number): { state: GameType; moveLabel?: string } {
+    // 2. Inside calculateNewMove call isValidMove
+    const valid = isValidMove(state, from, to, dieValueUsed);
+
+    // 3. If valid is false
+    if (!valid) {
+        return { state, moveLabel: undefined }; // Return the original state
+    }
+
+    // 4. If valid is true
+    // a. Create nextGame
+    const nextGame: GameType = newGame(state); // make a deep copy to modify
+    // b. Initialize moveLabel
+    let moveLabel: string = '';
+
+    // c. Determine Player Color and Signs
+    const playerColor = state.color;
+    if (!playerColor) { // Should not happen if isValidMove is robust
+        return { state, moveLabel: undefined };
+    }
+    const playerSign = playerColor === 'white' ? 1 : -1;
+    const opponentColor = playerColor === 'white' ? 'black' : 'white'; // For prison
+    const opponentSign = -playerSign;
+
+    // d. Apply Move Logic & Generate moveLabel
+    if (from === 'white') { // White re-entering
+        const toPoint = to as number; // 'to' is guaranteed number by isValidMove
+        nextGame.prison.white--;
+        moveLabel = `bar/${toPoint + 1}`;
+        if (nextGame.board[toPoint] === opponentSign) { // Hit opponent's blot
+            nextGame.prison[opponentColor]++;
+            nextGame.board[toPoint] = playerSign;
+            moveLabel += '*';
+        } else {
+            nextGame.board[toPoint] += playerSign;
+        }
+    } else if (from === 'black') { // Black re-entering
+        const toPoint = to as number; // 'to' is guaranteed number by isValidMove
+        nextGame.prison.black--;
+        moveLabel = `bar/${toPoint + 1}`;
+        if (nextGame.board[toPoint] === opponentSign) { // Hit opponent's blot
+            nextGame.prison[opponentColor]++;
+            nextGame.board[toPoint] = playerSign;
+            moveLabel += '*';
+        } else {
+            nextGame.board[toPoint] += playerSign;
+        }
+    } else if (to === 'off') { // Bearing off
+        const fromPoint = from as number; // 'from' is guaranteed number
+        nextGame.board[fromPoint] -= playerSign;
+        nextGame.home[playerColor]++;
+        moveLabel = `${fromPoint + 1}/off`;
+    } else { // Standard board move, 'from' and 'to' are numbers
+        const fromPoint = from as number;
+        const toPoint = to as number;
+        nextGame.board[fromPoint] -= playerSign;
+        moveLabel = `${fromPoint + 1}/${toPoint + 1}`;
+        if (nextGame.board[toPoint] === opponentSign) { // Hit opponent's blot
+            nextGame.prison[opponentColor]++;
+            nextGame.board[toPoint] = playerSign;
+            moveLabel += '*';
+        } else {
+            nextGame.board[toPoint] += playerSign;
+        }
+    }
+
+    // e. Consume the dieValueUsed
+    const dieIndex = nextGame.dice.indexOf(dieValueUsed);
+    if (dieIndex > -1) {
+        nextGame.dice[dieIndex] = 0; // Mark die as used (0)
+    }
+
+    // f. Set status
+    nextGame.status = 'moved'; 
+    // g. Return
     return { state: nextGame, moveLabel };
 }
