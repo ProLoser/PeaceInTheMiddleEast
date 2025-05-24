@@ -176,6 +176,11 @@ export function App() {
     return () => unregisterAuthObserver();
   }, [load]); // Added load to dependency array as it's used in the effect
 
+  // Register Service Worker
+  useEffect(() => {
+    registerSW({ immediate: true });
+  }, []);
+
   // Subscribe to match
   useEffect(() => {
     if (match?.game) {
