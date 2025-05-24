@@ -1,5 +1,6 @@
 
 import { type GameType } from "./Types";
+// Removed isValidMove import
 
 // White = Positive, Black = Negative
 export const DEFAULT_BOARD = [
@@ -38,75 +39,121 @@ export const newGame = (oldGame?: GameType) => ({
  * @param to 
  * @returns moveLabel is not returned if the move is blocked
  */
-export function calculate(state: GameType, from: number | "white" | "black", to: number) {
-    if (from === to) return { state }; // no move
-    const nextGame: GameType = newGame(state);
-    let moveLabel: string; // @see https://en.wikipedia.org/wiki/Backgammon_notation
-    if (from === "white") {
-        // white re-enter
-        if (nextGame.board[to] === -1) {
-            // hit
-            moveLabel = `bar/${to}*`;
-            nextGame.prison.black++;
-            nextGame.prison.white--;
-            nextGame.board[to] = 1;
-        } else if (nextGame.board[to] >= -1) {
-            // move
-            moveLabel = `bar/${to}`;
-            nextGame.prison.white--;
-            nextGame.board[to]++;
-        } else {
-            // blocked
-            return { state };
-        }
-    } else if (from === "black") {
-        // black re-enter
-        if (nextGame.board[to] === 1) {
-            // hit
-            moveLabel = `bar/${to}*`;
-            nextGame.prison.white++;
-            nextGame.prison.black--;
-            nextGame.board[to] = -1;
-        } else if (nextGame.board[to] <= 1) {
-            // move
-            moveLabel = `bar/${to}`;
-            nextGame.prison.black--;
-            nextGame.board[to]--;
-        } else {
-            // blocked
-            return { state };
-        }
-    } else {
-        const offense = nextGame.board[from];
-        const defense = nextGame.board[to];
+export function calculate(state: GameType, from: number | "white" | "black", to: number | "off"): { state: GameType; moveLabel?: string } {
+    const playerColor = state.color;
+    if (!playerColor) return { state }; // No player color, invalid state
+    const playerSign = playerColor === 'white' ? 1 : -1;
+    const opponentSign = -playerSign;
+    const [d1, d2] = state.dice; // These are the available dice
+    let moveDistance = 0;
+    let isValidDieMatch = false;
 
-        if (defense === undefined) {
-            // bear off
-            moveLabel = `${from}/off`;
-            if (offense > 0) {
-                nextGame.home.white++;
-            } else {
-                nextGame.home.black++;
-            }
-        } else if (!defense || Math.sign(defense) === Math.sign(offense)) {
-            // move
-            moveLabel = `${from}/${to}`;
-            nextGame.board[to] += Math.sign(offense);
-        } else if (Math.abs(defense) === 1) {
-            // hit
-            moveLabel = `${from}/${to}*`;
-            nextGame.board[to] = -Math.sign(defense);
-            if (offense > 0) nextGame.prison.black++;
-            else nextGame.prison.white++;
-        } else {
-            // blocked
-            return { state };
+    // Handle Re-entry from Bar
+    if (from === 'white' || from === 'black') {
+        if (typeof to === 'off') return { state }; // Cannot re-enter to 'off'
+
+        if (from === 'white') {
+            if (state.prison.white === 0) return { state }; // No pieces on bar
+            moveDistance = (to as number) + 1; // Target point (0-5) + 1 gives die value
+            if ((to as number) < 0 || (to as number) > 5) return { state }; // Invalid target for white re-entry
+        } else { // from === 'black'
+            if (state.prison.black === 0) return { state };
+            moveDistance = 24 - (to as number); // Target point (18-23)
+            if ((to as number) < 18 || (to as number) > 23) return { state }; // Invalid target for black re-entry
         }
 
-        // remove from previous position
-        nextGame.board[from] -= Math.sign(nextGame.board[from]);
+        if (d1 === moveDistance || d2 === moveDistance) isValidDieMatch = true;
+        if (!isValidDieMatch) return { state };
 
-        nextGame.status = 'moved'
+        const destPieceCount = state.board[to as number];
+        if (Math.sign(destPieceCount) === opponentSign && Math.abs(destPieceCount) > 1) return { state }; // Blocked
     }
+    // Handle Standard Moves and Bearing Off (from is a number)
+    else if (typeof from === 'number') {
+        if (Math.sign(state.board[from]) !== playerSign) return { state }; // Not player's piece
+
+        if (to === 'off') { // Bearing Off
+            let canBearOff = true;
+            if (playerColor === 'white') {
+                if (state.prison.white > 0) canBearOff = false;
+                for (let i = 6; i < 24; i++) if (state.board[i] * playerSign > 0) canBearOff = false;
+                if (!canBearOff) return { state };
+                moveDistance = from + 1; // e.g., point 1 (idx 0) is 1 pip to off
+            } else { // Black
+                if (state.prison.black > 0) canBearOff = false;
+                for (let i = 0; i < 18; i++) if (state.board[i] * playerSign > 0) canBearOff = false;
+                if (!canBearOff) return { state };
+                moveDistance = 24 - from; // e.g., point 24 (idx 23) is 1 pip to off
+            }
+
+            if (d1 === moveDistance || d2 === moveDistance) {
+                isValidDieMatch = true;
+            } else {
+                const higherDie = (d1 > moveDistance) ? d1 : ((d2 > moveDistance) ? d2 : 0);
+                if (higherDie > 0) {
+                    let isFurthest = true;
+                    if (playerColor === 'white') {
+                        for (let i = from + 1; i < 6; i++) if (state.board[i] * playerSign > 0) isFurthest = false;
+                    } else { // Black
+                        for (let i = from - 1; i > 17; i--) if (state.board[i] * playerSign > 0) isFurthest = false;
+                    }
+                    if (isFurthest) isValidDieMatch = true;
+                }
+            }
+        } else { // Standard Move (to is a number)
+             if (typeof to !== 'number') return { state }; // Should not happen if to !== 'off'
+
+            if (playerColor === 'white' && to >= from) return { state };
+            if (playerColor === 'black' && to <= from) return { state };
+            moveDistance = Math.abs(from - to);
+            if (d1 === moveDistance || d2 === moveDistance) isValidDieMatch = true;
+
+            const destPieceCount = state.board[to as number];
+            if (Math.sign(destPieceCount) === opponentSign && Math.abs(destPieceCount) > 1) return { state }; // Blocked
+        }
+        if (!isValidDieMatch) return { state };
+    } else {
+      return { state }; // Invalid 'from' type if not 'white', 'black', or number
+    }
+
+    // If all checks passed, create nextGame and apply changes:
+    const nextGame = newGame(state); // Deep copy
+    let moveLabel = '';
+    const opponentColor = playerColor === 'white' ? 'black' : 'white';
+
+
+    if (from === 'white') {
+        nextGame.prison.white--;
+        moveLabel = `bar/${(to as number) + 1}`;
+        if (Math.sign(nextGame.board[to as number]) === opponentSign && Math.abs(nextGame.board[to as number]) === 1) { // Hit blot
+            nextGame.prison[opponentColor]++;
+            nextGame.board[to as number] = playerSign; moveLabel += '*';
+        } else {
+             nextGame.board[to as number] += playerSign;
+        }
+    } else if (from === 'black') {
+        nextGame.prison.black--;
+        moveLabel = `bar/${(to as number) + 1}`;
+        if (Math.sign(nextGame.board[to as number]) === opponentSign && Math.abs(nextGame.board[to as number]) === 1) { // Hit blot
+            nextGame.prison[opponentColor]++;
+            nextGame.board[to as number] = playerSign; moveLabel += '*';
+        } else {
+            nextGame.board[to as number] += playerSign;
+        }
+    } else if (to === 'off') { // from is number
+        nextGame.board[from as number] -= playerSign;
+        nextGame.home[playerColor!]++; // playerColor is confirmed not null
+        moveLabel = `${(from as number) + 1}/off`;
+    } else { // Standard move from board point (from is number) to board point (to is number)
+        nextGame.board[from as number] -= playerSign;
+        moveLabel = `${(from as number) + 1}/${(to as number) + 1}`;
+        if (Math.sign(nextGame.board[to as number]) === opponentSign && Math.abs(nextGame.board[to as number]) === 1) { // Hit blot
+            nextGame.prison[opponentColor]++;
+            nextGame.board[to as number] = playerSign; moveLabel += '*';
+        } else {
+            nextGame.board[to as number] += playerSign;
+        }
+    }
+    nextGame.status = 'moved';
     return { state: nextGame, moveLabel };
 }
