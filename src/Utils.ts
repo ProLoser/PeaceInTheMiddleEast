@@ -1,6 +1,4 @@
-
 import { type GameType } from "./Types";
-// Removed isValidMove import
 
 // White = Positive, Black = Negative
 export const DEFAULT_BOARD = [
