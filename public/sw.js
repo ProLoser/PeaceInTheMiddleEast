@@ -121,15 +121,6 @@ function setupDatabaseListener() {
   dbPathRef.orderByChild('timestamp').limitToLast(5).on('child_added', dbListenerCallback, errorCallback);
   console.log('Service Worker: Listener setup complete for path:', path, 'with limitToLast(5)');
 }
-    if (dbPathRef && dbListenerCallback) { // Clean up on error
-        dbPathRef.off('child_added', dbListenerCallback);
-    }
-    dbPathRef = null;
-    dbListenerCallback = null;
-    // Consider re-trying setup after a delay for transient errors.
-  });
-  console.log('Service Worker: Listener setup complete for path:', path);
-}
 
 // 6. Handle Notification Click
 self.addEventListener('notificationclick', event => {
