@@ -16,7 +16,7 @@ import Piece from './Board/Piece';
 import './index.css'
 import './Board/Board.css';
 import './Toolbar.css'
-import { calculate, newGame, rollDie, vibrate } from './Utils';
+import { calculate, newGame, rollDie, vibrate } from './Utils'; // Removed calculateNewMove
 import { registerSW } from 'virtual:pwa-register';
 
 
@@ -215,39 +215,44 @@ export function App() {
     vibrate();
   }, [match?.game, game, user]);
 
-  const move = useCallback((from: number | "white" | "black", to: number) => {
-    const { state: nextState, moveLabel } = calculate(game, from, to);
-    if (!moveLabel) return;
-    setGame(nextState);
-    // dispatch({ type: Actions.MOVE, data: { from, to } });
-    // sendMove(nextState, `${nextState.dice.join("-")}: ${moveLabel}`);
-    // const move = `${nextState.dice.join("-")}: ${moveLabel}`
-    // };
-    // const move = useCallback((game: GameType, move: Move["move"]) => {
-    if (match?.game) {
-      const time = new Date().toISOString();
-      const nextMove: Move = {
-        player: user?.val().uid,
-        game: match.game,
-        move: `${nextState.dice.join("-")}: ${moveLabel}`,
-        time,
-      }
-      const update = {
-        sort: time,
-      };
-      database.ref('moves').push(nextMove)
-      database.ref(`games/${match.game}`).set(nextState)
-      database.ref(`matches/${user?.key}/${friend?.key}`).update(update);
-      database.ref(`matches/${friend?.key}/${user?.key}`).update(update);
+  // Modified move function
+  const move = useCallback((from: number | "white" | "black", to: number | "off") => {
+    const result = calculate(game, from, to);
 
+    if (result.moveLabel) {
+      setGame(result.state);
+      // Firebase update logic using result.state and result.moveLabel
+      if (match?.game) {
+        const time = new Date().toISOString();
+        const nextMove: Move = {
+          player: user?.val().uid,
+          game: match.game,
+          // Construct move string using original dice (not consumed by calculate)
+          move: `${result.state.dice.join("-")}: ${result.moveLabel}`,
+          time,
+        };
+        const update = {
+          sort: time,
+        };
+        database.ref('moves').push(nextMove);
+        database.ref(`games/${match.game}`).set(result.state); // Use the state from result
+        database.ref(`matches/${user?.key}/${friend?.key}`).update(update);
+        database.ref(`matches/${friend?.key}/${user?.key}`).update(update);
+      }
+    } else {
+      console.log("Invalid move attempt:", from, to);
+      // Return without updating state or Firebase if no valid move was found
+      return;
     }
   }, [game, match?.game, user, friend]);
 
   const onDragOver: DragEventHandler = useCallback((event) => { event.preventDefault(); }, [])
+  // Modified onDrop handler
   const onDrop: DragEventHandler = useCallback((event) => {
     event.preventDefault();
     let from = parseInt(event.dataTransfer?.getData("text")!)
-    return move(from, -1,)
+    // Call move with 'off' for bearing off
+    return move(from, 'off');
   }, [move])
 
   const onSelect = useCallback((position: number | null) => {
