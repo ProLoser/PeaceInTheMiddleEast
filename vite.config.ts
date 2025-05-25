@@ -7,9 +7,12 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
+      strategies: 'injectManifest', // Use custom service worker
+      srcDir: 'public',             // Directory of your custom SW
+      filename: 'sw.js',            // Filename of your custom SW
       registerType: 'autoUpdate',
       devOptions: {
-        enabled: false
+        enabled: true               // Enable PWA in development
       },
       manifest: {
         theme_color: '#ed7560',
@@ -27,7 +30,7 @@ export default defineConfig({
           }
         ]
       }
-})
+    })
   ],
   // base: '/PeaceInTheMiddleEast/'
 })
