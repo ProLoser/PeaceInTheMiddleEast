@@ -155,10 +155,23 @@ export function App() {
           if (friendId) load(friendId, authUser.uid);
 
           // Notify Service Worker of User ID
-          if (navigator.serviceWorker && navigator.serviceWorker.controller) {
-            navigator.serviceWorker.controller.postMessage({ type: 'SET_USER_ID', userId: authUser.uid });
-          } else {
-            console.log('Service worker controller not available to set user ID.');
+          navigator.serviceWorker.ready.then(registration => {
+            if (registration.active) {
+              registration.active.postMessage({ type: 'SET_USER_ID', userId: authUser.uid });
+            } else {
+              console.log('Service worker active instance not available to set user ID.');
+            }
+          }).catch(error => {
+              console.error('Error getting service worker registration:', error);
+          });
+          if (Notification.permission === 'default') {
+            Notification.requestPermission().then(permission => {
+              if (permission === 'granted') {
+                console.log('Notification permission granted.');
+              } else {
+                console.log('Notification permission denied.');
+              }
+            });
           }
         });
       } else {
@@ -166,11 +179,15 @@ export function App() {
         setMatch(null);
 
         // Notify Service Worker to clear User ID
-        if (navigator.serviceWorker && navigator.serviceWorker.controller) {
-          navigator.serviceWorker.controller.postMessage({ type: 'CLEAR_USER_ID' });
-        } else {
-          console.log('Service worker controller not available to clear user ID.');
-        }
+        navigator.serviceWorker.ready.then(registration => {
+          if (registration.active) {
+            registration.active.postMessage({ type: 'CLEAR_USER_ID' });
+          } else {
+            console.log('Service worker active instance not available to clear user ID.');
+          }
+        }).catch(error => {
+            console.error('Error getting service worker registration:', error);
+        });
       }
     });
     return () => unregisterAuthObserver();
@@ -252,7 +269,7 @@ export function App() {
         game: match.game,
         move: `${nextState.dice.join("-")}: ${moveLabel}`,
         time,
-        recipientId: friend?.key // Renamed from recipientPlayerId
+        friend: friend?.key // Renamed from recipientPlayerId
       };
 
       // Conditional addition of recipientPlayerId removed as it's now part of the direct definition.

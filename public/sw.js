@@ -90,7 +90,7 @@ function setupDatabaseListener() {
     }
 
     const moveData = snapshot.val();
-    if (moveData && moveData.recipientId === currentUserId && moveData.player !== currentUserId) {
+    if (moveData && moveData.friend === currentUserId && moveData.player !== currentUserId) {
       console.log('Service Worker: Received new move for notification', moveId, moveData);
       
       const title = 'New move in your game!';
@@ -117,9 +117,9 @@ function setupDatabaseListener() {
     }
   };
   
-  // Listen to the last 5 moves ordered by timestamp
-  dbPathRef.orderByChild('timestamp').limitToLast(5).on('child_added', dbListenerCallback, errorCallback);
-  console.log('Service Worker: Listener setup complete for path:', path, 'with limitToLast(5)');
+  // Listen to the last 5 moves for the current user, ordered by friend (which is now the recipientId)
+  dbPathRef.orderByChild('friend').equalTo(currentUserId).limitToLast(5).on('child_added', dbListenerCallback, errorCallback);
+  console.log('Service Worker: Listener setup complete for path:', path, 'filtered by friend and limited to last 5');
 }
 
 // 6. Handle Notification Click
