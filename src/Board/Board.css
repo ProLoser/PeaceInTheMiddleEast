@@ -56,6 +56,11 @@
         height: 0;
         position: absolute;
         z-index: -1;
+        transition: border-width 1s ease-in-out;
+
+        @starting-style {
+            border-width: 0;
+        }
     }
 }
 
@@ -107,6 +112,7 @@ order:
             transform: translateX(-50%);
             border-left: 3vmax solid transparent;
             border-right: 3vmax solid transparent;
+            transition: border-top-width 1s ease-in-out, border-bottom-width 1s ease-in-out;
         }
         :nth-child(-n+12 of &) {/* top */
             flex-direction: column;
@@ -202,6 +208,7 @@ order:
             transform: translateY(-50%);
             border-top: 3vmax solid transparent;
             border-bottom: 3vmax solid transparent;
+            transition: border-left-width 1s ease-in-out, border-right-width 1s ease-in-out;
         }
         :nth-child(-n+12 of &) {/* top */
             flex-direction: column;
