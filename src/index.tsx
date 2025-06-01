@@ -1,7 +1,5 @@
 import { StrictMode, useEffect, useState, useCallback, type DragEventHandler } from "react";
 import ReactDOM from 'react-dom/client'
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/database';
 // TODO: Upgrade to modular after firebaseui upgrades
 // import { initializeApp } from 'firebase/app';
 import type { Match, Move, GameType, SnapshotOrNullType, UserData, ModalState } from "./Types";
@@ -17,22 +15,8 @@ import './index.css'
 import './Board/Board.css';
 import './Toolbar.css'
 import { calculate, newGame, rollDie, vibrate } from './Utils';
-import { registerSW } from 'virtual:pwa-register';
+import firebase from "./firebase.config";
 import { saveMessagingDeviceToken } from './firebase-messaging-setup';
-
-
-
-// Start Firebase
-firebase.initializeApp({
-  apiKey: "AIzaSyDSTc5VVNNT32jRE4m8qr7hVbI8ahaIsRc",
-  authDomain: "peaceinthemiddleeast.firebaseapp.com",
-  databaseURL: "https://peaceinthemiddleeast-default-rtdb.firebaseio.com",
-  projectId: "peaceinthemiddleeast",
-  storageBucket: "peaceinthemiddleeast.appspot.com",
-  messagingSenderId: "529824094542",
-  appId: "1:529824094542:web:eadc5cf0dc140a2b0de61f",
-  measurementId: "G-NKGPNTLDF1"
-});
 
 // Start React
 ReactDOM.createRoot(document.getElementById('root')!).render(<StrictMode><App /></StrictMode>)
@@ -122,7 +106,7 @@ export function App() {
       console.log('Resetting', match?.game);
       let data = newGame()
       if (match?.game)
-        firebase.database().ref(`games/${match?.game}`).set(data);
+        database.ref(`games/${match?.game}`).set(data);
       setGame(data);
       toggle(false)
     }
@@ -138,7 +122,7 @@ export function App() {
     // onLogin/Logout
     const unregisterAuthObserver = firebase.auth().onAuthStateChanged(async authUser => {
       if (authUser) {
-        const userRef = firebase.database().ref(`users/${authUser.uid}`)
+        const userRef = database.ref(`users/${authUser.uid}`)
         let snapshot = await userRef.get()
         if (!snapshot.exists()) {
           // Upload initial user data
@@ -185,8 +169,8 @@ export function App() {
   // Subscribe to match
   useEffect(() => {
     if (match?.game) {
-      const gameRef = firebase.database().ref(`games/${match?.game}`)
-      const onValue = (snapshot: firebase.database.DataSnapshot) => {
+      const gameRef = database.ref(`games/${match?.game}`)
+      const onValue = (snapshot: DataSnapshot) => {
         const value = snapshot.val();
         if (value) {
           setGame(game => {
@@ -217,7 +201,7 @@ export function App() {
       if (game.turn === user?.val().uid)
         return console.log("You cannot roll the dice twice in a row.");
 
-      firebase.database().ref(`games/${match?.game}`).update({
+      database.ref(`games/${match?.game}`).update({
         dice,
         color: game.color === 'white' ? 'black' : 'white',
         turn: user?.val().uid,

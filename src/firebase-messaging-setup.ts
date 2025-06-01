@@ -1,29 +1,11 @@
-// client/src/firebase-messaging-setup.ts (using compat)
-
-// Import the compat versions of the SDKs you need
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/messaging';
-import 'firebase/compat/database';
-import 'firebase/compat/auth';
-
-// Your Firebase configuration (get this from your Firebase project settings)
-const firebaseConfig = {
-  apiKey: "AIzaSyDSTc5VVNNT32jRE4m8qr7hVbI8ahaIsRc",
-  authDomain: "peaceinthemiddleeast.firebaseapp.com",
-  databaseURL: "https://peaceinthemiddleeast-default-rtdb.firebaseio.com",
-  projectId: "peaceinthemiddleeast",
-  storageBucket: "peaceinthemiddleeast.appspot.com",
-  messagingSenderId: "529824094542",
-  appId: "1:529824094542:web:eadc5cf0dc140a2b0de61f",
-  measurementId: "G-NKGPNTLDF1"
-};
+import firebase from './firebase.config';
 
 // Initialize Firebase (using the compat app import)
-const firebaseApp = firebase.initializeApp(firebaseConfig);
+// const firebase = firebase.initializeApp(firebaseConfig);
 // Access services directly from the app instance or the global firebase object
-const messaging = firebaseApp.messaging(); // Or firebase.messaging() if using script tags
-const db = firebaseApp.database();       // Or firebase.database()
-const auth = firebaseApp.auth();         // Or firebase.auth()
+const messaging = firebase.messaging(); // Or firebase.messaging() if using script tags
+const db = firebase.database();       // Or firebase.database()
+const auth = firebase.auth();         // Or firebase.auth()
 
 
 // Get the FCM registration token and save it to the database
