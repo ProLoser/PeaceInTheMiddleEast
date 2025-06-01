@@ -130,7 +130,7 @@ export default function Profile({ authUser, toggle }) {
     const handleEnableNotificationsClick = useCallback(async () => {
         try {
             await saveMessagingDeviceToken();
-        } catch (error)
+        } catch (error) {
             console.error("Error requesting notification permission from profile:", error);
         }
         setCurrentNotificationPermission(Notification.permission);
