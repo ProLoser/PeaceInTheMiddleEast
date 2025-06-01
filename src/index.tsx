@@ -18,6 +18,7 @@ import './Board/Board.css';
 import './Toolbar.css'
 import { calculate, newGame, rollDie, vibrate } from './Utils';
 import { registerSW } from 'virtual:pwa-register';
+import { saveMessagingDeviceToken } from './firebase-messaging-setup';
 
 
 
@@ -43,6 +44,7 @@ export function App() {
   const database = firebase.database();
   const [game, setGame] = useState<GameType>(newGame);
   const [user, setUser] = useState<SnapshotOrNullType>(null);
+  const [hasAttemptedNotificationPermission, setHasAttemptedNotificationPermission] = useState(false);
   const [state, setState] = useState<ModalState>(false);
   const [lastState, setLastState] = useState<ModalState>('friends');
   const [match, setMatch] = useState<Match | null>(null);
@@ -157,10 +159,28 @@ export function App() {
       } else {
         setUser(null);
         setMatch(null);
+        setHasAttemptedNotificationPermission(false);
       }
     });
     return () => unregisterAuthObserver();
   }, []);
+
+  useEffect(() => {
+    const requestPermission = async () => {
+      if (state === 'friends' && user && Notification.permission === 'default' && !hasAttemptedNotificationPermission) {
+        console.log("Friends modal opened, attempting notification permission request via useEffect..."); // Dev log
+        try {
+          await saveMessagingDeviceToken();
+        } catch (error) {
+          console.error("Error requesting notification permission from useEffect:", error); // Dev log
+        } finally {
+          setHasAttemptedNotificationPermission(true);
+        }
+      }
+    };
+
+    requestPermission();
+  }, [state, user, hasAttemptedNotificationPermission]);
 
   // Subscribe to match
   useEffect(() => {
