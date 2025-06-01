@@ -10,7 +10,14 @@ importScripts('https://www.gstatic.com/firebasejs/10.12.4/firebase-messaging-com
 
 // Your Firebase configuration
 const firebaseConfig = {
-  // ... your config (should be same as client config)
+  apiKey: "AIzaSyDSTc5VVNNT32jRE4m8qr7hVbI8ahaIsRc",
+  authDomain: "peaceinthemiddleeast.firebaseapp.com",
+  databaseURL: "https://peaceinthemiddleeast-default-rtdb.firebaseio.com",
+  projectId: "peaceinthemiddleeast",
+  storageBucket: "peaceinthemiddleeast.appspot.com",
+  messagingSenderId: "529824094542",
+  appId: "1:529824094542:web:eadc5cf0dc140a2b0de61f",
+  measurementId: "G-NKGPNTLDF1"
 };
 
 // Initialize Firebase using the compat API
@@ -26,7 +33,7 @@ messaging.onBackgroundMessage((payload) => { // Use messaging.onBackgroundMessag
   const notificationTitle = payload.notification.title;
   const notificationOptions = {
     body: payload.notification.body,
-    icon: '/firebase-logo.png' // Or your app icon
+    icon: '/android-chrome-512x512.png' // Or your app icon
   };
 
   self.registration.showNotification(notificationTitle, notificationOptions);
