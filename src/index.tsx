@@ -52,39 +52,26 @@ export function App() {
   const [friend, setFriend] = useState<SnapshotOrNullType>(null);
   const [selected, setSelected] = useState<number | null>(null);
 
-  const toggle = useCallback(async (newState: ModalState) => {
-    // Logic for actually showing/hiding the modal
+  const toggle = useCallback((newState: ModalState) => {
     setState(prevState => {
-      let resolvedNewState = newState;
       if (typeof newState === 'string') { // Open
         if (prevState) setLastState(prevState);
-      } else if (newState === true) { // Back
-        let tempState = lastState;
-        setLastState(currentLastState => {
-           return prevState;
+        return newState
+      } else if (newState == true) { // Back
+        setLastState(lastState => {
+          newState = lastState;
+          return prevState;
         });
-        resolvedNewState = tempState;
+        return newState;
       } else if (newState === false) { // Close
         if (prevState) setLastState(prevState);
-      } else { // Toggle (e.g., clicking the toolbar icon)
+        return false;
+      } else { // Toggle
         setLastState(prevState);
-        resolvedNewState = prevState === 'friends' ? false : 'friends';
+        return prevState === 'friends' ? false : 'friends';
       }
-      return resolvedNewState;
     });
-
-    // Notification permission logic
-    if (user && typeof newState === 'string' && Notification.permission === 'default' && !hasAttemptedNotificationPermission) {
-      try {
-        // console.log("Attempting to request notification permission...");
-        await saveMessagingDeviceToken();
-        setHasAttemptedNotificationPermission(true);
-      } catch (error) {
-        // console.error("Error during notification permission request:", error);
-        setHasAttemptedNotificationPermission(true);
-      }
-    }
-  }, [user, hasAttemptedNotificationPermission, lastState]);
+  }, []);
 
   const load = useCallback(async (friendId: string = '', authUser?: string) => {
     if (friendId === 'PeaceInTheMiddleEast') return;
@@ -177,6 +164,23 @@ export function App() {
     });
     return () => unregisterAuthObserver();
   }, []);
+
+  useEffect(() => {
+    const requestPermission = async () => {
+      if (state === 'friends' && user && Notification.permission === 'default' && !hasAttemptedNotificationPermission) {
+        console.log("Friends modal opened, attempting notification permission request via useEffect..."); // Dev log
+        try {
+          await saveMessagingDeviceToken();
+        } catch (error) {
+          console.error("Error requesting notification permission from useEffect:", error); // Dev log
+        } finally {
+          setHasAttemptedNotificationPermission(true);
+        }
+      }
+    };
+
+    requestPermission();
+  }, [state, user, hasAttemptedNotificationPermission]);
 
   // Subscribe to match
   useEffect(() => {

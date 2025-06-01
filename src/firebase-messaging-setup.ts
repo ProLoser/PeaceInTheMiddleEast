@@ -72,16 +72,3 @@ messaging.onMessage((payload) => {
 });
 
 // see public/firebase-messaging-sw.js
-
-// Call this function when the user logs in or perhaps when the app loads if they are already logged in
-auth.onAuthStateChanged((user) => { // Using compat auth instance
-  if (user) {
-    // User is signed in.
-    // Notification permission will be requested via user interaction elsewhere.
-    // console.log('User signed in (firebase-messaging-setup).');
-  } else {
-    // User is signed out
-    // console.log('User signed out (firebase-messaging-setup), token not needed or remove token from DB');
-    // Optional: remove the token from the database if the user signs out
-  }
-});

@@ -130,10 +130,10 @@ export default function Profile({ authUser, toggle }) {
     const handleEnableNotificationsClick = useCallback(async () => {
         try {
             await saveMessagingDeviceToken();
-        } catch (error) {
+        } catch (error)
             console.error("Error requesting notification permission from profile:", error);
         }
-        setCurrentNotificationPermission(Notification.permission); // Update state after attempt
+        setCurrentNotificationPermission(Notification.permission);
     }, []);
 
     return <section id="profile">
@@ -165,21 +165,17 @@ export default function Profile({ authUser, toggle }) {
             </label>
             <Avatar user={editing} />
 
-            {/* Notification Button Start */}
             {(currentNotificationPermission === 'default' || currentNotificationPermission === 'denied') && (
-                <div>
+                <>
                     <p>Enable notifications to stay updated on game events.</p>
                     <button type="button" onClick={handleEnableNotificationsClick}>
                         Enable Notifications
                     </button>
-                </div>
+                </>
             )}
             {currentNotificationPermission === 'granted' && (
-                <div>
-                    <p>Notifications are enabled.</p>
-                </div>
+                <p>Notifications are enabled.</p>
             )}
-            {/* Notification Button End */}
         </form>
     </section>
 }
