@@ -36,7 +36,7 @@ async function saveMessagingDeviceToken() {
       // Get token (using the compat messaging instance)
       // VAPID key is required for web push (generate in Firebase Console -> Project settings -> Cloud Messaging)
       // Note: getToken is part of the v9 web API, which compat wraps
-      const currentToken = await messaging.getToken({ vapidKey: 'YOUR_VAPID_KEY_HERE' });
+      const currentToken = await messaging.getToken({ vapidKey: 'BM1H9qfv1e_XcIB31ZeLCn8IpGOdMIwMShRej6wld8QAMkV4YqJ-eMQa1rSnwhkmVmAFw3tvUdlP2JzZmgTq4Fk' });
 
       if (currentToken) {
         console.log('FCM registration token:', currentToken);
