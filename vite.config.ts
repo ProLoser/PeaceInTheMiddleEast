@@ -9,7 +9,6 @@ export default defineConfig({
     react(),
     devtoolsJson(),
     VitePWA({
-      strategies: 'injectManifest',
       registerType: 'autoUpdate',
       devOptions: {
         enabled: true
