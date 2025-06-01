@@ -18,6 +18,7 @@ import './Board/Board.css';
 import './Toolbar.css'
 import { calculate, newGame, rollDie, vibrate } from './Utils';
 import { registerSW } from 'virtual:pwa-register';
+import { saveMessagingDeviceToken } from './firebase-messaging-setup';
 
 
 
@@ -43,6 +44,7 @@ export function App() {
   const database = firebase.database();
   const [game, setGame] = useState<GameType>(newGame);
   const [user, setUser] = useState<SnapshotOrNullType>(null);
+  const [hasAttemptedNotificationPermission, setHasAttemptedNotificationPermission] = useState(false);
   const [state, setState] = useState<ModalState>(false);
   const [lastState, setLastState] = useState<ModalState>('friends');
   const [match, setMatch] = useState<Match | null>(null);
@@ -50,26 +52,39 @@ export function App() {
   const [friend, setFriend] = useState<SnapshotOrNullType>(null);
   const [selected, setSelected] = useState<number | null>(null);
 
-  const toggle = useCallback((newState: ModalState) => {
+  const toggle = useCallback(async (newState: ModalState) => {
+    // Logic for actually showing/hiding the modal
     setState(prevState => {
+      let resolvedNewState = newState;
       if (typeof newState === 'string') { // Open
         if (prevState) setLastState(prevState);
-        return newState
-      } else if (newState == true) { // Back
-        setLastState(lastState => {
-          newState = lastState;
-          return prevState;
+      } else if (newState === true) { // Back
+        let tempState = lastState;
+        setLastState(currentLastState => {
+           return prevState;
         });
-        return newState;
+        resolvedNewState = tempState;
       } else if (newState === false) { // Close
         if (prevState) setLastState(prevState);
-        return false;
-      } else { // Toggle
+      } else { // Toggle (e.g., clicking the toolbar icon)
         setLastState(prevState);
-        return prevState === 'friends' ? false : 'friends';
+        resolvedNewState = prevState === 'friends' ? false : 'friends';
       }
+      return resolvedNewState;
     });
-  }, []);
+
+    // Notification permission logic
+    if (user && typeof newState === 'string' && Notification.permission === 'default' && !hasAttemptedNotificationPermission) {
+      try {
+        // console.log("Attempting to request notification permission...");
+        await saveMessagingDeviceToken();
+        setHasAttemptedNotificationPermission(true);
+      } catch (error) {
+        // console.error("Error during notification permission request:", error);
+        setHasAttemptedNotificationPermission(true);
+      }
+    }
+  }, [user, hasAttemptedNotificationPermission, lastState]);
 
   const load = useCallback(async (friendId: string = '', authUser?: string) => {
     if (friendId === 'PeaceInTheMiddleEast') return;
@@ -157,6 +172,7 @@ export function App() {
       } else {
         setUser(null);
         setMatch(null);
+        setHasAttemptedNotificationPermission(false);
       }
     });
     return () => unregisterAuthObserver();

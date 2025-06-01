@@ -1,11 +1,12 @@
 // Import FirebaseAuth and firebase.
-import { useState, useCallback, ChangeEvent } from 'react';
+import { useState, useCallback, ChangeEvent, useEffect } from 'react';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/database';
 import Avatar from '../Avatar';
 import type { UserData } from '../Types';
 import './Profile.css'
+import { saveMessagingDeviceToken } from '../firebase-messaging-setup';
 
 export const LANGUAGES = ["af", "af-NA", "af-ZA", "agq", "agq-CM", "ak", "ak-GH", "am",
     "am-ET", "ar", "ar-001", "ar-AE", "ar-BH", "ar-DJ", "ar-DZ",
@@ -111,6 +112,7 @@ export const LANGUAGES = ["af", "af-NA", "af-ZA", "agq", "agq-CM", "ak", "ak-GH"
 
 export default function Profile({ authUser, toggle }) {
     const [editing, setEditing] = useState<UserData>(authUser?.val() || { uid: '', name: '', language: '', photoURL: '' });
+    const [currentNotificationPermission, setCurrentNotificationPermission] = useState(Notification.permission);
 
     const save = useCallback(async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -124,6 +126,15 @@ export default function Profile({ authUser, toggle }) {
     const generateOnChange = (key: string) => (event: ChangeEvent<HTMLInputElement>) => {
         setEditing(editing => ({ ...editing, [key]: event.target.value }));
     };
+
+    const handleEnableNotificationsClick = useCallback(async () => {
+        try {
+            await saveMessagingDeviceToken();
+        } catch (error) {
+            console.error("Error requesting notification permission from profile:", error);
+        }
+        setCurrentNotificationPermission(Notification.permission); // Update state after attempt
+    }, []);
 
     return <section id="profile">
         <form onSubmit={save}>
@@ -153,6 +164,22 @@ export default function Profile({ authUser, toggle }) {
                 <input type="text" name="photoURL" value={editing.photoURL || ''} onChange={generateOnChange('photoURL')} placeholder="Photo URL" />
             </label>
             <Avatar user={editing} />
+
+            {/* Notification Button Start */}
+            {(currentNotificationPermission === 'default' || currentNotificationPermission === 'denied') && (
+                <div>
+                    <p>Enable notifications to stay updated on game events.</p>
+                    <button type="button" onClick={handleEnableNotificationsClick}>
+                        Enable Notifications
+                    </button>
+                </div>
+            )}
+            {currentNotificationPermission === 'granted' && (
+                <div>
+                    <p>Notifications are enabled.</p>
+                </div>
+            )}
+            {/* Notification Button End */}
         </form>
     </section>
 }
