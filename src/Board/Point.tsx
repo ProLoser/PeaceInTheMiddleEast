@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState, type DragEventHandler } from "react";
-import { playCheckerSound } from '../../Utils';
+import { playCheckerSound } from '../Utils';
 import Piece from './Piece'
 
 type PointProps = {

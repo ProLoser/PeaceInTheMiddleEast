@@ -1,5 +1,5 @@
 import { useCallback, forwardRef, type DragEventHandler } from "react";
-import { playCheckerSound } from '../../Utils';
+import { playCheckerSound } from '../Utils';
 import black from './images/piece-black-2.png';
 import white from './images/piece-white-2.png';
 import './Piece.css'
