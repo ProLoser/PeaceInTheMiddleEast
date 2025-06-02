@@ -110,14 +110,14 @@ export default function Friends({ authUser, toggle, load, reset }) {
                 aria-haspopup="menu"
                 aria-expanded={isExpanded}
                 onPointerUp={() => setIsExpanded(!isExpanded)}
-                className="material-icons"
+                className="material-icons notranslate"
             >
                 settings
             </button>
             <menu>
                 <li>
                     <a onPointerUp={invite}>
-                        <span className="material-icons">person_add_alt_1</span>
+                        <span className="material-icons notranslate">person_add_alt_1</span>
                         Invite Friend
                     </a>
                 </li>
@@ -128,25 +128,31 @@ export default function Friends({ authUser, toggle, load, reset }) {
                     : null}
                 <li>
                     <a onPointerUp={() => toggle('profile')}>
-                        <span className="material-icons">manage_accounts</span>
+                        <span className="material-icons notranslate">manage_accounts</span>
                         Edit Profile
                     </a>
                 </li>
                 <li>
                     <a onPointerUp={reset}>
-                        <span className="material-icons">restart_alt</span>
+                        <span className="material-icons notranslate">restart_alt</span>
                         Reset Match
                     </a>
                 </li>
                 <li>
                     <a href="https://github.com/ProLoser/PeaceInTheMiddleEast/issues/new" target="_blank">
-                        <span className="material-icons">bug_report</span>
+                        <span className="material-icons notranslate">bug_report</span>
                         Report Bug
                     </a>
                 </li>
                 <li>
+                    <a href="https://github.com/ProLoser/PeaceInTheMiddleEast/" target="_blank" rel="noopener noreferrer">
+                        <span className="material-icons notranslate">info</span>
+                        About
+                    </a>
+                </li>
+                <li>
                     <a onPointerUp={() => firebase.auth().signOut()}>
-                        <span className="material-icons">logout</span>
+                        <span className="material-icons notranslate">logout</span>
                         Logout
                     </a>
                 </li>

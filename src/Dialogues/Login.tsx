@@ -84,7 +84,7 @@ export default function Login({ reset, friend, load }: LoginProps) {
                     aria-haspopup="menu"
                     aria-expanded={isExpanded}
                     onPointerUp={() => setIsExpanded(!isExpanded)}
-                    className="material-icons"
+                    className="material-icons notranslate"
                 >
                     settings
                 </button>
@@ -96,13 +96,13 @@ export default function Login({ reset, friend, load }: LoginProps) {
                         : null}
                     <li>
                         <a onPointerUp={reset}>
-                            <span className="material-icons">restart_alt</span>
+                            <span className="material-icons notranslate">restart_alt</span>
                             Reset Match
                         </a>
                     </li>
                     <li>
                         <a href="https://github.com/ProLoser/PeaceInTheMiddleEast/issues/new" target="_blank">
-                            <span className="material-icons">bug_report</span>
+                            <span className="material-icons notranslate">bug_report</span>
                             Report Bug
                         </a>
                     </li>
