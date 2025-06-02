@@ -41,7 +41,7 @@ self.addEventListener('notificationclick', event => {
   console.log('Service Worker: Notification clicked.', event.notification);
   event.notification.close();
 
-  const friend = event.notification.data.friend; // This is opponent's UID, used for URL path
+  const friend = event.notification.data.player; // This is opponent's UID, used for URL path
   // const gameId = event.notification.data.gameId; // Game's unique key, if needed for other logic
   // const moveId = event.notification.data.moveId; // Move was removed when notification was shown
 
