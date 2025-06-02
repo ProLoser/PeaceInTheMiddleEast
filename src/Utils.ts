@@ -1,4 +1,3 @@
-
 import { type GameType } from "./Types";
 
 // White = Positive, Black = Negative
@@ -111,19 +110,29 @@ export function calculate(state: GameType, from: number | "white" | "black", to:
     return { state: nextGame, moveLabel };
 }
 
+const audioCache: { [key: string]: HTMLAudioElement } = {};
+
+const checkerSounds = [
+  'capture.mp3',
+  'castle.mp3',
+  'move-check.mp3',
+  'move-self.mp3',
+  'notify.mp3',
+  'promote.mp3',
+];
+
+checkerSounds.forEach(file => {
+  const audio = new Audio();
+  audio.preload = 'auto';
+  audio.src = file;
+  audioCache[file] = audio;
+});
+
 export const playCheckerSound = () => {
-  const mp3Files = [
-    'capture.mp3',
-    'castle.mp3',
-    'move-check.mp3',
-    'move-self.mp3',
-    'notify.mp3',
-    'promote.mp3',
-  ];
-
-  const randomIndex = Math.floor(Math.random() * mp3Files.length);
-  const randomMp3 = mp3Files[randomIndex];
-
-  const audio = new Audio(randomMp3);
+  const randomIndex = Math.floor(Math.random() * checkerSounds.length);
+  const randomMp3 = checkerSounds[randomIndex];
+  
+  const audio = audioCache[randomMp3];
+  audio.currentTime = 0;
   audio.play();
 };
