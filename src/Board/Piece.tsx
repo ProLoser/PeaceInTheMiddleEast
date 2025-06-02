@@ -1,4 +1,5 @@
 import { useCallback, forwardRef, type DragEventHandler } from "react";
+import { playCheckerSound } from '../../Utils';
 import black from './images/piece-black-2.png';
 import white from './images/piece-white-2.png';
 import './Piece.css'
@@ -13,6 +14,8 @@ type PieceProps = {
 
 const Piece = forwardRef<HTMLImageElement, PieceProps>(({ color, position, onSelect }, ref) => {
     const onDragStart: DragEventHandler = useCallback((event) => {
+        playCheckerSound();
+        navigator.vibrate?.(10);
         if (onSelect) onSelect(null)
         switch (position) {
             case undefined: // Home

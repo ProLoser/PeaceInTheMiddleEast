@@ -110,3 +110,20 @@ export function calculate(state: GameType, from: number | "white" | "black", to:
     }
     return { state: nextGame, moveLabel };
 }
+
+export const playCheckerSound = () => {
+  const mp3Files = [
+    'public/capture.mp3',
+    'public/castle.mp3',
+    'public/move-check.mp3',
+    'public/move-self.mp3',
+    'public/notify.mp3',
+    'public/promote.mp3',
+  ];
+
+  const randomIndex = Math.floor(Math.random() * mp3Files.length);
+  const randomMp3 = mp3Files[randomIndex];
+
+  const audio = new Audio(randomMp3);
+  audio.play();
+};
