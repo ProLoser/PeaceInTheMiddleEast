@@ -16,7 +16,7 @@ export default function ToggleFullscreen() {
     }, [])
 
     return <a onPointerUp={toggleFullscreen}>
-        <span className="material-icons">{fullscreen ? 'fullscreen_exit' : 'fullscreen'}</span>
+        <span className="material-icons notranslate">{fullscreen ? 'fullscreen_exit' : 'fullscreen'}</span>
         {fullscreen ? 'Exit Fullscreen' : 'Fullscreen'}
     </a>
 }

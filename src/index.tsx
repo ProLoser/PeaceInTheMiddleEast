@@ -285,7 +285,7 @@ export function App() {
         <div id="toolbar" onPointerUp={toggle}>
           {friendData
             ? <Avatar user={friendData} />
-            : <a className={`material-icons ${state && 'active' || ''}`}>account_circle</a>}
+            : <a className={`material-icons notranslate ${state && 'active' || ''}`}>account_circle</a>}
           <h2>{friendData?.name ?? 'Local'}</h2>
         </div>
 
