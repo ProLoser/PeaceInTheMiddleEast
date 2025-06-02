@@ -9,6 +9,7 @@ export type UserData = {
     search: string;
     photoURL: string | null;
     language: string;
+    fcmToken: string;
 }
 
 export type ModalState = 'chat' | 'profile' | 'friends' | 'login' | boolean;
@@ -29,9 +30,9 @@ export type Match = {
 
 export type Move = {
     player: string;
-    game: string;
     move: string;
     time: string;
+    friend?: string;
 }
 
 export type GameType = {

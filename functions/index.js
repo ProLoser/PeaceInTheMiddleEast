@@ -6,43 +6,46 @@ import * as admin from 'firebase-admin';
 admin.initializeApp();
 const db = admin.database();
 
-// Listen for new moves in games
-// Assuming moves are stored like /games/{gameId}/moves/{moveId}
-// Or simpler for this example, let's say the 'lastMove' is updated at /games/{gameId}/lastMove
-export const sendMoveNotification = functions.database.ref('/games/{gameId}/lastMove')
-  .onUpdate(async (change, context) => {
-    const afterData = change.after.val();
-    const gameId = context.params.gameId;
+// Cache for FCM tokens
+const tokenCache = new Map();
 
-    console.log(`Move updated in game ${gameId}:`, afterData);
+// Listen for new moves and send push notifications
+functions.database.ref('/moves')
+  .onChildAdded(async (change, context) => {
+    const move = change.after.val();
+    console.log('New move:', move);
 
-    // --- Your game logic here ---
-    const nextPlayerId = afterData.nextPlayerId;
-    const moveMessage = afterData.message || "A move was made!";
-    const currentPlayerId = afterData.currentPlayerId;
-
-    if (!nextPlayerId || nextPlayerId === currentPlayerId) {
-      console.log('No next player specified or same player, skipping notification.');
+    if (!move.friend) {
+      console.log('No friend specified, skipping notification.');
       return null;
     }
 
-    const recipientTokenSnapshot = await db.ref(`/users/${nextPlayerId}/fcmToken`).once('value');
-    const recipientToken = recipientTokenSnapshot.val();
+    // Check cache first
+    let recipientToken = tokenCache.get(move.friend);
+    
+    // If not in cache, fetch from database
+    if (!recipientToken) {
+      const recipientTokenSnapshot = await db.ref(`/users/${move.friend}/fcmToken`).once('value');
+      recipientToken = recipientTokenSnapshot.val();
+      
+      if (recipientToken) {
+        // Cache the token
+        tokenCache.set(move.friend, recipientToken);
+      }
+    }
 
     if (!recipientToken) {
-      console.log(`No FCM token found for user ${nextPlayerId}.`);
+      console.log(`No FCM token found for user ${move.friend}.`);
       return null;
     }
 
-    // --- Construct and Send the FCM Message ---
     const payload = {
       notification: {
-        title: `It's your turn in Game ${gameId}!`,
-        body: moveMessage,
+        title: `It's your turn!`,
+        body: move.move,
       },
       data: {
-        gameId: gameId,
-        type: 'new_move',
+        player: move.player,
       }
     };
 
@@ -52,6 +55,10 @@ export const sendMoveNotification = functions.database.ref('/games/{gameId}/last
 
       if (response.results && response.results[0] && response.results[0].error) {
          console.error('Failure sending notification to', recipientToken, ':', response.results[0].error);
+         // If token is invalid, remove from cache
+         if (response.results[0].error.code === 'messaging/invalid-registration-token') {
+           tokenCache.delete(move.friend);
+         }
       }
 
       return null;

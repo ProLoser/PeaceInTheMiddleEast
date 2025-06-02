@@ -232,9 +232,9 @@ export function App() {
       const time = new Date().toISOString();
       const nextMove: Move = {
         player: user?.val().uid,
-        game: match.game,
         move: `${nextState.dice.join("-")}: ${moveLabel}`,
         time,
+        friend: friend?.key!,
       }
       const update = {
         sort: time,
