@@ -9,7 +9,7 @@ export type UserData = {
     search: string;
     photoURL: string | null;
     language: string;
-    fcmToken: string;
+    fcmToken?: string;
 }
 
 export type ModalState = 'chat' | 'profile' | 'friends' | 'login' | boolean;
@@ -39,7 +39,7 @@ export type GameType = {
     status?: string;
     board: number[];
     dice: number[];
-    color: string;
+    color: 'black' | 'white';
     turn: string;
     prison: {
         black: number;

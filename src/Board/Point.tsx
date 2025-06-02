@@ -1,5 +1,4 @@
 import { useCallback, useRef, useState, type DragEventHandler } from "react";
-import { playCheckerSound } from '../Utils';
 import Piece from './Piece'
 
 type PointProps = {
@@ -15,7 +14,6 @@ export default function Point({ pieces, move, position, onSelect, selected }: Po
     const pieceRef = useRef<HTMLImageElement>(null);
     const onDragOver: DragEventHandler = useCallback((event) => { event.preventDefault(); }, [])
     const onDrop: DragEventHandler = useCallback((event) => {
-        playCheckerSound();
         navigator.vibrate?.(10);
         event.preventDefault();
         onSelect(null)

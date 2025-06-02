@@ -17,6 +17,7 @@ import './Toolbar.css'
 import { calculate, newGame, rollDie, vibrate } from './Utils';
 import firebase from "./firebase.config";
 import { saveMessagingDeviceToken } from './firebase-messaging-setup';
+import { playCheckerSound } from './Utils';
 
 // Start React
 ReactDOM.createRoot(document.getElementById('root')!).render(<StrictMode><App /></StrictMode>)
@@ -222,6 +223,7 @@ export function App() {
   const move = useCallback((from: number | "white" | "black", to: number) => {
     const { state: nextState, moveLabel } = calculate(game, from, to);
     if (!moveLabel) return;
+    playCheckerSound();
     setGame(nextState);
     // dispatch({ type: Actions.MOVE, data: { from, to } });
     // sendMove(nextState, `${nextState.dice.join("-")}: ${moveLabel}`);
