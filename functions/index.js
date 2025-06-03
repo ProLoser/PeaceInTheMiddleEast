@@ -5,8 +5,8 @@ admin.initializeApp();
 const db = admin.database();
 const tokenCache = new Map();
 
-exports.sendMoveNotification = onValueCreated('/moves/{moveId}', async (snapshot, context) => {
-    const move = snapshot.val();
+exports.sendMoveNotification = onValueCreated('/moves/{moveId}', async event => {
+    const move = event.data.val();
 
     if (!move.friend) {
       console.log('No friend specified, skipping notification.');
@@ -34,7 +34,7 @@ exports.sendMoveNotification = onValueCreated('/moves/{moveId}', async (snapshot
         title: `It's your turn!`,
         body: move.move,
       },
-      token: fcmToken,
+      token: recipientToken,
       data: {
         player: move.player,
       }
