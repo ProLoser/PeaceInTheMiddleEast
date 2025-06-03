@@ -1,35 +1,25 @@
-// functions/src/index.ts (NO CHANGE - Admin SDK syntax is standard)
-
-import * as functions from 'firebase-functions';
-import * as admin from 'firebase-admin';
+const {onValueCreated} = require("firebase-functions/v2/database");
+const admin = require('firebase-admin');
 
 admin.initializeApp();
 const db = admin.database();
-
-// Cache for FCM tokens
 const tokenCache = new Map();
 
-// Listen for new moves and send push notifications
-functions.database.ref('/moves')
-  .onChildAdded(async (change, context) => {
-    const move = change.after.val();
-    console.log('New move:', move);
+exports.sendMoveNotification = onValueCreated('/moves/{moveId}', async (snapshot, context) => {
+    const move = snapshot.val();
 
     if (!move.friend) {
       console.log('No friend specified, skipping notification.');
       return null;
     }
 
-    // Check cache first
     let recipientToken = tokenCache.get(move.friend);
     
-    // If not in cache, fetch from database
     if (!recipientToken) {
       const recipientTokenSnapshot = await db.ref(`/users/${move.friend}/fcmToken`).once('value');
       recipientToken = recipientTokenSnapshot.val();
       
       if (recipientToken) {
-        // Cache the token
         tokenCache.set(move.friend, recipientToken);
       }
     }
@@ -44,13 +34,14 @@ functions.database.ref('/moves')
         title: `It's your turn!`,
         body: move.move,
       },
+      token: fcmToken,
       data: {
         player: move.player,
       }
-    };
+  };
 
     try {
-      const response = await admin.messaging().sendToDevice(recipientToken, payload);
+      const response = await admin.messaging().send(payload);
       console.log('Successfully sent message:', response);
 
       if (response.results && response.results[0] && response.results[0].error) {
