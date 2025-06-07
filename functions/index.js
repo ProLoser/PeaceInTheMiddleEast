@@ -37,7 +37,12 @@ exports.sendMoveNotification = onValueCreated('/moves/{moveId}', async event => 
       token: recipientToken,
       data: {
         player: move.player,
-      }
+      },
+      webpush: { // Add webpush key for web-specific options
+          notification: {
+              tag: move.player // Use sender's ID as the tag
+          }
+      }      
   };
 
     try {

@@ -30,7 +30,9 @@ firebase.messaging().onBackgroundMessage((payload) => {
 
   const notificationTitle = payload.notification.title;
   const notificationOptions = {
-    body: payload.notification.body,
+    body: payload.notification.body, 
+    icon: '/android-chrome-512x512.png',
+    tag: payload.data.player || 'new_message', // Use player's UID as the tag
     icon: '/android-chrome-512x512.png'
   };
 

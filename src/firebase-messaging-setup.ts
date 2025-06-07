@@ -17,7 +17,7 @@ export async function saveMessagingDeviceToken() {
   }
 
   try {
-    // Request permission (using the compat messaging instance)
+    // Request permission (using the compat messaging instance)  
     const permission = await Notification.requestPermission();
     if (permission === 'granted') {
       console.log('Notification permission granted.');
@@ -48,9 +48,9 @@ export async function saveMessagingDeviceToken() {
 messaging.onMessage((payload) => {
   console.log('Message received in foreground.', payload);
   // Display the notification to the user in the app UI
-  if (payload.notification) {
-      alert(`New move in game: ${payload.notification.body}`); // Simple example
-  }
+  // if (payload.notification) {
+  //     alert(`New move in game: ${payload.notification.body}`); // Simple example
+  // }
 });
 
 // see public/firebase-messaging-sw.js
