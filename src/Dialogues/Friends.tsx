@@ -1,7 +1,8 @@
 // Import FirebaseAuth and firebase.
-import { useState, useCallback, useRef, ReactNode, useEffect } from 'react';
+import { useState, useCallback, useRef, ReactNode, useEffect, useContext } from 'react'; // Added useContext
 import type { ChangeEventHandler } from 'react';
 import { formatDistance } from 'date-fns';
+import DialogContext, { DialogContextType } from './DialogContext'; // Added DialogContext
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/database';
@@ -11,7 +12,14 @@ import './Friends.css'
 import ToggleFullscreen from '../ToggleFullscreen';
 type Users = { [key: string]: UserData }
 
-export default function Friends({ authUser, toggle, load, reset }) {
+export default function Friends({ authUser, load, reset }) { // Removed toggle from props
+    const context = useContext(DialogContext);
+    if (!context) {
+        console.error('DialogContext not found in Friends component');
+        return null;
+    }
+    const { toggleDialog } = context; // Destructure toggleDialog from context
+
     const searchRef = useRef<HTMLInputElement>(null);
     const [users, setUsers] = useState<Users>({});
     const [isExpanded, setIsExpanded] = useState(false);
@@ -63,7 +71,7 @@ export default function Friends({ authUser, toggle, load, reset }) {
     const NOW = new Date()
 
     const row = (user: UserData, match?: Match) => 
-        <li key={user.uid} onPointerUp={() => { load(user.uid, authUser.key); toggle() }}>
+        <li key={user.uid} onPointerUp={() => { load(user.uid, authUser.key); toggleDialog(false); }}> {/* Use toggleDialog(false) */}
             <Avatar user={user} />
             <div>
                 <h3>{user.name}</h3>
@@ -127,7 +135,7 @@ export default function Friends({ authUser, toggle, load, reset }) {
                     </li>
                     : null}
                 <li>
-                    <a onPointerUp={() => toggle('profile')}>
+                    <a onPointerUp={() => toggleDialog('profile')}> {/* Use toggleDialog('profile') */}
                         <span className="material-icons notranslate">manage_accounts</span>
                         Edit Profile
                     </a>

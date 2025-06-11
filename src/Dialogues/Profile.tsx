@@ -1,7 +1,8 @@
 // Import FirebaseAuth and firebase.
-import { useState, useCallback, ChangeEvent, useEffect } from 'react';
+import React, { useState, useCallback, ChangeEvent, useEffect, useContext } from 'react'; // Added React and useContext
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
+import DialogContext, { DialogContextType } from './DialogContext'; // Added DialogContext
 import 'firebase/compat/database';
 import Avatar from '../Avatar';
 import type { UserData } from '../Types';
@@ -110,7 +111,14 @@ export const LANGUAGES = ["af", "af-NA", "af-ZA", "agq", "agq-CM", "ak", "ak-GH"
     "zh-Hant-TW", "zu", "zu-ZA"];
 
 
-export default function Profile({ authUser, toggle }) {
+export default function Profile({ authUser }) { // Removed toggle from props
+    const context = useContext(DialogContext);
+    if (!context) {
+        console.error('DialogContext not found in Profile component');
+        return null;
+    }
+    const { toggleDialog } = context; // Destructure toggleDialog from context
+
     const [editing, setEditing] = useState<UserData>(authUser?.val() || { uid: '', name: '', language: '', photoURL: '' });
     const [currentNotificationPermission, setCurrentNotificationPermission] = useState(Notification.permission);
 
@@ -120,8 +128,8 @@ export default function Profile({ authUser, toggle }) {
         const userRef = firebase.database().ref(`users/${authUser!.key}`);
         userRef.set(editing);
         console.log('Saved', editing);
-        toggle('friends')
-    }, [editing, authUser]);
+        toggleDialog('friends'); // Use toggleDialog
+    }, [editing, authUser, toggleDialog]); // Added toggleDialog to dependencies
 
     const generateOnChange = (key: string) => (event: ChangeEvent<HTMLInputElement>) => {
         setEditing(editing => ({ ...editing, [key]: event.target.value }));
@@ -140,7 +148,7 @@ export default function Profile({ authUser, toggle }) {
         <form onSubmit={save}>
             <header>
                 <h1>
-                    <a onPointerUp={() => toggle('friends')}>
+                    <a onPointerUp={() => toggleDialog('friends')}> {/* Use toggleDialog */}
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-x"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M18 6l-12 12" /><path d="M6 6l12 12" /></svg>
                     </a>
                     Edit Profile
