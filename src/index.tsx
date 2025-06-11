@@ -4,10 +4,13 @@ import ReactDOM from 'react-dom/client'
 // import { initializeApp } from 'firebase/app';
 import type { Match, Move, GameType, SnapshotOrNullType, UserData, ModalState } from "./Types";
 import Avatar from "./Avatar";
-import Friends from "./Dialogues/Friends";
-import Chat from "./Dialogues/Chat";
-import Profile from "./Dialogues/Profile";
-import Login from "./Dialogues/Login";
+// Dialog components are now rendered by DialogContainer
+// import Friends from "./Dialogues/Friends";
+// import Chat from "./Dialogues/Chat";
+// import Profile from "./Dialogues/Profile";
+// import Login from "./Dialogues/Login";
+import DialogContext from './Dialogues/DialogContext';
+import DialogContainer from './Dialogues';
 import Dice from './Board/Dice';
 import Point from './Board/Point';
 import Piece from './Board/Piece';
@@ -30,33 +33,32 @@ export function App() {
   const [game, setGame] = useState<GameType>(newGame);
   const [user, setUser] = useState<SnapshotOrNullType>(null);
   const [hasAttemptedNotificationPermission, setHasAttemptedNotificationPermission] = useState(false);
-  const [state, setState] = useState<ModalState>(false);
-  const [lastState, setLastState] = useState<ModalState>('friends');
+  const [dialogState, setDialogState] = useState<ModalState>(false); // Renamed state to dialogState
+  const [lastDialogState, setLastDialogState] = useState<ModalState>('friends'); // Renamed lastState to lastDialogState
   const [match, setMatch] = useState<Match | null>(null);
   const [chats, setChats] = useState<SnapshotOrNullType>(null);
   const [friend, setFriend] = useState<SnapshotOrNullType>(null);
   const [selected, setSelected] = useState<number | null>(null);
 
-  const toggle = useCallback((newState: ModalState) => {
-    setState(prevState => {
-      if (typeof newState === 'string') { // Open
-        if (prevState) setLastState(prevState);
-        return newState
-      } else if (newState == true) { // Back
-        setLastState(lastState => {
-          newState = lastState;
-          return prevState;
-        });
+  const toggleDialog = useCallback((newState: ModalState) => { // Renamed toggle to toggleDialog
+    setDialogState(prevState => {
+      if (typeof newState === 'string') { // Open specific dialog
+        if (prevState) setLastDialogState(prevState);
         return newState;
-      } else if (newState === false) { // Close
-        if (prevState) setLastState(prevState);
+      } else if (newState === true) { // Back button: Go to lastDialogState
+        const actualNewState = lastDialogState;
+        setLastDialogState(prevState || false); // Save current state (or false if none) as the new last state
+        return actualNewState;
+      } else if (newState === false) { // Close dialog
+        if (prevState) setLastDialogState(prevState);
         return false;
-      } else { // Toggle
-        setLastState(prevState);
-        return prevState === 'friends' ? false : 'friends';
+      } else { // Toggle friends or close (original generic toggle)
+        const nextState = prevState === 'friends' ? false : 'friends';
+        if (prevState) setLastDialogState(prevState);
+        return nextState;
       }
     });
-  }, []);
+  }, [lastDialogState]); // Added lastDialogState to dependency array
 
   const load = useCallback(async (friendId: string = '', authUser?: string) => {
     if (friendId === 'PeaceInTheMiddleEast') return;
@@ -99,19 +101,19 @@ export function App() {
       database.ref(`matches/${friendId}/${authUser}`).set(data);
       setMatch(data);
     }
-    toggle(false)
-  }, [toggle]);
+    toggleDialog(false) // Use renamed function
+  }, [toggleDialog, database]); // Added database to dependency array as it's used inside
 
   const reset = useCallback(() => {
     if (confirm('Are you sure you want to reset the match?')) {
       console.log('Resetting', match?.game);
       let data = newGame()
       if (match?.game)
-        database.ref(`games/${match?.game}`).set(data);
+        database.ref(`games/${match?.game}`).set(data); // database is used here
       setGame(data);
-      toggle(false)
+      toggleDialog(false) // Use renamed function
     }
-  }, [match?.game, toggle])
+  }, [match?.game, toggleDialog, database]); // Added database to dependency array
 
 
   useEffect(() => {
@@ -152,7 +154,7 @@ export function App() {
 
   useEffect(() => {
     const requestPermission = async () => {
-      if (state === 'friends' && user && Notification.permission === 'default' && !hasAttemptedNotificationPermission) {
+      if (dialogState === 'friends' && user && Notification.permission === 'default' && !hasAttemptedNotificationPermission) { // Use renamed state
         console.log("Friends modal opened, attempting notification permission request via useEffect..."); // Dev log
         try {
           await saveMessagingDeviceToken();
@@ -165,7 +167,7 @@ export function App() {
     };
 
     requestPermission();
-  }, [state, user, hasAttemptedNotificationPermission]);
+  }, [dialogState, user, hasAttemptedNotificationPermission]); // Use renamed state
 
   // Subscribe to match
   useEffect(() => {
@@ -270,24 +272,21 @@ export function App() {
   const friendData = friend?.val();
 
   return (
-    <>
-      <dialog open={(friendData&&!user)||!!state}>
-        {user
-          ? state === 'friends'
-            ? <Friends authUser={user} load={load} toggle={toggle} reset={reset} />
-            : state === 'profile'
-              ? <Profile authUser={user} toggle={toggle} />
-              : state === 'chat'
-                ? <Chat chats={chats} user={user} />
-                : null
-          : <Login reset={reset} friend={friendData} load={load} />}
-      </dialog>
+    <DialogContext.Provider value={{ dialogState, toggleDialog, lastDialogState }}>
+      {/* Old dialog element removed */}
+      <DialogContainer
+        user={user}
+        friendData={friendData}
+        load={load}
+        reset={reset}
+        chats={chats}
+      />
 
       <div id="board">
-        <div id="toolbar" onPointerUp={toggle}>
+        <div id="toolbar" onPointerUp={() => toggleDialog(null)}>
           {friendData
             ? <Avatar user={friendData} />
-            : <a className={`material-icons notranslate ${state && 'active' || ''}`}>account_circle</a>}
+            : <a className={`material-icons notranslate ${dialogState && 'active' || ''}`}>account_circle</a>} {/* Use renamed state */}
           <h2>{friendData?.name ?? 'Local'}</h2>
         </div>
 
@@ -317,6 +316,6 @@ export function App() {
           <Point key={index} pieces={pieces} move={move} position={index} selected={selected} onSelect={onSelect} />
         )}
       </div >
-    </>
+    </DialogContext.Provider>
   );
 }
