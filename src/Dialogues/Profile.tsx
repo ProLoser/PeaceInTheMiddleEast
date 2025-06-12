@@ -1,13 +1,11 @@
 // Import FirebaseAuth and firebase.
-import React, { useState, useCallback, ChangeEvent, useEffect, useContext } from 'react'; // Added React and useContext
+import React, { useState, useCallback, useContext } from 'react'; // Added React and useContext
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
-import DialogContext, { DialogContextType } from './DialogContext'; // Added DialogContext
+import { DialogContext } from '.'; // Added DialogContext
 import 'firebase/compat/database';
-import Avatar from '../Avatar';
-import type { UserData } from '../Types';
 import './Profile.css'
-import { saveMessagingDeviceToken } from '../firebase-messaging-setup';
+import { SnapshotOrNullType } from '../Types';
 
 export const LANGUAGES = ["af", "af-NA", "af-ZA", "agq", "agq-CM", "ak", "ak-GH", "am",
     "am-ET", "ar", "ar-001", "ar-AE", "ar-BH", "ar-DJ", "ar-DZ",
@@ -110,80 +108,66 @@ export const LANGUAGES = ["af", "af-NA", "af-ZA", "agq", "agq-CM", "ak", "ak-GH"
     "zh-Hans-MO", "zh-Hans-SG", "zh-Hant", "zh-Hant-HK", "zh-Hant-MO",
     "zh-Hant-TW", "zu", "zu-ZA"];
 
+type ProfileProps = {
+    user: SnapshotOrNullType
+}
+export default function Profile({ user }: ProfileProps) {
+    const { toggle } = useContext(DialogContext)!;
 
-export default function Profile({ authUser }) { // Removed toggle from props
-    const context = useContext(DialogContext);
-    if (!context) {
-        console.error('DialogContext not found in Profile component');
-        return null;
-    }
-    const { toggleDialog } = context; // Destructure toggleDialog from context
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [name, setName] = useState(user?.val()?.name || '');
 
-    const [editing, setEditing] = useState<UserData>(authUser?.val() || { uid: '', name: '', language: '', photoURL: '' });
-    const [currentNotificationPermission, setCurrentNotificationPermission] = useState(Notification.permission);
-
-    const save = useCallback(async (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        if (!editing) return;
-        const userRef = firebase.database().ref(`users/${authUser!.key}`);
-        userRef.set(editing);
-        console.log('Saved', editing);
-        toggleDialog('friends'); // Use toggleDialog
-    }, [editing, authUser, toggleDialog]); // Added toggleDialog to dependencies
-
-    const generateOnChange = (key: string) => (event: ChangeEvent<HTMLInputElement>) => {
-        setEditing(editing => ({ ...editing, [key]: event.target.value }));
-    };
-
-    const handleEnableNotificationsClick = useCallback(async () => {
-        try {
-            await saveMessagingDeviceToken();
-        } catch (error) {
-            console.error("Error requesting notification permission from profile:", error);
-        }
-        setCurrentNotificationPermission(Notification.permission);
+    const handleNameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+        setName(e.target.value);
     }, []);
 
-    return <section id="profile">
-        <form onSubmit={save}>
-            <header>
-                <h1>
-                    <a onPointerUp={() => toggleDialog('friends')}> {/* Use toggleDialog */}
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-x"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M18 6l-12 12" /><path d="M6 6l12 12" /></svg>
-                    </a>
-                    Edit Profile
-                    <button type="submit">Save</button>
-                </h1>
-            </header>
-            <label>
-                Name
-                <input type="text" name="name" value={editing.name} onChange={generateOnChange('name')} placeholder="Name" />
-            </label>
-            <label>
-                Language
-                <select name="language" value={editing.language} onChange={generateOnChange('language')} placeholder="Language">
-                    {LANGUAGES.map(language => (
-                        <option key={language}>{language}</option>
-                    ))}
-                </select>
-            </label>
-            <label>
-                Avatar URL
-                <input type="text" name="photoURL" value={editing.photoURL || ''} onChange={generateOnChange('photoURL')} placeholder="Photo URL" />
-            </label>
-            <Avatar user={editing} />
+    const handleSave = useCallback(async () => {
+        if (!user?.key) return;
+        
+        setIsLoading(true);
+        setError(null);
+        try {
+            const userRef = firebase.database().ref(`users/${user.key}`);
+            await userRef.update({
+                name: name,
+                search: name.toLowerCase()
+            });
+            toggle(false);
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'An error occurred while saving profile');
+        } finally {
+            setIsLoading(false);
+        }
+    }, [user?.key, name, toggle]);
 
-            {(currentNotificationPermission === 'default' || currentNotificationPermission === 'denied') && (
-                <>
-                    <p>Enable notifications to stay updated on game events.</p>
-                    <button type="button" onClick={handleEnableNotificationsClick}>
-                        Enable Notifications
-                    </button>
-                </>
-            )}
-            {currentNotificationPermission === 'granted' && (
-                <p>Notifications are enabled.</p>
-            )}
-        </form>
-    </section>
+    if (!user) return null;
+
+    return (
+        <section id="profile">
+            <header>
+                <h1>Edit Profile</h1>
+            </header>
+            <div className="content">
+                {error && <div className="error">{error}</div>}
+                <div className="form-group">
+                    <label htmlFor="name">Name</label>
+                    <input
+                        id="name"
+                        type="text"
+                        value={name}
+                        onChange={handleNameChange}
+                        disabled={isLoading}
+                    />
+                </div>
+                <button
+                    className="save-profile"
+                    onClick={handleSave}
+                    disabled={isLoading}
+                >
+                    {isLoading ? 'Saving...' : 'Save Profile'}
+                </button>
+            </div>
+        </section>
+    );
 }

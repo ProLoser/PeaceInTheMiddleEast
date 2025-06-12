@@ -6,7 +6,7 @@ import 'firebaseui/dist/firebaseui.css';
 import * as firebaseui from 'firebaseui';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
-import ToggleFullscreen from '../ToggleFullscreen';
+import ToggleFullscreen from './ToggleFullscreen';
 import './Login.css';
 
 // Configure FirebaseUI.

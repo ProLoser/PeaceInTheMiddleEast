@@ -1,96 +1,68 @@
-import React, { useContext, useRef, useEffect } from 'react';
-import DialogContext, { DialogContextType } from './DialogContext';
+import React, { useRef, useEffect, createContext, useState, useCallback, useMemo } from 'react';
 import Friends from './Friends';
 import Chat from './Chat';
 import Profile from './Profile';
 import Login from './Login';
-import type { UserData, SnapshotOrNullType } from '../Types'; // Assuming these types are needed from App.tsx
+import type { UserData, SnapshotOrNullType } from '../Types';
 
-// Props that DialogContainer will receive from App.tsx
-// These are the props that were originally passed to the individual dialog components from App.tsx
-interface DialogContainerProps {
-  user: SnapshotOrNullType; // From App's state
-  friendData: UserData | null | undefined; // From App's state (derived from `friend` snapshot)
-  load: (friendId?: string, authUser?: string) => void; // From App's methods
-  reset: () => void; // From App's methods
-  chats: SnapshotOrNullType; // From App's state
-  // Add any other props that individual dialogs might need from App.tsx
+export type DialogContextType = {
+  state: string | boolean;
+  toggle: (value: string | boolean) => void;
+};
+
+export const DialogContext = createContext<DialogContextType | undefined>(undefined);
+
+interface DialoguesProps {
+  user: SnapshotOrNullType;
+  friendData: UserData | null | undefined;
+  load: (friendId?: string, authUser?: string) => void;
+  reset: () => void;
+  chats: SnapshotOrNullType; 
+  children: React.ReactNode
 }
 
-const DialogContainer: React.FC<DialogContainerProps> = ({
-  user,
-  friendData,
-  load,
-  reset,
-  chats,
-}) => {
-  const context = useContext(DialogContext);
-
-  if (!context) {
-    // This should not happen if the provider is set up correctly in App.tsx
-    console.error('DialogContext not found. Make sure DialogProvider is wrapping this component.');
-    return null;
-  }
-
-  const { dialogState, toggleDialog } = context;
+export default function Dialogues({ user, friendData, load, reset, chats, children }: DialoguesProps) {
+  const [state, setState] = useState<string | boolean>(false);
   const dialogRef = useRef<HTMLDialogElement>(null);
 
-  // Determine if the dialog should be open
-  // This combines the logic from the original <dialog open={(friendData&&!user)||!!state}>
-  const isOpen = (friendData && !user) || !!dialogState;
+  const toggle = useCallback((value: string | boolean) => {
+    setState(value);
+  }, []);
 
-  // Effect for managing "click outside to close"
+  const value = useMemo(() => ({ state, toggle }), [state, toggle]);
+
+  const isOpen = (friendData && !user) || !!state;
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      // If the dialog is shown and the click is outside its content
-      if (dialogRef.current && !dialogRef.current.contains(event.target as Node)) {
-        toggleDialog(false);
+      if (dialogRef.current && !dialogRef.current.contains(event.target as Node) && dialogRef.current.open) {
+        toggle(false);
       }
     };
 
-    if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
+    document.addEventListener('mousedown', handleClickOutside);
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isOpen, toggleDialog]); // Dependencies for the click outside effect
-
-  // Effect for calling showModal and close on the dialog element
-  useEffect(() => {
-    if (dialogRef.current) {
-      if (isOpen) {
-        if (!dialogRef.current.open) {
-          dialogRef.current.showModal();
-        }
-      } else {
-        if (dialogRef.current.open) {
-          dialogRef.current.close();
-        }
-      }
-    }
-  }, [isOpen]);
-
-  if (!isOpen) {
-    return null; // Don't render the dialog if it shouldn't be open
-  }
+  }, [toggle]);
 
   return (
-    <dialog ref={dialogRef} onCancel={() => toggleDialog(false)}>
-      {user ? (
-        dialogState === 'friends' ? (
-          <Friends authUser={user} load={load} reset={reset} />
-        ) : dialogState === 'profile' ? (
-          <Profile authUser={user} />
-        ) : dialogState === 'chat' ? (
-          <Chat chats={chats} user={user} />
-        ) : null
-      ) : (
-        <Login reset={reset} friend={friendData} load={load} />
-      )}
-    </dialog>
+    <DialogContext.Provider value={value}>
+      <dialog ref={dialogRef} onCancel={() => toggle(false)} open={isOpen}>
+        {user ? (
+          state === 'friends' ? (
+            <Friends user={user} load={load} reset={reset} />
+          ) : state === 'profile' ? (
+            <Profile user={user} />
+          ) : state === 'chat' ? (
+            <Chat chats={chats} user={user} />
+          ) : null
+        ) : (
+          <Login reset={reset} friend={friendData} load={load} />
+        )}
+      </dialog>
+      {children}
+    </DialogContext.Provider>
   );
-};
-
-export default DialogContainer;
+}

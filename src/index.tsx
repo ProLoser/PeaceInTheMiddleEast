@@ -2,25 +2,19 @@ import { StrictMode, useEffect, useState, useCallback, type DragEventHandler } f
 import ReactDOM from 'react-dom/client'
 // TODO: Upgrade to modular after firebaseui upgrades
 // import { initializeApp } from 'firebase/app';
-import type { Match, Move, GameType, SnapshotOrNullType, UserData, ModalState } from "./Types";
-import Avatar from "./Avatar";
-// Dialog components are now rendered by DialogContainer
-// import Friends from "./Dialogues/Friends";
-// import Chat from "./Dialogues/Chat";
-// import Profile from "./Dialogues/Profile";
-// import Login from "./Dialogues/Login";
-import DialogContext from './Dialogues/DialogContext';
-import DialogContainer from './Dialogues';
+import type { Match, Move, GameType, SnapshotOrNullType, UserData } from "./Types";
+import Dialogues from './Dialogues';
 import Dice from './Board/Dice';
 import Point from './Board/Point';
 import Piece from './Board/Piece';
+import Toolbar from './Board/Toolbar';
 import './index.css'
 import './Board/Board.css';
-import './Toolbar.css'
+import './Board/Toolbar.css'
 import { calculate, newGame, rollDie, vibrate } from './Utils';
 import firebase from "./firebase.config";
-import { saveMessagingDeviceToken } from './firebase-messaging-setup';
 import { playCheckerSound } from './Utils';
+import type firebaseType from 'firebase/compat/app';
 
 // Start React
 ReactDOM.createRoot(document.getElementById('root')!).render(<StrictMode><App /></StrictMode>)
@@ -32,33 +26,10 @@ export function App() {
   const database = firebase.database();
   const [game, setGame] = useState<GameType>(newGame);
   const [user, setUser] = useState<SnapshotOrNullType>(null);
-  const [hasAttemptedNotificationPermission, setHasAttemptedNotificationPermission] = useState(false);
-  const [dialogState, setDialogState] = useState<ModalState>(false); // Renamed state to dialogState
-  const [lastDialogState, setLastDialogState] = useState<ModalState>('friends'); // Renamed lastState to lastDialogState
   const [match, setMatch] = useState<Match | null>(null);
   const [chats, setChats] = useState<SnapshotOrNullType>(null);
   const [friend, setFriend] = useState<SnapshotOrNullType>(null);
   const [selected, setSelected] = useState<number | null>(null);
-
-  const toggleDialog = useCallback((newState: ModalState) => { // Renamed toggle to toggleDialog
-    setDialogState(prevState => {
-      if (typeof newState === 'string') { // Open specific dialog
-        if (prevState) setLastDialogState(prevState);
-        return newState;
-      } else if (newState === true) { // Back button: Go to lastDialogState
-        const actualNewState = lastDialogState;
-        setLastDialogState(prevState || false); // Save current state (or false if none) as the new last state
-        return actualNewState;
-      } else if (newState === false) { // Close dialog
-        if (prevState) setLastDialogState(prevState);
-        return false;
-      } else { // Toggle friends or close (original generic toggle)
-        const nextState = prevState === 'friends' ? false : 'friends';
-        if (prevState) setLastDialogState(prevState);
-        return nextState;
-      }
-    });
-  }, [lastDialogState]); // Added lastDialogState to dependency array
 
   const load = useCallback(async (friendId: string = '', authUser?: string) => {
     if (friendId === 'PeaceInTheMiddleEast') return;
@@ -76,6 +47,11 @@ export function App() {
       return;
     }
 
+    if (!authUser) {
+      console.error('Cannot load friend without being authenticated');
+      return;
+    }
+
     const friendSnapshot = await database.ref(`users/${friendId}`).get();
     if (!friendSnapshot.exists()) {
       console.error('User not found', friendId);
@@ -83,7 +59,6 @@ export function App() {
     }
 
     setFriend(friendSnapshot);
-    if (!authUser) return;
     const matchSnapshot = await database.ref(`matches/${authUser}/${friendId}`).get();
     if (matchSnapshot.exists()) {
       setMatch(await matchSnapshot.val());
@@ -101,20 +76,17 @@ export function App() {
       database.ref(`matches/${friendId}/${authUser}`).set(data);
       setMatch(data);
     }
-    toggleDialog(false) // Use renamed function
-  }, [toggleDialog, database]); // Added database to dependency array as it's used inside
+  }, [database]);
 
   const reset = useCallback(() => {
     if (confirm('Are you sure you want to reset the match?')) {
       console.log('Resetting', match?.game);
       let data = newGame()
       if (match?.game)
-        database.ref(`games/${match?.game}`).set(data); // database is used here
+        database.ref(`games/${match?.game}`).set(data);
       setGame(data);
-      toggleDialog(false) // Use renamed function
     }
-  }, [match?.game, toggleDialog, database]); // Added database to dependency array
-
+  }, [match?.game, database]);
 
   useEffect(() => {
     // Autoload Match upon Login
@@ -146,34 +118,16 @@ export function App() {
       } else {
         setUser(null);
         setMatch(null);
-        setHasAttemptedNotificationPermission(false);
       }
     });
     return () => unregisterAuthObserver();
   }, []);
 
-  useEffect(() => {
-    const requestPermission = async () => {
-      if (dialogState === 'friends' && user && Notification.permission === 'default' && !hasAttemptedNotificationPermission) { // Use renamed state
-        console.log("Friends modal opened, attempting notification permission request via useEffect..."); // Dev log
-        try {
-          await saveMessagingDeviceToken();
-        } catch (error) {
-          console.error("Error requesting notification permission from useEffect:", error); // Dev log
-        } finally {
-          setHasAttemptedNotificationPermission(true);
-        }
-      }
-    };
-
-    requestPermission();
-  }, [dialogState, user, hasAttemptedNotificationPermission]); // Use renamed state
-
   // Subscribe to match
   useEffect(() => {
     if (match?.game) {
       const gameRef = database.ref(`games/${match?.game}`)
-      const onValue = (snapshot: DataSnapshot) => {
+      const onValue = (snapshot: firebaseType.database.DataSnapshot) => {
         const value = snapshot.val();
         if (value) {
           setGame(game => {
@@ -247,7 +201,6 @@ export function App() {
       database.ref(`games/${match.game}`).set(nextState)
       database.ref(`matches/${user?.key}/${friend?.key}`).update(update);
       database.ref(`matches/${friend?.key}/${user?.key}`).update(update);
-
     }
   }, [game, match?.game, user, friend]);
 
@@ -272,26 +225,16 @@ export function App() {
   const friendData = friend?.val();
 
   return (
-    <DialogContext.Provider value={{ dialogState, toggleDialog, lastDialogState }}>
-      {/* Old dialog element removed */}
-      <DialogContainer
-        user={user}
-        friendData={friendData}
-        load={load}
-        reset={reset}
-        chats={chats}
-      />
-
+    <Dialogues
+      user={user}
+      friendData={friendData}
+      load={load}
+      reset={reset}
+      chats={chats}
+    >
       <div id="board">
-        <div id="toolbar" onPointerUp={() => toggleDialog(null)}>
-          {friendData
-            ? <Avatar user={friendData} />
-            : <a className={`material-icons notranslate ${dialogState && 'active' || ''}`}>account_circle</a>} {/* Use renamed state */}
-          <h2>{friendData?.name ?? 'Local'}</h2>
-        </div>
-
-        <Dice onPointerUp={rollDice} values={game.dice} color={game.color} />
-
+        <Toolbar friendData={friend} />
+        <Dice onPointerUp={rollDice} values={game.dice as [number | undefined, number | undefined]} color={game.color} />
         <div className="bar">
           {Array.from({ length: game.prison?.white }, (_, index) =>
             <Piece key={index} position={-1} color="white" />
@@ -315,7 +258,7 @@ export function App() {
         {game.board.map((pieces: number, index: number) =>
           <Point key={index} pieces={pieces} move={move} position={index} selected={selected} onSelect={onSelect} />
         )}
-      </div >
-    </DialogContext.Provider>
+      </div>
+    </Dialogues>
   );
 }

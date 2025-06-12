@@ -1,36 +1,57 @@
 // Import FirebaseAuth and firebase.
-import { useState, useCallback, useRef, ReactNode, useEffect, useContext } from 'react'; // Added useContext
+import { useState, useCallback, useRef, ReactNode, useEffect, useContext } from 'react';
 import type { ChangeEventHandler } from 'react';
 import { formatDistance } from 'date-fns';
-import DialogContext, { DialogContextType } from './DialogContext'; // Added DialogContext
+import { DialogContext } from '.';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/database';
-import { UserData, Match } from '../Types';
+import { UserData, Match, SnapshotOrNullType } from '../Types';
 import Avatar from '../Avatar';
 import './Friends.css'
-import ToggleFullscreen from '../ToggleFullscreen';
+import ToggleFullscreen from './ToggleFullscreen';
+import { saveMessagingDeviceToken } from '../firebase-messaging-setup';
+
 type Users = { [key: string]: UserData }
 
-export default function Friends({ authUser, load, reset }) { // Removed toggle from props
-    const context = useContext(DialogContext);
-    if (!context) {
-        console.error('DialogContext not found in Friends component');
-        return null;
-    }
-    const { toggleDialog } = context; // Destructure toggleDialog from context
+type FriendsProps = {
+    user: SnapshotOrNullType;
+    load: (userId: string, key: string) => void;
+    reset: () => void;
+}
+
+export default function Friends({ user, load, reset }: FriendsProps) {
+    const { toggle } = useContext(DialogContext)!;
 
     const searchRef = useRef<HTMLInputElement>(null);
     const [users, setUsers] = useState<Users>({});
     const [isExpanded, setIsExpanded] = useState(false);
     const [matches, setMatches] = useState<firebase.database.DataSnapshot>([]);
     const [searchResults, setSearchResults] = useState<firebase.database.DataSnapshot>([]);
+    const [hasAttemptedNotificationPermission, setHasAttemptedNotificationPermission] = useState(false);
+
+    // Request notification permission when Friends component mounts
+    useEffect(() => {
+        const requestPermission = async () => {
+            if (user && Notification.permission === 'default' && !hasAttemptedNotificationPermission) {
+                console.log("Friends modal opened, attempting notification permission request...");
+                try {
+                    await saveMessagingDeviceToken();
+                } catch (error) {
+                    console.error("Error requesting notification permission:", error);
+                } finally {
+                    setHasAttemptedNotificationPermission(true);
+                }
+            }
+        };
+        requestPermission();
+    }, [user, hasAttemptedNotificationPermission]);
 
     // Synchronize Matches
     useEffect(() => {
-        if (!authUser) return;
+        if (!user) return;
 
-        const queryMatches = firebase.database().ref(`matches/${authUser.key}`).orderByChild('sort').limitToLast(100);
+        const queryMatches = firebase.database().ref(`matches/${user.key}`).orderByChild('sort').limitToLast(100);
         const subscriber = (snapshot: firebase.database.DataSnapshot) => {
             setMatches(snapshot);
             snapshot.forEach(match => {
@@ -47,31 +68,38 @@ export default function Friends({ authUser, load, reset }) { // Removed toggle f
         return () => {
             queryMatches.off('value', subscriber);
         }
-    }, [authUser]);
+    }, [user]);
 
     const onSearch: ChangeEventHandler<HTMLInputElement> = useCallback(async () => {
         if (searchRef.current?.value) {
             const search = searchRef.current.value
             const searchSnapshot = await firebase.database().ref('users').orderByChild('search').startAt(search.toLocaleLowerCase()).get();
-            // const results: UserData[] = []
-            // searchSnapshot.forEach(result => {
-            //     results.push(result.val())
-            // })
             setSearchResults(searchSnapshot)
         } else {
             setSearchResults([])
         }
     }, []);
 
-    if (!authUser) return null;
+    if (!user) return null;
 
     const renderFriends: ReactNode[] = []
     const friends: string[] = []
 
     const NOW = new Date()
 
+    const handleLoad = useCallback((userId: string) => {
+        if (!user?.key) return;
+        load(userId, user.key);
+        toggle(false);
+    }, [load, user?.key, toggle]);
+
+    const handleReset = useCallback(() => {
+        reset();
+        toggle(false);
+    }, [reset, toggle]);
+
     const row = (user: UserData, match?: Match) => 
-        <li key={user.uid} onPointerUp={() => { load(user.uid, authUser.key); toggleDialog(false); }}> {/* Use toggleDialog(false) */}
+        <li key={user.uid} onPointerUp={() => handleLoad(user.uid)}>
             <Avatar user={user} />
             <div>
                 <h3>{user.name}</h3>
@@ -95,15 +123,15 @@ export default function Friends({ authUser, load, reset }) { // Removed toggle f
     })
     searchResults.forEach(result => {
         const resultData: UserData = result.val()
-        if (result.key === authUser.key || friends.includes(result.key) || searchReject(resultData)) {
+        if (result.key === user.key || friends.includes(result.key) || searchReject(resultData)) {
             return;
         }
         renderFriends.push(row(resultData))
     })
 
     const invite = () => {
-        if (authUser.key) {
-            const shareUrl = (new URL(authUser.key, location.href)).toString()
+        if (user.key) {
+            const shareUrl = (new URL(user.key, location.href)).toString()
             navigator.clipboard?.writeText?.(shareUrl)
             navigator.share?.({
                 url: shareUrl,
@@ -135,13 +163,13 @@ export default function Friends({ authUser, load, reset }) { // Removed toggle f
                     </li>
                     : null}
                 <li>
-                    <a onPointerUp={() => toggleDialog('profile')}> {/* Use toggleDialog('profile') */}
+                    <a onPointerUp={() => toggle('profile')}>
                         <span className="material-icons notranslate">manage_accounts</span>
                         Edit Profile
                     </a>
                 </li>
                 <li>
-                    <a onPointerUp={reset}>
+                    <a onPointerUp={handleReset}>
                         <span className="material-icons notranslate">restart_alt</span>
                         Reset Match
                     </a>
@@ -167,7 +195,7 @@ export default function Friends({ authUser, load, reset }) { // Removed toggle f
             </menu>
             <h1>
                 <span>
-                    <span>{authUser.val().name}'s</span>
+                    <span>{user.val().name}'s</span>
                     Matches
                 </span>
             </h1>
