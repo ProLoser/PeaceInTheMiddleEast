@@ -7,7 +7,7 @@ import type { UserData, SnapshotOrNullType } from '../Types';
 
 export type DialogContextType = {
   state: string | boolean;
-  toggle: (value: string | boolean) => void;
+  toggle: (value?: string | boolean) => void;
 };
 
 export const DialogContext = createContext<DialogContextType | undefined>(undefined);
@@ -23,11 +23,19 @@ interface DialoguesProps {
 
 export default function Dialogues({ user, friendData, load, reset, chats, children }: DialoguesProps) {
   const [state, setState] = useState<string | boolean>(false);
+  const [lastDialog, setLastDialog] = useState<string>("friends");
   const dialogRef = useRef<HTMLDialogElement>(null);
 
-  const toggle = useCallback((value: string | boolean) => {
-    setState(value);
-  }, []);
+  const toggle = useCallback((value?: string | boolean) => {
+    if (value === undefined) {
+      setState(lastDialog);
+    } else if (typeof value === 'string') {
+      setState(value);
+      setLastDialog(value);
+    } else {
+      setState(value);
+    }
+  }, [lastDialog]);
 
   const value = useMemo(() => ({ state, toggle }), [state, toggle]);
 
