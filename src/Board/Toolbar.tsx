@@ -13,7 +13,7 @@ export default function Toolbar({ friendData }: ToolbarProps) {
   const friendDataValue = friendData?.val();
 
   return (
-    <div id="toolbar" onPointerUp={() => toggle('friends')}>
+    <div id="toolbar" onPointerUp={(e) => { toggle('friends'); e.stopPropagation(); }}>
       {friendDataValue
         ? <Avatar user={friendDataValue} />
         : <a className={`material-icons notranslate ${dialogState && 'active' || ''}`}>account_circle</a>}
