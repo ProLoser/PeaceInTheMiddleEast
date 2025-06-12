@@ -28,7 +28,7 @@ export default function Dialogues({ user, friendData, load, reset, chats, childr
 
   const toggle = useCallback((value?: string | boolean) => {
     if (value === undefined) {
-      setState(lastDialog);
+      setState(state => state ? false : lastDialog);
     } else if (typeof value === 'string') {
       setState(value);
       setLastDialog(value);
