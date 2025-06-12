@@ -41,11 +41,11 @@ export default function Dialogues({ user, friendData, load, reset, chats, childr
     };
 
     if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('pointerup', handleClickOutside);
     }
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('pointerup', handleClickOutside);
     };
   }, [isOpen, toggle]);
 
