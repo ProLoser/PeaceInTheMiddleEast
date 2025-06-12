@@ -36,9 +36,7 @@ export default function Dialogues({ user, friendData, load, reset, chats, childr
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dialogRef.current && !dialogRef.current.contains(event.target as Node) && dialogRef.current.open) {
-        if (state !== false) {
-          toggle(false);
-        }
+        toggle(false);
       }
     };
 
