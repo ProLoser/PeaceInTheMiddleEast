@@ -40,12 +40,14 @@ export default function Dialogues({ user, friendData, load, reset, chats, childr
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [toggle]);
+  }, [isOpen, toggle]);
 
   return (
     <DialogContext.Provider value={value}>
