@@ -94,6 +94,12 @@ export default function Login({ reset, friend, load }: LoginProps) {
                             Report Bug
                         </a>
                     </li>
+                    <li>
+                        <a href="https://github.com/ProLoser/PeaceInTheMiddleEast/" target="_blank" rel="noopener noreferrer">
+                            <span className="material-icons notranslate">info</span>
+                            About
+                        </a>
+                    </li>
                 </menu>
                 <h1>Play {friend?friend.name:'Online'}</h1>
             </header>
