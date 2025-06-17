@@ -168,7 +168,8 @@ export function App() {
       // local
       setGame({
         ...game,
-        dice
+        dice,
+        status: 'moving'
       });
     }
 
