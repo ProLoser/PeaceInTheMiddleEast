@@ -27,7 +27,7 @@ export const newGame = (oldGame?: GameType) => ({
         black: 0,
         white: 0,
     },
-    status: oldGame?.status || null
+    status: oldGame?.status || 'rolling'
 } as GameType);
 
 /**
