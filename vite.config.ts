@@ -13,6 +13,13 @@ export default defineConfig({
       devOptions: {
         enabled: true
       },
+      includeAssets: [
+        '*.mp3',
+        'icons/*.png',
+        'favicon.ico',
+        'apple-touch-icon.png',
+        'safari-pinned-tab.svg' // Added based on existing files in public/
+      ],
       manifest: {
         theme_color: '#ed7560',
         orientation: 'portrait',
@@ -27,7 +34,25 @@ export default defineConfig({
             src: 'android-chrome-512x512.png',
             sizes: '512x512',
             type: 'image/png'
-          }
+          },
+          { src: 'icons/digit-1-black.png', sizes: '72x72', type: 'image/png' },
+          { src: 'icons/digit-1-white.png', sizes: '72x72', type: 'image/png' },
+          { src: 'icons/digit-2-black.png', sizes: '72x72', type: 'image/png' },
+          { src: 'icons/digit-2-white.png', sizes: '72x72', type: 'image/png' },
+          { src: 'icons/digit-3-black.png', sizes: '72x72', type: 'image/png' },
+          { src: 'icons/digit-3-white.png', sizes: '72x72', type: 'image/png' },
+          { src: 'icons/digit-4-black.png', sizes: '72x72', type: 'image/png' },
+          { src: 'icons/digit-4-white.png', sizes: '72x72', type: 'image/png' },
+          { src: 'icons/digit-5-black.png', sizes: '72x72', type: 'image/png' },
+          { src: 'icons/digit-5-white.png', sizes: '72x72', type: 'image/png' },
+          { src: 'icons/digit-6-black.png', sizes: '72x72', type: 'image/png' },
+          { src: 'icons/digit-6-white.png', sizes: '72x72', type: 'image/png' },
+          { src: 'icons/piece-black-2-sh.png', sizes: '72x72', type: 'image/png' },
+          { src: 'icons/piece-black-2.png', sizes: '72x72', type: 'image/png' },
+          { src: 'icons/piece-black.png', sizes: '72x72', type: 'image/png' },
+          { src: 'icons/piece-white-2-sh.png', sizes: '72x72', type: 'image/png' },
+          { src: 'icons/piece-white-2.png', sizes: '72x72', type: 'image/png' },
+          { src: 'icons/piece-white.png', sizes: '72x72', type: 'image/png' }
         ]
       }
     })
