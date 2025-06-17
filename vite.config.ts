@@ -13,6 +13,13 @@ export default defineConfig({
       devOptions: {
         enabled: true
       },
+      includeAssets: [
+        '*.mp3',
+        'icons/*.png',
+        'favicon.ico',
+        'apple-touch-icon.png',
+        'safari-pinned-tab.svg' // Added based on existing files in public/
+      ],
       manifest: {
         theme_color: '#ed7560',
         orientation: 'portrait',
