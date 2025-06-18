@@ -30,6 +30,18 @@ export const newGame = (oldGame?: GameType) => ({
     status: oldGame?.status || 'rolling'
 } as GameType);
 
+export function nextMove(state: GameType, usedDice: number[] = [], from?: number) {
+    let availableMoves: number[] = []
+    
+    if (from !== undefined) {
+        // calculate available destinations
+    } else {
+        // calculate available starting points
+    }
+    
+    return availableMoves
+}
+
 /**
  * 
  * @param state 
