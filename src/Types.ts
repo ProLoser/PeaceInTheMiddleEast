@@ -12,6 +12,17 @@ export type UserData = {
     fcmToken?: string;
 }
 
+export enum Color = {
+    White = 'WHITE',
+    Black = 'BLACK',
+}
+
+export enum Status {
+  Rolling = 'ROLLING',
+  Moving = 'MOVING',
+  GameOver = 'GAME_OVER',
+}
+
 export type ModalState = 'chat' | 'profile' | 'friends' | 'login' | boolean;
 
 export type ModalContextType = {
