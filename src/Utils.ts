@@ -8,6 +8,11 @@ export const DEFAULT_BOARD = [
     -5, 0, 0, 0, 3, 0, 5, 0, 0, 0, 0, -2,
 ];
 
+const HOME_INDEXES = {
+    white: [18, 23],
+    black: [6, 11]
+}
+
 export function rollDie() {
     return Math.floor(Math.random() * 6) + 1;
 }
@@ -44,6 +49,11 @@ export function nextMove(state: GameType, usedDice: number[] = [], from?: number
         const index = availableDice.indexOf(die)  
         if (~index) availableDice.splice(index,1)
     })
+
+    const allHome = () => 
+        15 === state.home[player] + state.board
+          .slice(HOME_INDEXES[player][0], HOME_INDEXES[player][1])
+          .reduce((a,b)=>a+Math.abs(b),0)
     
     if (from === undefined) { // calculate starting points
         if (state.prison[player]) { // pieces are on bar
@@ -52,6 +62,8 @@ export function nextMove(state: GameType, usedDice: number[] = [], from?: number
                 if (unprotected(state.board[point]))
                     availableMoves.add(point)
             })
+        } else if (allHome()) { // bear off 
+            
         } else { // normal
 
         }
