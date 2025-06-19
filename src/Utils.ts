@@ -2,7 +2,9 @@ import { type GameType } from "./Types";
 
 // White = Positive, Black = Negative
 export const DEFAULT_BOARD = [
+    // index:           6             11
     5, 0, 0, 0, -3, 0, -5, 0, 0, 0, 0, 2,
+    // index:         18              23
     -5, 0, 0, 0, 3, 0, 5, 0, 0, 0, 0, -2,
 ];
 
@@ -31,12 +33,30 @@ export const newGame = (oldGame?: GameType) => ({
 } as GameType);
 
 export function nextMove(state: GameType, usedDice: number[] = [], from?: number) {
-    let availableMoves: number[] = []
+    const availableMoves = new Set<number>();
+    const player = state.color;
+    const unprotected = (pieces: number) => player === 'white' ? pieces >= -1 : pieces <= 1;
+    const availableDice = [...state.dice]
+    // Check for Doubles
+    if (availableDice[0] === availableDice[1]) availableDice.push(availableDice[0], availableDice[0])
+    // Filter used 
+    usedDice.forEach(die => {
+        const index = availableDice.indexOf(die)  
+        if (~index) availableDice.splice(index,1)
+    })
     
-    if (from !== undefined) {
-        // calculate available destinations
-    } else {
-        // calculate available starting points
+    if (from === undefined) { // calculate starting points
+        if (state.prison[player]) { // pieces are on bar
+            availableDice.forEach(die => {
+                const point = player == 'white' ? 12 - die : 24 - die
+                if (unprotected(state.board[point]))
+                    availableMoves.add(point)
+            })
+        } else { // normal
+
+        }
+    } else { // calculate destinations
+        
     }
     
     return availableMoves
