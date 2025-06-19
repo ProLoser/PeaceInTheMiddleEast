@@ -51,9 +51,12 @@ export function nextMove(state: GameType, usedDice: number[] = [], from?: number
     })
 
     const allHome = () => 
-        15 === state.home[player] + state.board
+        15 === state.board
           .slice(HOME_INDEXES[player][0], HOME_INDEXES[player][1])
-          .reduce((a,b)=>a+Math.abs(b),0)
+          .reduce(
+              (total, value) => total + Math.abs(value), 
+              state.home[player]
+          )
     
     if (from === undefined) { // calculate starting points
         if (state.prison[player]) { // pieces are on bar
