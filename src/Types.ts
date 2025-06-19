@@ -40,10 +40,10 @@ export type Match = {
 }
 
 export type Move = {
-    player: string;
+    player: UserData['uid'];
     move: string;
     time: string;
-    friend?: string;
+    friend?: UserData['uid'];
 }
 
 export type GameType = {
@@ -65,7 +65,7 @@ export type Chat = {
         // timestamp
         [key: number]: {
             // cj123
-            author: string,
+            author: UserData['uid'],
             // Hello World!
             message: string
         }
