@@ -12,7 +12,7 @@ export type UserData = {
     fcmToken?: string;
 }
 
-export enum Color = {
+export enum Color {
     White = 'white',
     Black = 'black',
 }
