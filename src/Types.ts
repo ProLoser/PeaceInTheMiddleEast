@@ -13,8 +13,8 @@ export type UserData = {
 }
 
 export enum Color = {
-    White = 'WHITE',
-    Black = 'BLACK',
+    White = 'white',
+    Black = 'black',
 }
 
 export enum Status {
@@ -23,11 +23,11 @@ export enum Status {
   GameOver = 'GAME_OVER',
 }
 
-export type ModalState = 'chat' | 'profile' | 'friends' | 'login' | boolean;
+export type ModalState = 'chat' | 'profile' | 'friends' | 'login';
 
 export type ModalContextType = {
-    toggle: (newState: ModalState) => void;
-    state: ModalState;
+    toggle: (newState?: ModalState | boolean) => void;
+    state: ModalState | false;
 };
 
 export type Match = {
@@ -47,18 +47,16 @@ export type Move = {
 }
 
 export type GameType = {
-    status?: string;
+    status?: Status;
     board: number[];
-    dice: number[];
-    color: 'black' | 'white';
-    turn: string;
+    dice: [number, number];
+    color: Color;
+    turn: UserData['uid'];
     prison: {
-        black: number;
-        white: number;
+        [color in Color]: number;
     };
     home: {
-        black: number;
-        white: number;
+        [color in Color]: number;
     };
 };
 
