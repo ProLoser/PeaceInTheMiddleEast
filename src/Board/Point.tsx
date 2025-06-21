@@ -27,7 +27,7 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
     const color = pieces > 0 ? Color.White : Color.Black;
 
     const onDragStart: DragEventHandler = useCallback((event) => {
-        // if (!enabled) return;
+        if (!enabled) return;
         onSelect(position)
         setDragging(true)        
         event.dataTransfer?.setDragImage(pieceRef.current, 50, 50);
@@ -63,6 +63,7 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
                 color={color} 
                 position={position} 
                 onSelect={onSelect} 
+                enabled={enabled}
             />
         )}
     </div>

@@ -11,30 +11,30 @@ type PieceProps = {
     color: Color,
     position?: number,
     onSelect?: (position: number|null) => void,
+    enabled?: boolean
 }
 
-const Piece = forwardRef<HTMLImageElement, PieceProps>(({ color, position, onSelect }, ref) => {
+const Piece = forwardRef<HTMLImageElement, PieceProps>(({ color, position, onSelect, enabled = false }, ref) => {
     const onDragStart: DragEventHandler = useCallback((event) => {
+        if (!enabled || position === undefined) { // home
+            onSelect?.(null)
+            event.preventDefault()
+            return;
+        }
         playCheckerSound();
         navigator.vibrate?.(10);
-        switch (position) {
-            case undefined: // Home
-                onSelect?.(null)
-                event.preventDefault()
-                break;
-            case -1: // Bar
-                event.dataTransfer?.setData('text', color)
-                event.stopPropagation()
-                onSelect?.(-1)
-                break;
-            default: // Board
-                event.dataTransfer?.setData('text', position.toString())
-                event.stopPropagation()
-                onSelect?.(position)
+        if (position === -1) {
+            event.dataTransfer?.setData('text', color)
+            event.stopPropagation()
+            onSelect?.(-1)
+        } else {
+            event.dataTransfer?.setData('text', position.toString())
+            event.stopPropagation()
+            onSelect?.(position)
         }
-    }, [position, color, onSelect]);
+    }, [position, color, onSelect, enabled]);
     
-    return <div className={`piece ${color}`} onDragStart={onDragStart} draggable={position !== undefined}>
+    return <div className={`piece ${color}`} onDragStart={onDragStart} draggable={enabled}>
         <img ref={ref} src={IMAGES[color]} />
     </div>
 })

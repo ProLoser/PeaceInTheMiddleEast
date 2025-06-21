@@ -11,7 +11,7 @@ import Toolbar from './Board/Toolbar';
 import './index.css'
 import './Board/Board.css';
 import './Board/Toolbar.css'
-import { calculate, newGame, rollDie, vibrate } from './Utils';
+import { calculate, newGame, populated, rollDie, vibrate } from './Utils';
 import firebase from "./firebase.config";
 import { playCheckerSound } from './Utils';
 import type firebaseType from 'firebase/compat/app';
@@ -215,12 +215,8 @@ export function App() {
   }, [move])
 
   const onSelect = useCallback((position: number | null) => {
-    if (position === null || selected !== null) {
-      setSelected(null);
-    } else {
-      setSelected(position);
-    }
-  }, [selected])
+    setSelected(position)
+  }, [selected]) // this dependency is necessary for some reason
 
   const friendData = friend?.val();
 
@@ -237,12 +233,22 @@ export function App() {
         <Dice onPointerUp={rollDice} values={game.dice} color={game.color} used={usedDice} />
         <div className="bar">
           {Array.from({ length: game.prison?.white }, (_, index) =>
-            <Piece key={index} position={-1} color={Color.White} />
+            <Piece 
+              key={index} 
+              position={-1} 
+              color={Color.White} 
+              enabled={!game.color || game.color === Color.White} 
+            />
           )}
         </div>
         <div className="bar">
           {Array.from({ length: game.prison?.black }, (_, index) =>
-            <Piece key={index} position={-1} color={Color.Black} />
+            <Piece 
+              key={index} 
+              position={-1} 
+              color={Color.Black} 
+              enabled={!game.color || game.color === Color.Black} 
+            />
           )}
         </div>
         <div className="home" onDragOver={onDragOver} onDrop={onDrop}>
@@ -257,7 +263,7 @@ export function App() {
         </div>
         {game.board.map((pieces: number, index: number) =>
           <Point 
-            enabled={pieces !== 0} 
+            enabled={!game.color && pieces !== 0 || populated(game.color, pieces)} 
             key={index} 
             pieces={pieces} 
             move={move} 

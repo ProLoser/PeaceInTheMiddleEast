@@ -1,6 +1,10 @@
 import { Color, Status, type GameType } from "./Types";
 
-// White = Positive, Black = Negative
+export const PLAYER_SIGN = {
+    white: 1,
+    black: -1
+};
+
 export const DEFAULT_BOARD: GameType['board'] = [
     // index:           6             11
     5, 0, 0, 0, -3, 0, -5, 0, 0, 0, 0, 2,
@@ -37,11 +41,57 @@ export const newGame = (oldGame?: GameType) => ({
     status: oldGame?.status || 'rolling'
 } as GameType);
 
+
+    
+export const populated = (player: Color, pieces: number) => PLAYER_SIGN[player] * pieces > 0
+export const unprotected = (player: Color, pieces: number) => PLAYER_SIGN[player] * pieces <= 1;
+export const allHome = (player: Color, state: GameType) => 
+    15 === state.board
+        .slice(HOME_INDEXES[player][0], HOME_INDEXES[player][1])
+        .reduce(
+            (total, value) => total + Math.abs(value), 
+            state.home[player]
+        )
+
+export const farthestHome = (player: Color, state: GameType) => {
+    for (let point = HOME_INDEXES[player][0]; point <= HOME_INDEXES[player][1]; point++) {
+        if (populated(player, state.board[point])) {
+            return point
+        }
+    }
+    return 0;
+}
+
+export const destination = (player: Color, point: number, die: number) => {
+    let newPoint;
+    if (player === Color.White) {
+        if (point > 11) { // bottom
+            newPoint = point + die // right
+            if (newPoint > HOME_INDEXES[player][1]) return -1; // off
+            return newPoint;
+        } else { // top
+            let newPoint = point - die; // left
+            if (newPoint < 0) return 11 + -1 * newPoint // wrap 
+            return newPoint
+        }
+    } else { // black
+        if (point < 12) { // top
+            newPoint = point + die; // right
+            if (newPoint > HOME_INDEXES[player][1]) return -1; // off
+            return newPoint;
+        } else { // bottom
+            let newPoint = point - die; // left
+            if (newPoint < 12) return Math.abs(newPoint - 12) // wrap 
+            return newPoint
+        }
+    }
+}
+
 export function nextMove(state: GameType, usedDice: number[] = [], from?: number) {
     const availableMoves = new Set<number>();
     const player = state.color;
-    const playerSign = player === 'white' ? 1 : -1;
-    const [homeStart, homeEnd] = HOME_INDEXES[player]
+    const playerSign = PLAYER_SIGN[player];
+    const [, homeEnd] = HOME_INDEXES[player]
     const availableDice = [...state.dice]
     // Check for Doubles
     if (availableDice[0] === availableDice[1]) availableDice.push(availableDice[0], availableDice[0])
@@ -51,75 +101,31 @@ export function nextMove(state: GameType, usedDice: number[] = [], from?: number
         if (~index) availableDice.splice(index,1)
     })
     
-    const populated = (pieces: number) => playerSign * pieces > 0
-    const unprotected = (pieces: number) => playerSign * pieces <= 1;
-    const allHome = () => 
-        15 === state.board
-          .slice(homeStart, homeEnd)
-          .reduce(
-              (total, value) => total + Math.abs(value), 
-              state.home[player]
-          )
-
-    const farthestHome = () => {
-        for (let point = homeStart; point <= homeEnd; point++) {
-            if (populated(state.board[point])) {
-                return point
-            }
-        }
-        return 0;
-    }
-
-    const destination = (point: number, die: number) => {
-        let newPoint;
-        if (player === Color.White) {
-            if (point > 11) { // bottom
-                newPoint = point + die // right
-                if (newPoint > homeEnd) return -1; // off
-                return newPoint;
-            } else { // top
-                let newPoint = point - die; // left
-                if (newPoint < 0) return 11 + -1 * newPoint // wrap 
-                return newPoint
-            }
-        } else { // black
-            if (point < 12) { // top
-                newPoint = point + die; // right
-                if (newPoint > 11) return -1; // off
-                return newPoint;
-            } else { // bottom
-                let newPoint = point - die; // left
-                if (newPoint < 12) return Math.abs(newPoint - 12) // wrap 
-                return newPoint
-            }
-        }
-    }
-    
     if (from === undefined) { // calculate starting points
         if (state.prison[player]) { // pieces are on bar
             availableDice.forEach(die => {
-                const point = player == 'white' ? 12 - die : 24 - die
-                if (unprotected(state.board[point]))
+                const point = player == Color.White ? 12 - die : 24 - die
+                if (unprotected(player, state.board[point]))
                     availableMoves.add(point)
             })
         } else { 
             // normal moves
             state.board.forEach((value, point) => {
                 if (
-                    populated(value)
+                    populated(player, value)
                     && availableDice.find(die => {
-                        return unprotected(point + die * playerSign)
+                        return unprotected(player, point + die * playerSign)
                     })
                 )
                     availableMoves.add(point)
             })
 
-            if (allHome()) { // bear off moves
-                const farthestPoint = farthestHome()
+            if (allHome(player, state)) { // bear off moves
+                const farthestPoint = farthestHome(player, state)
                 availableDice.forEach(die => {
                     const point = homeEnd - die + 1
                     if (
-                        populated(state.board[point]) // exact
+                        populated(player, state.board[point]) // exact
                         || die > homeEnd - farthestPoint // within
                     ) {
                         availableMoves.add(point)
@@ -129,8 +135,8 @@ export function nextMove(state: GameType, usedDice: number[] = [], from?: number
         }
     } else { // calculate destinations, assume only valid from points are provided
         availableDice.forEach(die => {
-            const point = destination(from, die)
-            if (point !== undefined && (point === -1 || unprotected(state.board[point])))
+            const point = destination(player, from, die)
+            if (point !== undefined && (point === -1 || unprotected(player, state.board[point])))
                 availableMoves.add(point)
         })
     }
@@ -145,11 +151,11 @@ export function nextMove(state: GameType, usedDice: number[] = [], from?: number
  * @param to 
  * @returns moveLabel is not returned if the move is blocked
  */
-export function calculate(state: GameType, from: number | "white" | "black", to: number) {
+export function calculate(state: GameType, from: number | Color, to: number) {
     if (from === to) return { state }; // no move
     const nextGame: GameType = newGame(state);
     let moveLabel: string; // @see https://en.wikipedia.org/wiki/Backgammon_notation
-    if (from === "white") {
+    if (from === Color.White) {
         // white re-enter
         if (nextGame.board[to] === -1) {
             // hit
@@ -166,7 +172,7 @@ export function calculate(state: GameType, from: number | "white" | "black", to:
             // blocked
             return { state };
         }
-    } else if (from === "black") {
+    } else if (from === Color.Black) {
         // black re-enter
         if (nextGame.board[to] === 1) {
             // hit
