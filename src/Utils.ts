@@ -1,7 +1,7 @@
 import { Color, Status, type GameType } from "./Types";
 
 // White = Positive, Black = Negative
-export const DEFAULT_BOARD = [
+export const DEFAULT_BOARD: GameType['board'] = [
     // index:           6             11
     5, 0, 0, 0, -3, 0, -5, 0, 0, 0, 0, 2,
     // index:         18              23

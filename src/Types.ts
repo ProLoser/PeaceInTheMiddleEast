@@ -48,7 +48,7 @@ export type Move = {
 
 export type GameType = {
     status?: Status;
-    board: number[];
+    board: number[] & { length: 24 };
     dice: [number, number];
     color: Color;
     turn: UserData['uid'];

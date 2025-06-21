@@ -30,6 +30,7 @@ export function App() {
   const [chats, setChats] = useState<SnapshotOrNullType>(null);
   const [friend, setFriend] = useState<SnapshotOrNullType>(null);
   const [selected, setSelected] = useState<number | null>(null);
+  const [usedDice, setUsedDice] = useState<number[]>([]);
 
   const load = useCallback(async (friendId: string = '', authUser?: string) => {
     if (friendId === 'PeaceInTheMiddleEast') return;
@@ -152,7 +153,7 @@ export function App() {
   }, [match?.game]);
 
   const rollDice = useCallback(() => {
-    const dice = [rollDie(), rollDie()];
+    const dice = [rollDie(), rollDie()] as GameType['dice'];
     if (match?.game) {
       // online
       if (game.turn === user?.val().uid)
@@ -173,6 +174,7 @@ export function App() {
       });
     }
 
+    setUsedDice([]);
     diceSound.play();
     vibrate();
   }, [match?.game, game, user]);
@@ -209,7 +211,7 @@ export function App() {
   const onDrop: DragEventHandler = useCallback((event) => {
     event.preventDefault();
     let from = parseInt(event.dataTransfer?.getData("text")!)
-    return move(from, -1,)
+    move(from, -1)
   }, [move])
 
   const onSelect = useCallback((position: number | null) => {
@@ -235,7 +237,7 @@ export function App() {
     >
       <div id="board">
         <Toolbar friendData={friend} />
-        <Dice onPointerUp={rollDice} values={game.dice as [number | undefined, number | undefined]} color={game.color} />
+        <Dice onPointerUp={rollDice} values={game.dice} color={game.color} used={usedDice} />
         <div className="bar">
           {Array.from({ length: game.prison?.white }, (_, index) =>
             <Piece key={index} position={-1} color={Color.White} />
@@ -257,7 +259,15 @@ export function App() {
           )}
         </div>
         {game.board.map((pieces: number, index: number) =>
-          <Point key={index} pieces={pieces} move={move} position={index} selected={selected} onSelect={onSelect} />
+          <Point 
+            enabled={pieces !== 0} 
+            key={index} 
+            pieces={pieces} 
+            move={move} 
+            position={index} 
+            selected={selected} 
+            onSelect={onSelect} 
+          />
         )}
       </div>
     </Dialogues>
