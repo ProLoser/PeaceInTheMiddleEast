@@ -6,7 +6,18 @@
     
     img {
         aspect-ratio: 1;
-        max-width: 100%;
+        flex-basis: 0;
+        flex-grow: 1;
+        min-height: 0;
+        width: auto;
+        height: auto;
+        object-fit: contain;
+        min-width: 0;
         max-height: 100%;
+        max-width: 100%;
+        transition: opacity .2s;
+        &.used {
+            opacity: .5;
+        }
     }
 }
