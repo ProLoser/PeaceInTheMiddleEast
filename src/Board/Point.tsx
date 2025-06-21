@@ -16,28 +16,23 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
     const pieceRef = useRef<HTMLImageElement>(null);
     const onDragOver: DragEventHandler = useCallback((event) => { event.preventDefault(); }, [])
     const onDrop: DragEventHandler = useCallback((event) => {
+        if (!enabled) return;
         navigator.vibrate?.(10);
         event.preventDefault();
         onSelect(null)
         let from = event.dataTransfer?.getData("text")!
         return move(from, position)
-    }, [move])
+    }, [move, enabled])
 
     const color = pieces > 0 ? Color.White : Color.Black;
 
     const onDragStart: DragEventHandler = useCallback((event) => {
-        // if (pieces === 0) return;
-
+        if (!enabled) return;
         onSelect(null)
-        setDragging(true)
-
-        if (pieces)
-            event.dataTransfer?.setDragImage(pieceRef.current, 50, 50);
-
-        // Set drag data
-        if (position !== undefined || pieces !== 0)
-            event.dataTransfer?.setData('text/plain', position?.toString());
-    }, [position, pieces, pieceRef, onSelect]);
+        setDragging(true)        
+        event.dataTransfer?.setDragImage(pieceRef.current, 50, 50);
+        event.dataTransfer?.setData('text/plain', position?.toString());
+    }, [position, pieceRef, onSelect, enabled]);
 
     const onDragEnd = useCallback(() => {
         setDragging(false);
@@ -45,9 +40,9 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
 
     const onPointerUp = useCallback(() => {
         if (dragging) return;
-        if (pieces !== 0 || selected !== null && enabled)
+        if (enabled || selected !== null)
             onSelect(position)
-    }, [pieces, position, onSelect, dragging, enabled])
+    }, [position, onSelect, dragging, enabled])
 
     return <div className={`point ${selected === position ? 'selected' : ''}`} 
         draggable={enabled}
@@ -57,6 +52,14 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
         onDragStart={onDragStart}
         onDragEnd={onDragEnd}
     >
-        {Array.from({ length: Math.abs(pieces) }, (_, index) => <Piece ref={index == 0 ? pieceRef : null} key={index} color={color} position={position} onSelect={onSelect} />)}
+        {Array.from({ length: Math.abs(pieces) }, (_, index) => 
+            <Piece 
+                ref={index == 0 ? pieceRef : null} 
+                key={index} 
+                color={color} 
+                position={position} 
+                onSelect={onSelect} 
+            />
+        )}
     </div>
 }
