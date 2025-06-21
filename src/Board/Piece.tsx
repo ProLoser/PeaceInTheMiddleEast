@@ -21,8 +21,7 @@ const Piece = forwardRef<HTMLImageElement, PieceProps>(({ color, position, onSel
             event.preventDefault()
             return;
         }
-        playCheckerSound();
-        navigator.vibrate?.(10);
+        navigator.vibrate?.(5);
         if (position === -1) {
             event.dataTransfer?.setData('text', color)
             event.stopPropagation()
