@@ -215,15 +215,12 @@ export function App() {
   }, [move])
 
   const onSelect = useCallback((position: number | null) => {
-    if (position === null || selected === position) {
+    if (position === null || selected !== null) {
       setSelected(null);
-    } else if (selected === null) {
-      setSelected(position);
     } else {
-      move(selected, position);
-      setSelected(null);
+      setSelected(position);
     }
-  }, [selected, move])
+  }, [selected])
 
   const friendData = friend?.val();
 

@@ -16,7 +16,7 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
     const pieceRef = useRef<HTMLImageElement>(null);
     const onDragOver: DragEventHandler = useCallback((event) => { event.preventDefault(); }, [])
     const onDrop: DragEventHandler = useCallback((event) => {
-        if (!enabled) return;
+        // if (!enabled) return;
         navigator.vibrate?.(10);
         event.preventDefault();
         onSelect(null)
@@ -27,8 +27,8 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
     const color = pieces > 0 ? Color.White : Color.Black;
 
     const onDragStart: DragEventHandler = useCallback((event) => {
-        if (!enabled) return;
-        onSelect(null)
+        // if (!enabled) return;
+        onSelect(position)
         setDragging(true)        
         event.dataTransfer?.setDragImage(pieceRef.current, 50, 50);
         event.dataTransfer?.setData('text/plain', position?.toString());
@@ -40,8 +40,12 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
 
     const onPointerUp = useCallback(() => {
         if (dragging) return;
-        if (enabled || selected !== null)
+        if (selected !== null) {
+            onSelect(null)
+            move(selected, position)
+        } else if (enabled) {
             onSelect(position)
+        }
     }, [position, onSelect, dragging, enabled])
 
     return <div className={`point ${selected === position ? 'selected' : ''}`} 

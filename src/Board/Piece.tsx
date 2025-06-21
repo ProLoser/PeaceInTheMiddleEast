@@ -17,18 +17,20 @@ const Piece = forwardRef<HTMLImageElement, PieceProps>(({ color, position, onSel
     const onDragStart: DragEventHandler = useCallback((event) => {
         playCheckerSound();
         navigator.vibrate?.(10);
-        if (onSelect) onSelect(null)
         switch (position) {
             case undefined: // Home
+                onSelect?.(null)
                 event.preventDefault()
                 break;
             case -1: // Bar
                 event.dataTransfer?.setData('text', color)
                 event.stopPropagation()
+                onSelect?.(-1)
                 break;
             default: // Board
                 event.dataTransfer?.setData('text', position.toString())
                 event.stopPropagation()
+                onSelect?.(position)
         }
     }, [position, color, onSelect]);
     
