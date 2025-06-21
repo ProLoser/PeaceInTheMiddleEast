@@ -13,6 +13,7 @@ type DiceProps = {
 export default function Dice({ onPointerUp, values = [6, 6], used = [], color }: DiceProps) {
     let dice = [values[0]!, values[1]!];
     
+    // Show doubles when rules enabled
     if (color && values[0] === values[1])
         dice.push(values[0]!, values[1]!);
     
