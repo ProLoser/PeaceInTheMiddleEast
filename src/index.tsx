@@ -2,7 +2,7 @@ import { StrictMode, useEffect, useState, useCallback, type DragEventHandler } f
 import ReactDOM from 'react-dom/client'
 // TODO: Upgrade to modular after firebaseui upgrades
 // import { initializeApp } from 'firebase/app';
-import type { Match, Move, GameType, SnapshotOrNullType, UserData } from "./Types";
+import { type Match, type Move, type GameType, type SnapshotOrNullType, type UserData, Color, Status } from "./Types";
 import Dialogues from './Dialogues';
 import Dice from './Board/Dice';
 import Point from './Board/Point';
@@ -160,16 +160,16 @@ export function App() {
 
       database.ref(`games/${match?.game}`).update({
         dice,
-        color: game.color === 'white' ? 'black' : 'white',
+        color: game.color === Color.White ? Color.Black : Color.White,
         turn: user?.val().uid,
-        status: 'moving'
+        status: Status.Moving
       });
     } else {
       // local
       setGame({
         ...game,
         dice,
-        status: 'moving'
+        status: Status.Moving
       });
     }
 
@@ -238,22 +238,22 @@ export function App() {
         <Dice onPointerUp={rollDice} values={game.dice as [number | undefined, number | undefined]} color={game.color} />
         <div className="bar">
           {Array.from({ length: game.prison?.white }, (_, index) =>
-            <Piece key={index} position={-1} color="white" />
+            <Piece key={index} position={-1} color={Color.White} />
           )}
         </div>
         <div className="bar">
           {Array.from({ length: game.prison?.black }, (_, index) =>
-            <Piece key={index} position={-1} color="black" />
+            <Piece key={index} position={-1} color={Color.Black} />
           )}
         </div>
         <div className="home" onDragOver={onDragOver} onDrop={onDrop}>
           {Array.from({ length: game.home?.black }, (_, index) =>
-            <Piece key={index} color="black" />
+            <Piece key={index} color={Color.Black} />
           )}
         </div>
         <div className="home" onDragOver={onDragOver} onDrop={onDrop}>
           {Array.from({ length: game.home?.white }, (_, index) =>
-            <Piece key={index} color="white" />
+            <Piece key={index} color={Color.White} />
           )}
         </div>
         {game.board.map((pieces: number, index: number) =>

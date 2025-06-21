@@ -1,9 +1,10 @@
 import { useCallback, useRef, useState, type DragEventHandler } from "react";
 import Piece from './Piece'
+import { Color } from "../Types";
 
 type PointProps = {
     pieces: number,
-    move: (from: number | 'black' | 'white', to: number) => void,
+    move: (from: number | Color, to: number) => void,
     position: number,
     selected: number | null,
     onSelect: (position: number | null) => void
@@ -21,7 +22,7 @@ export default function Point({ pieces, move, position, onSelect, selected }: Po
         return move(from, position)
     }, [move])
 
-    const color = pieces > 0 ? 'white' : 'black';
+    const color = pieces > 0 ? Color.White : Color.Black;
 
     const onDragStart: DragEventHandler = useCallback((event) => {
         // if (pieces === 0) return;

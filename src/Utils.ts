@@ -1,4 +1,4 @@
-import { type GameType } from "./Types";
+import { Color, Status, type GameType } from "./Types";
 
 // White = Positive, Black = Negative
 export const DEFAULT_BOARD = [
@@ -40,23 +40,60 @@ export const newGame = (oldGame?: GameType) => ({
 export function nextMove(state: GameType, usedDice: number[] = [], from?: number) {
     const availableMoves = new Set<number>();
     const player = state.color;
-    const unprotected = (pieces: number) => player === 'white' ? pieces >= -1 : pieces <= 1;
+    const playerSign = player === 'white' ? 1 : -1;
+    const [homeStart, homeEnd] = HOME_INDEXES[player]
     const availableDice = [...state.dice]
     // Check for Doubles
     if (availableDice[0] === availableDice[1]) availableDice.push(availableDice[0], availableDice[0])
-    // Filter used 
+        // Filter used 
     usedDice.forEach(die => {
         const index = availableDice.indexOf(die)  
         if (~index) availableDice.splice(index,1)
     })
-
+    
+    const populated = (pieces: number) => playerSign * pieces > 0
+    const unprotected = (pieces: number) => playerSign * pieces <= 1;
     const allHome = () => 
         15 === state.board
-          .slice(HOME_INDEXES[player][0], HOME_INDEXES[player][1])
+          .slice(homeStart, homeEnd)
           .reduce(
               (total, value) => total + Math.abs(value), 
               state.home[player]
           )
+
+    const farthestHome = () => {
+        for (let point = homeStart; point <= homeEnd; point++) {
+            if (populated(state.board[point])) {
+                return point
+            }
+        }
+        return 0;
+    }
+
+    const destination = (point: number, die: number) => {
+        let newPoint;
+        if (player === Color.White) {
+            if (point > 11) { // bottom
+                newPoint = point + die // right
+                if (newPoint > homeEnd) return -1; // off
+                return newPoint;
+            } else { // top
+                let newPoint = point - die; // left
+                if (newPoint < 0) return 11 + -1 * newPoint // wrap 
+                return newPoint
+            }
+        } else { // black
+            if (point < 12) { // top
+                newPoint = point + die; // right
+                if (newPoint > 11) return -1; // off
+                return newPoint;
+            } else { // bottom
+                let newPoint = point - die; // left
+                if (newPoint < 12) return Math.abs(newPoint - 12) // wrap 
+                return newPoint
+            }
+        }
+    }
     
     if (from === undefined) { // calculate starting points
         if (state.prison[player]) { // pieces are on bar
@@ -65,13 +102,37 @@ export function nextMove(state: GameType, usedDice: number[] = [], from?: number
                 if (unprotected(state.board[point]))
                     availableMoves.add(point)
             })
-        } else if (allHome()) { // bear off 
-            
-        } else { // normal
+        } else { 
+            // normal moves
+            state.board.forEach((value, point) => {
+                if (
+                    populated(value)
+                    && availableDice.find(die => {
+                        return unprotected(point + die * playerSign)
+                    })
+                )
+                    availableMoves.add(point)
+            })
 
+            if (allHome()) { // bear off moves
+                const farthestPoint = farthestHome()
+                availableDice.forEach(die => {
+                    const point = homeEnd - die + 1
+                    if (
+                        populated(state.board[point]) // exact
+                        || die > homeEnd - farthestPoint // within
+                    ) {
+                        availableMoves.add(point)
+                    }
+                })
+            }
         }
-    } else { // calculate destinations
-        
+    } else { // calculate destinations, assume only valid from points are provided
+        availableDice.forEach(die => {
+            const point = destination(from, die)
+            if (point !== undefined && (point === -1 || unprotected(state.board[point])))
+                availableMoves.add(point)
+        })
     }
     
     return availableMoves
@@ -153,7 +214,7 @@ export function calculate(state: GameType, from: number | "white" | "black", to:
         nextGame.board[from] -= Math.sign(nextGame.board[from]);
 
         nextGame.status = nextGame.home.white === 15 || nextGame.home.black === 15 ?
-            'game over' : 'rolling';
+            Status.GameOver : Status.Rolling;
     }
     return { state: nextGame, moveLabel };
 }

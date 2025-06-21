@@ -3,11 +3,12 @@ import { playCheckerSound } from '../Utils';
 import black from './images/piece-black-2.png';
 import white from './images/piece-white-2.png';
 import './Piece.css'
+import { Color } from "../Types";
 
 const IMAGES = { black, white }
 
 type PieceProps = {
-    color: 'black' | 'white',
+    color: Color,
     position?: number,
     onSelect?: (position: number|null) => void,
 }
