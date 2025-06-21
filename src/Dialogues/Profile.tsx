@@ -123,7 +123,7 @@ export default function Profile({ user }: ProfileProps) {
     }, []);
 
     const handleSave = useCallback(async () => {
-        if (!user?.key) return;
+        if (!user?.key) return false;
         
         setIsLoading(true);
         setError(null);
@@ -139,6 +139,7 @@ export default function Profile({ user }: ProfileProps) {
         } finally {
             setIsLoading(false);
         }
+        return false;
     }, [user?.key, name, toggle]);
 
     if (!user) return null;
@@ -148,7 +149,7 @@ export default function Profile({ user }: ProfileProps) {
             <header>
                 <h1>Edit Profile</h1>
             </header>
-            <div className="content">
+            <form className="content" onSubmit={handleSave}>
                 {error && <div className="error">{error}</div>}
                 <div className="form-group">
                     <label htmlFor="name">Name</label>
@@ -162,12 +163,19 @@ export default function Profile({ user }: ProfileProps) {
                 </div>
                 <button
                     className="save-profile"
-                    onClick={handleSave}
                     disabled={isLoading}
+                    type="submit"
                 >
                     {isLoading ? 'Saving...' : 'Save Profile'}
                 </button>
-            </div>
+                <button
+                    className="cancel"
+                    type="button"
+                    onClick={() => toggle('friends')}
+                >
+                    Cancel
+                </button>
+            </form>
         </section>
     );
 }

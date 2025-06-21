@@ -42,10 +42,8 @@ export default function Dialogues({ user, friendData, load, reset, chats, childr
   const isOpen = (friendData && !user) || !!state;
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dialogRef.current && !dialogRef.current.contains(event.target as Node) && dialogRef.current.open) {
-        toggle(false);
-      }
+    const handleClickOutside = () => {
+      toggle(false);
     };
 
     if (isOpen) {
@@ -59,7 +57,7 @@ export default function Dialogues({ user, friendData, load, reset, chats, childr
 
   return (
     <DialogContext.Provider value={value}>
-      <dialog ref={dialogRef} onCancel={() => toggle(false)} open={isOpen}>
+      <dialog ref={dialogRef} onCancel={() => toggle(false)} open={isOpen} onPointerUp={event => event.stopPropagation()}>
         {user ? (
           state === 'friends' ? (
             <Friends user={user} load={load} reset={reset} />
