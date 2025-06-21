@@ -44,7 +44,7 @@ export const newGame = (oldGame?: GameType) => ({
 
     
 export const populated = (player: Color, pieces: number) => PLAYER_SIGN[player] * pieces > 0
-export const unprotected = (player: Color, pieces: number) => PLAYER_SIGN[player] * pieces <= 1;
+export const unprotected = (player: Color, pieces: number) => PLAYER_SIGN[player] * pieces >= -1;
 export const allHome = (player: Color, state: GameType) => 
     15 === state.board
         .slice(HOME_INDEXES[player][0], HOME_INDEXES[player][1])
@@ -89,32 +89,29 @@ export const destination = (player: Color, point: number, die: number) => {
 
 export function nextMove(state: GameType, usedDice: number[] = [], from?: number) {
     const availableMoves = new Set<number>();
+    if (!state.color) return availableMoves;
     const player = state.color;
-    const playerSign = PLAYER_SIGN[player];
     const [, homeEnd] = HOME_INDEXES[player]
     const availableDice = [...state.dice]
     // Check for Doubles
     if (availableDice[0] === availableDice[1]) availableDice.push(availableDice[0], availableDice[0])
-        // Filter used 
+        // Filter used 
     usedDice.forEach(die => {
         const index = availableDice.indexOf(die)  
         if (~index) availableDice.splice(index,1)
     })
     
-    if (from === undefined) { // calculate starting points
+    if (from === undefined || from === null) { // calculate starting points
         if (state.prison[player]) { // pieces are on bar
-            availableDice.forEach(die => {
-                const point = player == Color.White ? 12 - die : 24 - die
-                if (unprotected(player, state.board[point]))
-                    availableMoves.add(point)
-            })
+            availableMoves.add(-1)
         } else { 
             // normal moves
             state.board.forEach((value, point) => {
                 if (
                     populated(player, value)
                     && availableDice.find(die => {
-                        return unprotected(player, point + die * playerSign)
+                        const dest = destination(player, point, die)
+                        return dest !== undefined && dest !== -1 && unprotected(player, state.board[dest])
                     })
                 )
                     availableMoves.add(point)
@@ -134,11 +131,19 @@ export function nextMove(state: GameType, usedDice: number[] = [], from?: number
             }
         }
     } else { // calculate destinations, assume only valid from points are provided
-        availableDice.forEach(die => {
-            const point = destination(player, from, die)
-            if (point !== undefined && (point === -1 || unprotected(player, state.board[point])))
-                availableMoves.add(point)
-        })
+        if (state.prison[player]) {
+            availableDice.forEach(die => {
+                const point = player == Color.White ? 12 - die : 24 - die
+                if (unprotected(player, state.board[point]))
+                    availableMoves.add(point)
+            })
+        } else {
+            availableDice.forEach(die => {
+                const point = destination(player, from, die)
+                if (point !== undefined && (point === -1 || unprotected(player, state.board[point])))
+                    availableMoves.add(point)
+            })
+        }
     }
     
     return availableMoves

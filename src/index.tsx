@@ -1,4 +1,4 @@
-import { StrictMode, useEffect, useState, useCallback, type DragEventHandler } from "react";
+import { StrictMode, useEffect, useState, useCallback, type DragEventHandler, useMemo } from "react";
 import ReactDOM from 'react-dom/client'
 // TODO: Upgrade to modular after firebaseui upgrades
 // import { initializeApp } from 'firebase/app';
@@ -11,7 +11,7 @@ import Toolbar from './Board/Toolbar';
 import './index.css'
 import './Board/Board.css';
 import './Board/Toolbar.css'
-import { calculate, newGame, populated, rollDie, vibrate } from './Utils';
+import { calculate, newGame, nextMove, populated, rollDie, vibrate } from './Utils';
 import firebase from "./firebase.config";
 import { playCheckerSound } from './Utils';
 import type firebaseType from 'firebase/compat/app';
@@ -94,7 +94,6 @@ export function App() {
     const friendId = location.pathname.split('/').pop()
     if (friendId) load(friendId)
     
-
     // onLogin/Logout
     const unregisterAuthObserver = firebase.auth().onAuthStateChanged(async authUser => {
       if (authUser) {
@@ -123,6 +122,10 @@ export function App() {
     });
     return () => unregisterAuthObserver();
   }, []);
+
+  const moves = useMemo(() => {
+    return nextMove(game, usedDice, selected)
+  }, [selected, game.dice, usedDice])
 
   // Subscribe to match
   useEffect(() => {
@@ -264,6 +267,7 @@ export function App() {
         {game.board.map((pieces: number, index: number) =>
           <Point 
             enabled={!game.color && pieces !== 0 || populated(game.color, pieces)} 
+            valid={moves.has(index)}
             key={index} 
             pieces={pieces} 
             move={move} 

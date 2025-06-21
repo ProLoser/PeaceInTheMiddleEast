@@ -8,10 +8,11 @@ type PointProps = {
     position: number,
     selected: number | null,
     onSelect: (position: number | null) => void,
-    enabled: boolean
+    enabled: boolean,
+    valid: boolean
 }
 
-export default function Point({ pieces, move, position, onSelect, selected, enabled }: PointProps) {
+export default function Point({ pieces, move, position, onSelect, selected, enabled, valid }: PointProps) {
     const [dragging, setDragging] = useState(false);
     const pieceRef = useRef<HTMLImageElement>(null);
     const onDragOver: DragEventHandler = useCallback((event) => { event.preventDefault(); }, [])
@@ -48,7 +49,7 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
         }
     }, [position, onSelect, dragging, enabled])
 
-    return <div className={`point ${selected === position ? 'selected' : ''}`} 
+    return <div className={`point ${selected === position ? 'selected' : ''} ${valid ? 'valid' : ''}`} 
         draggable={enabled}
         onPointerUp={onPointerUp} 
         onDragOver={onDragOver} 
