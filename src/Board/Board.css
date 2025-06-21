@@ -196,8 +196,8 @@ order:
     }
     .point {
         &.valid {
-            /* --primary: green;
-            --secondary: green; */
+            --primary: green;
+            --secondary: green;
         }
         &:nth-child(even):hover::before {
             /* border-right-color: var(--primary-hover) !important; */
