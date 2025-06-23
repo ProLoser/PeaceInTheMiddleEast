@@ -87,7 +87,7 @@ export const destination = (player: Color, point: number, die: number) => {
     }
 }
 
-export function nextMove(state: GameType, usedDice: number[] = [], from?: number) {
+export function nextMoves(state: GameType, usedDice: number[] = [], from?: number) {
     const availableMoves = new Set<number>();
     if (!state.color) return availableMoves;
     const player = state.color;

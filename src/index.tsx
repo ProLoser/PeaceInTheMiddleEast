@@ -11,7 +11,7 @@ import Toolbar from './Board/Toolbar';
 import './index.css'
 import './Board/Board.css';
 import './Board/Toolbar.css'
-import { calculate, newGame, nextMove, populated, rollDie, vibrate } from './Utils';
+import { calculate, newGame, nextMoves, populated, rollDie, vibrate } from './Utils';
 import firebase from "./firebase.config";
 import { playCheckerSound } from './Utils';
 import type firebaseType from 'firebase/compat/app';
@@ -124,8 +124,10 @@ export function App() {
   }, []);
 
   const moves = useMemo(() => {
-    return nextMove(game, usedDice, selected)
-  }, [selected, game.dice, usedDice])
+    if (game.turn && game.turn !== user?.val().uid)
+      return new Set();
+    return nextMoves(game, usedDice, selected)
+  }, [selected, game.dice, usedDice, game.turn])
 
   // Subscribe to match
   useEffect(() => {
@@ -182,16 +184,12 @@ export function App() {
     vibrate();
   }, [match?.game, game, user]);
 
-  const move = useCallback((from: number | "white" | "black", to: number) => {
+  const move = useCallback((from: number | Color, to: number) => {
+    if (match?.game && (!moves.has(to))) return;
     const { state: nextState, moveLabel } = calculate(game, from, to);
     if (!moveLabel) return;
     playCheckerSound();
     setGame(nextState);
-    // dispatch({ type: Actions.MOVE, data: { from, to } });
-    // sendMove(nextState, `${nextState.dice.join("-")}: ${moveLabel}`);
-    // const move = `${nextState.dice.join("-")}: ${moveLabel}`
-    // };
-    // const move = useCallback((game: GameType, move: Move["move"]) => {
     if (match?.game) {
       const time = new Date().toISOString();
       const nextMove: Move = {
@@ -208,7 +206,7 @@ export function App() {
       database.ref(`matches/${user?.key}/${friend?.key}`).update(update);
       database.ref(`matches/${friend?.key}/${user?.key}`).update(update);
     }
-  }, [game, match?.game, user, friend]);
+  }, [game, match?.game, user, friend, moves]);
 
   const onDragOver: DragEventHandler = useCallback((event) => { event.preventDefault(); }, [])
   const onDrop: DragEventHandler = useCallback((event) => {
@@ -243,7 +241,7 @@ export function App() {
       <div id="board">
         <Toolbar friendData={friend} />
         <Dice
-          onPointerUp={isMyTurn ? rollDice : () => {}}
+          onPointerUp={rollDice}
           values={game.dice}
           color={game.color}
           used={usedDice}
