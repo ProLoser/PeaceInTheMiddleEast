@@ -223,6 +223,15 @@ export function App() {
 
   const friendData = friend?.val();
 
+  // Helper to check if it's the current player's turn
+  const isMyTurn = useMemo(() => {
+    // If local game (no match), allow all moves
+    if (!match?.game) return true;
+    // If user or game.turn is not set, disallow
+    if (!user?.val?.() || !game.turn) return false;
+    return user.val().uid === game.turn;
+  }, [match?.game, user, game.turn]);
+
   return (
     <Dialogues
       user={user}
@@ -233,24 +242,29 @@ export function App() {
     >
       <div id="board">
         <Toolbar friendData={friend} />
-        <Dice onPointerUp={rollDice} values={game.dice} color={game.color} used={usedDice} />
+        <Dice
+          onPointerUp={isMyTurn ? rollDice : () => {}}
+          values={game.dice}
+          color={game.color}
+          used={usedDice}
+        />
         <div className="bar">
           {Array.from({ length: game.prison?.white }, (_, index) =>
-            <Piece 
-              key={index} 
-              position={-1} 
-              color={Color.White} 
-              enabled={!game.color || game.color === Color.White} 
+            <Piece
+              key={index}
+              position={-1}
+              color={Color.White}
+              enabled={isMyTurn && (!game.color || game.color === Color.White)}
             />
           )}
         </div>
         <div className="bar">
           {Array.from({ length: game.prison?.black }, (_, index) =>
-            <Piece 
-              key={index} 
-              position={-1} 
-              color={Color.Black} 
-              enabled={!game.color || game.color === Color.Black} 
+            <Piece
+              key={index}
+              position={-1}
+              color={Color.Black}
+              enabled={isMyTurn && (!game.color || game.color === Color.Black)}
             />
           )}
         </div>
@@ -265,15 +279,15 @@ export function App() {
           )}
         </div>
         {game.board.map((pieces: number, index: number) =>
-          <Point 
-            enabled={!game.color && pieces !== 0 || populated(game.color, pieces)} 
+          <Point
+            enabled={isMyTurn && (!game.color && pieces !== 0 || populated(game.color, pieces))}
             valid={moves.has(index)}
-            key={index} 
-            pieces={pieces} 
-            move={move} 
-            position={index} 
-            selected={selected} 
-            onSelect={onSelect} 
+            key={index}
+            pieces={pieces}
+            move={move}
+            position={index}
+            selected={selected}
+            onSelect={onSelect}
           />
         )}
       </div>
