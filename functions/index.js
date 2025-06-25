@@ -31,9 +31,11 @@ exports.sendMoveNotification = onValueCreated('/moves/{moveId}', async event => 
 
   const payload = {
     token: recipientToken,
-    data: {
+    notification: {
       title: `It's your turn!`,
-      body: move.move,
+      body: move.move
+    },
+    data: {
       player: move.player
     },
     webpush: {
