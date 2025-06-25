@@ -1,12 +1,9 @@
 // --- IMPORTANT: Service Worker for Background Messages ---
-// This file handles messages when your web app is not in the foreground.
-// It needs to import and initialize Firebase Messaging itself, using compat!
+// Handles Firebase background messages and notification click navigation
 
-// public/firebase-messaging-sw.js (using compat)
 importScripts('https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/10.12.4/firebase-messaging-compat.js');
 
-// Your Firebase configuration @see src/firebase.config.ts
 const firebaseConfig = {
   apiKey: "AIzaSyDSTc5VVNNT32jRE4m8qr7hVbI8ahaIsRc",
   authDomain: "peaceinthemiddleeast.firebaseapp.com",
@@ -20,68 +17,56 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
-let currentUserId = null;
-let processedMoveIds = new Set();
+console.log('Service Worker: Firebase initialized.');
 
-console.log('Service Worker: Loaded and Firebase initialized.');
+const messaging = firebase.messaging();
 
-firebase.messaging().onBackgroundMessage((payload) => {
-  console.log('Received background message ', payload);
+messaging.onBackgroundMessage(payload => {
+  console.log('Received background message', payload);
 
-  const notificationTitle = payload.notification.title;
+  const { title, body } = payload.notification;
+  const { player } = payload.data;
+
   const notificationOptions = {
-    body: payload.notification.body, 
+    body: body,
     icon: '/android-chrome-512x512.png',
-    tag: payload.data.player || 'new_message', // Use player's UID as the tag
-    icon: '/android-chrome-512x512.png'
+    tag: player || 'new_message',
+    data: {
+      ...payload.data,
+      url: `${self.location.origin}/${player || ''}`
+    }
   };
 
-  self.registration.showNotification(notificationTitle, notificationOptions);
+  self.registration.showNotification(title, notificationOptions);
 });
 
 self.addEventListener('notificationclick', event => {
-  console.log('Service Worker: Notification clicked.', event.notification);
+  console.log('Notification clicked:', event.notification);
   event.notification.close();
 
-  const friend = event.notification.data.player; // This is opponent's UID, used for URL path
-  // const gameId = event.notification.data.gameId; // Game's unique key, if needed for other logic
-  // const moveId = event.notification.data.moveId; // Move was removed when notification was shown
+  const targetUrl = event.notification.data?.url || self.location.origin;
 
-  if (friend) {
-    // App URL structure is /:friend (e.g., /user123)
-    const targetUrl = `${self.location.origin}/${friend}`;
-    event.waitUntil(
-      clients.matchAll({ type: 'window', includeUncontrolled: true }).then(windowClients => {
-        for (let i = 0; i < windowClients.length; i++) {
-          const client = windowClients[i];
-          // Check if a window/tab with this game (friend) is already open.
-          if ((client.url === targetUrl || client.url === `${targetUrl}/`) && 'focus' in client) {
-            console.log('Service Worker: Focusing existing window for friend:', friend);
-            return client.focus();
-          }
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(windowClients => {
+      for (const client of windowClients) {
+        if ((client.url === targetUrl || client.url === `${targetUrl}/`) && 'focus' in client) {
+          console.log('Focusing existing window:', client.url);
+          return client.focus();
         }
-        if (clients.openWindow) {
-          console.log('Service Worker: Opening new window for friend:', friend);
-          return clients.openWindow(targetUrl);
-        }
-      })
-    );
-  } else {
-    console.log('Service Worker: No friend in notification data, opening main page.');
-    if (clients.openWindow) { // Fallback to open the main page
-      return clients.openWindow('/');
-    }
-  }
+      }
+      if (clients.openWindow) {
+        console.log('Opening new window to:', targetUrl);
+        return clients.openWindow(targetUrl);
+      }
+    })
+  );
 });
 
 self.addEventListener('activate', event => {
-  console.log('Service Worker: Activating...');
+  console.log('Service Worker activating...');
   event.waitUntil(
-    self.clients.claim().then(() => { // Take control of all clients immediately
+    self.clients.claim().then(() => {
       console.log('Service Worker: Claimed clients.');
-      // On activation, client should send 'SET_USER_ID' if user is logged in.
-      // If SW persisted userId (e.g. in IndexedDB), it could be read here to setup listener early.
-      // Example: restoreUserIdAndSetupListener();
     })
   );
 });
