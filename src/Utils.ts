@@ -42,7 +42,14 @@ export const newGame = (oldGame?: GameType) => ({
 } as GameType);
 
 
-    
+export const indexToPoint = (color: Color, index: number) => 
+    color === Color.White ?
+        index > 11 ?
+            index + 1 : 12 - index
+        : // black
+            index < 12 ?
+                index + 13 : 24 - index
+
 export const populated = (player: Color, pieces: number) => PLAYER_SIGN[player] * pieces > 0
 export const unprotected = (player: Color, pieces: number) => PLAYER_SIGN[player] * pieces >= -1;
 export const allHome = (player: Color, state: GameType) => 
@@ -170,13 +177,13 @@ export function calculate(state: GameType, from: number | Color | undefined | nu
         usedDie = 12 - to;
         if (nextGame.board[to] === -1) {
             // hit
-            moveLabel = `bar/${to}*`;
+            moveLabel = `bar/${indexToPoint(Color.White, to)}*`;
             nextGame.prison.black++;
             nextGame.prison.white--;
             nextGame.board[to] = 1;
         } else if (nextGame.board[to] >= -1) {
             // move
-            moveLabel = `bar/${to}`;
+            moveLabel = `bar/${indexToPoint(Color.White, to)}`;
             nextGame.prison.white--;
             nextGame.board[to]++;
         } else {
@@ -188,13 +195,13 @@ export function calculate(state: GameType, from: number | Color | undefined | nu
         usedDie = 24 - to;
         if (nextGame.board[to] === 1) {
             // hit
-            moveLabel = `bar/${to}*`;
+            moveLabel = `bar/${indexToPoint(Color.Black, to)}*`;
             nextGame.prison.white++;
             nextGame.prison.black--;
             nextGame.board[to] = -1;
         } else if (nextGame.board[to] <= 1) {
             // move
-            moveLabel = `bar/${to}`;
+            moveLabel = `bar/${indexToPoint(Color.Black, to)}`;
             nextGame.prison.black--;
             nextGame.board[to]--;
         } else {
@@ -202,33 +209,35 @@ export function calculate(state: GameType, from: number | Color | undefined | nu
             return { state };
         }
     } else {
-        const offense = nextGame.board[from];
+        const fromInt = parseInt(from)
+        // TODO: indexToPoint needs a color, but we don't have it for local games
+        const offense = nextGame.board[fromInt];
         const defense = nextGame.board[to];
         if (defense === undefined) {
             // bear off
             moveLabel = `${from}/off`;
             if (offense > 0) {
                 // White
-                usedDie = HOME_INDEXES.white[1] - from + 1;
+                usedDie = HOME_INDEXES.white[1] - fromInt + 1;
                 nextGame.home.white++;
             } else {
                 // Black
-                usedDie = from - HOME_INDEXES.black[0] + 1;
+                usedDie = fromInt - HOME_INDEXES.black[0] + 1;
                 nextGame.home.black++;
             }
         } else if (!defense || Math.sign(defense) === Math.sign(offense)) {
             // move
-            moveLabel = `${from}/${to}`;
+            moveLabel = `${fromInt}/${to}`;
             const player = state.color;
             const dice = [...state.dice];
-            usedDie = dice.find(die => destination(player, from, die) === to);
+            usedDie = dice.find(die => destination(player, fromInt, die) === to);
             nextGame.board[to] += Math.sign(offense);
         } else if (Math.abs(defense) === 1) {
             // hit
-            moveLabel = `${from}/${to}*`;
+            moveLabel = `${fromInt}/${to}*`;
             const player = state.color;
             const dice = [...state.dice];
-            usedDie = dice.find(die => destination(player, from, die) === to);
+            usedDie = dice.find(die => destination(player, fromInt, die) === to);
             nextGame.board[to] = -Math.sign(defense);
             if (offense > 0) nextGame.prison.black++;
             else nextGame.prison.white++;
@@ -237,7 +246,7 @@ export function calculate(state: GameType, from: number | Color | undefined | nu
             return { state };
         }
         // remove from previous position
-        nextGame.board[from] -= Math.sign(nextGame.board[from]);
+        nextGame.board[fromInt] -= Math.sign(nextGame.board[fromInt]);
         if (nextGame.home.white === 15 || nextGame.home.black === 15)
             nextGame.status = Status.GameOver;
     }

@@ -21,7 +21,7 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
         navigator.vibrate?.(10);
         event.preventDefault();
         onSelect(null)
-        let from = event.dataTransfer?.getData("text")!
+        let from = event.dataTransfer?.getData("text")! as number|Color
         return move(from, position)
     }, [move, enabled])
 
@@ -31,7 +31,7 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
         if (!enabled) return;
         onSelect(position)
         setDragging(true)        
-        event.dataTransfer?.setDragImage(pieceRef.current, 50, 50);
+        event.dataTransfer?.setDragImage(pieceRef.current!, 50, 50);
         event.dataTransfer?.setData('text/plain', position?.toString());
     }, [position, pieceRef, onSelect, enabled]);
 
