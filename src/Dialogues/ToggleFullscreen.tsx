@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 
-const toggleFullscreen = () =>
+const toggleFullscreen = (event: React.PointerEvent) => {
+    event.preventDefault();
     document.fullscreenElement
         ? document.exitFullscreen()
         : document.documentElement.requestFullscreen()
+}
 
 export default function ToggleFullscreen() {
     const [fullscreen, setFullscreen] = useState(!!document.fullscreenElement);
@@ -15,7 +17,7 @@ export default function ToggleFullscreen() {
         return () => document.removeEventListener('fullscreenchange', fullscreenchange);
     }, [])
 
-    return <a onPointerUp={toggleFullscreen}>
+    return <a onPointerUp={toggleFullscreen} href="#">
         <span className="material-icons notranslate">{fullscreen ? 'fullscreen_exit' : 'fullscreen'}</span>
         {fullscreen ? 'Exit Fullscreen' : 'Fullscreen'}
     </a>

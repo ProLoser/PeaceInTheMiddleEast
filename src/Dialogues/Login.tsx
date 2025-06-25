@@ -83,7 +83,7 @@ export default function Login({ reset, friend, load }: LoginProps) {
                         </li>
                         : null}
                     <li>
-                        <a onPointerUp={reset}>
+                        <a onPointerUp={reset} href="#">
                             <span className="material-icons notranslate">restart_alt</span>
                             Reset Match
                         </a>

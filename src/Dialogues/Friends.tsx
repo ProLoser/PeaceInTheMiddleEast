@@ -93,7 +93,8 @@ export default function Friends({ user, load, reset }: FriendsProps) {
         toggle(false);
     }, [load, user?.key, toggle]);
 
-    const handleReset = useCallback(() => {
+    const handleReset = useCallback((event: PointerEvent) => {
+        event.preventDefault();
         reset();
         toggle(false);
     }, [reset, toggle]);
@@ -152,7 +153,7 @@ export default function Friends({ user, load, reset }: FriendsProps) {
             </button>
             <menu>
                 <li>
-                    <a onPointerUp={invite}>
+                    <a onPointerUp={invite} href="#">
                         <span className="material-icons notranslate">person_add_alt_1</span>
                         Invite Friend
                     </a>
@@ -163,13 +164,13 @@ export default function Friends({ user, load, reset }: FriendsProps) {
                     </li>
                     : null}
                 <li>
-                    <a onPointerUp={() => toggle('profile')}>
+                    <a onPointerUp={() => toggle('profile')} href="#">
                         <span className="material-icons notranslate">manage_accounts</span>
                         Edit Profile
                     </a>
                 </li>
                 <li>
-                    <a onPointerUp={handleReset}>
+                    <a onPointerUp={handleReset} href="#">
                         <span className="material-icons notranslate">restart_alt</span>
                         Reset Match
                     </a>
@@ -187,7 +188,7 @@ export default function Friends({ user, load, reset }: FriendsProps) {
                     </a>
                 </li>
                 <li>
-                    <a onPointerUp={() => firebase.auth().signOut()}>
+                    <a onPointerUp={() => firebase.auth().signOut()} href="#">
                         <span className="material-icons notranslate">logout</span>
                         Logout
                     </a>
