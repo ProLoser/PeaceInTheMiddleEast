@@ -2,7 +2,8 @@ import { StrictMode, useEffect, useState, useCallback, type DragEventHandler, us
 import ReactDOM from 'react-dom/client'
 // TODO: Upgrade to modular after firebaseui upgrades
 // import { initializeApp } from 'firebase/app';
-import { type Match, type Move, type GameType, type SnapshotOrNullType, type UserData, Color, Status } from "./Types";
+import type { Match, Move, GameType, SnapshotOrNullType, UserData, UsedDie } from "./Types";
+import { Color, Status } from './Types';
 import Dialogues from './Dialogues';
 import Dice from './Board/Dice';
 import Point from './Board/Point';
@@ -30,7 +31,7 @@ export function App() {
   const [chats, setChats] = useState<SnapshotOrNullType>(null);
   const [friend, setFriend] = useState<SnapshotOrNullType>(null);
   const [selected, setSelected] = useState<number | null>(null);
-  const [usedDice, setUsedDice] = useState<number[]>([]);
+  const [usedDice, setUsedDice] = useState<UsedDie[]>([]);
 
   const load = useCallback(async (friendId: string = '', authUser?: string) => {
     if (friendId === 'PeaceInTheMiddleEast') return;
@@ -86,6 +87,8 @@ export function App() {
       if (match?.game)
         database.ref(`games/${match?.game}`).set(data);
       setGame(data);
+      setUsedDice([]);
+      setSelected(null);
     }
   }, [match?.game, database]);
 
@@ -124,10 +127,10 @@ export function App() {
   }, []);
 
   const moves = useMemo(() => {
-    if (game.turn && game.turn !== user?.val().uid)
+    if (game.turn && (game.turn !== user?.val().uid || game.status !== Status.Moving))
       return new Set();
     return nextMoves(game, usedDice, selected)
-  }, [selected, game.dice, usedDice, game.turn])
+  }, [selected, game, usedDice])
 
   // Subscribe to match
   useEffect(() => {
@@ -140,12 +143,14 @@ export function App() {
             if (game.color && game.color !== value.color) {
               diceSound.play();
               vibrate();
+              setUsedDice([]);
             }
             return value
           });
         } else {
           const blankGame = newGame();
           setGame(blankGame);
+          setUsedDice([]);
           // TODO: do i need to set this?
           gameRef.set(blankGame);
         }
@@ -159,6 +164,7 @@ export function App() {
 
   const rollDice = useCallback(() => {
     const dice = [rollDie(), rollDie()] as GameType['dice'];
+    if (dice[0] === dice[1]) dice.push(dice[0], dice[0]); // doubles
     if (match?.game) {
       // online
       if (game.turn === user?.val().uid)
@@ -185,28 +191,38 @@ export function App() {
   }, [match?.game, game, user]);
 
   const move = useCallback((from: number | Color, to: number) => {
-    if (match?.game && (!moves.has(to))) return;
-    const { state: nextState, moveLabel } = calculate(game, from, to);
+    if (match?.game && (!moves.has(to) || game.status !== Status.Moving)) return;
+    const { state: nextState, moveLabel, usedDie } = calculate(game, from, to);
     if (!moveLabel) return;
     playCheckerSound();
     setGame(nextState);
-    if (match?.game) {
+    setUsedDice(prev => [...prev, { 
+      value: usedDie!,
+      label: moveLabel 
+    }]);
+  }, [game, match?.game, user, friend, moves]);
+
+  // Publish move after all dice are used
+  useEffect(() => {
+    if (usedDice.length === game.dice.length && match?.game) {
       const time = new Date().toISOString();
+      const moveLabels = usedDice.map(die => die.label).join(' ');
       const nextMove: Move = {
         player: user?.val().uid,
-        move: `${nextState.dice.join("-")}: ${moveLabel}`,
+        move: `${game.dice.join("-")}: ${moveLabels}`,
         time,
         friend: friend?.key!,
       }
       const update = {
         sort: time,
       };
+      game.status = Status.Rolling;
       database.ref('moves').push(nextMove)
-      database.ref(`games/${match.game}`).set(nextState)
+      database.ref(`games/${match.game}`).set(game)
       database.ref(`matches/${user?.key}/${friend?.key}`).update(update);
       database.ref(`matches/${friend?.key}/${user?.key}`).update(update);
     }
-  }, [game, match?.game, user, friend, moves]);
+  }, [usedDice, game, match?.game, friend, user]);
 
   const onDragOver: DragEventHandler = useCallback((event) => { event.preventDefault(); }, [])
   const onDrop: DragEventHandler = useCallback((event) => {

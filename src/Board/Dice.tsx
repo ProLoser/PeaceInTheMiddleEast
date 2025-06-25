@@ -1,21 +1,17 @@
 import type { PointerEventHandler } from 'react';
 import * as IMAGES from './images/dice';
 import './Dice.css'
-import { Color } from '../Types';
+import { Color, UsedDie } from '../Types';
 
 type DiceProps = {
     onPointerUp: PointerEventHandler,
     values: [number?, number?],
-    used: number[],
+    used: UsedDie[],
     color?: Color,
 }
 
 export default function Dice({ onPointerUp, values = [6, 6], used = [], color }: DiceProps) {
-    let dice = [values[0]!, values[1]!];
-    
-    // Show doubles when rules enabled
-    if (color && values[0] === values[1])
-        dice.push(values[0]!, values[1]!);
+    let dice = values;
     
     const usedClone = [...used];
     
@@ -23,7 +19,7 @@ export default function Dice({ onPointerUp, values = [6, 6], used = [], color }:
         {dice.map((value, index) => {
             const diceColor = color || (index % 2 === 0 ? Color.Black : Color.White);
             const src = `${diceColor}${value}` as keyof typeof IMAGES;
-            const usedIndex = usedClone.indexOf(value);
+            const usedIndex = usedClone.findIndex(usedItem => usedItem.value === value);
             const isUsed = ~usedIndex;
             
             if (isUsed)

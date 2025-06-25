@@ -60,6 +60,11 @@ export type GameType = {
     };
 };
 
+export type UsedDie = {
+    value: number;
+    label: string;
+};
+
 export type Chat = {
     messages: {
         // timestamp

@@ -1,4 +1,4 @@
-import { Color, Status, type GameType } from "./Types";
+import { Color, Status, UsedDie, type GameType } from "./Types";
 
 export const PLAYER_SIGN = {
     white: 1,
@@ -38,7 +38,7 @@ export const newGame = (oldGame?: GameType) => ({
         black: 0,
         white: 0,
     },
-    status: oldGame?.status || 'rolling'
+    status: oldGame?.status || Status.Rolling
 } as GameType);
 
 
@@ -71,7 +71,7 @@ export const destination = (player: Color, point: number, die: number) => {
             return newPoint;
         } else { // top
             let newPoint = point - die; // left
-            if (newPoint < 0) return 11 + -1 * newPoint // wrap 
+            if (newPoint < 0) return 11 + (-1 * newPoint) // wrap 
             return newPoint
         }
     } else { // black
@@ -81,23 +81,21 @@ export const destination = (player: Color, point: number, die: number) => {
             return newPoint;
         } else { // bottom
             let newPoint = point - die; // left
-            if (newPoint < 12) return Math.abs(newPoint - 12) // wrap 
+            if (newPoint < 12) return Math.abs(newPoint - 11) // wrap 
             return newPoint
         }
     }
 }
 
-export function nextMoves(state: GameType, usedDice: number[] = [], from?: number) {
+export function nextMoves(state: GameType, usedDice: UsedDie[] = [], from?: number) {
     const availableMoves = new Set<number>();
     if (!state.color) return availableMoves;
     const player = state.color;
     const [, homeEnd] = HOME_INDEXES[player]
     const availableDice = [...state.dice]
-    // Check for Doubles
-    if (availableDice[0] === availableDice[1]) availableDice.push(availableDice[0], availableDice[0])
         // Filter used 
     usedDice.forEach(die => {
-        const index = availableDice.indexOf(die)  
+        const index = availableDice.indexOf(die.value)  
         if (~index) availableDice.splice(index,1)
     })
     
@@ -156,12 +154,20 @@ export function nextMoves(state: GameType, usedDice: number[] = [], from?: numbe
  * @param to 
  * @returns moveLabel is not returned if the move is blocked
  */
-export function calculate(state: GameType, from: number | Color, to: number) {
+export function calculate(state: GameType, from: number | Color | undefined | null, to: number) {
+    // If from is unspecified and there are pieces on the bar, treat the bar as the from point
+    if ((from === undefined || from === null) && state.color) {
+        if (state.prison[state.color] > 0) {
+            from = state.color;
+        }
+    }
     if (from === to) return { state }; // no move
     const nextGame: GameType = newGame(state);
     let moveLabel: string; // @see https://en.wikipedia.org/wiki/Backgammon_notation
+    let usedDie: number | undefined;
     if (from === Color.White) {
         // white re-enter
+        usedDie = 12 - to;
         if (nextGame.board[to] === -1) {
             // hit
             moveLabel = `bar/${to}*`;
@@ -179,6 +185,7 @@ export function calculate(state: GameType, from: number | Color, to: number) {
         }
     } else if (from === Color.Black) {
         // black re-enter
+        usedDie = 24 - to;
         if (nextGame.board[to] === 1) {
             // hit
             moveLabel = `bar/${to}*`;
@@ -197,22 +204,31 @@ export function calculate(state: GameType, from: number | Color, to: number) {
     } else {
         const offense = nextGame.board[from];
         const defense = nextGame.board[to];
-
         if (defense === undefined) {
             // bear off
             moveLabel = `${from}/off`;
             if (offense > 0) {
+                // White
+                usedDie = HOME_INDEXES.white[1] - from + 1;
                 nextGame.home.white++;
             } else {
+                // Black
+                usedDie = from - HOME_INDEXES.black[0] + 1;
                 nextGame.home.black++;
             }
         } else if (!defense || Math.sign(defense) === Math.sign(offense)) {
             // move
             moveLabel = `${from}/${to}`;
+            const player = state.color;
+            const dice = [...state.dice];
+            usedDie = dice.find(die => destination(player, from, die) === to);
             nextGame.board[to] += Math.sign(offense);
         } else if (Math.abs(defense) === 1) {
             // hit
             moveLabel = `${from}/${to}*`;
+            const player = state.color;
+            const dice = [...state.dice];
+            usedDie = dice.find(die => destination(player, from, die) === to);
             nextGame.board[to] = -Math.sign(defense);
             if (offense > 0) nextGame.prison.black++;
             else nextGame.prison.white++;
@@ -220,14 +236,12 @@ export function calculate(state: GameType, from: number | Color, to: number) {
             // blocked
             return { state };
         }
-
         // remove from previous position
         nextGame.board[from] -= Math.sign(nextGame.board[from]);
-
-        nextGame.status = nextGame.home.white === 15 || nextGame.home.black === 15 ?
-            Status.GameOver : Status.Rolling;
+        if (nextGame.home.white === 15 || nextGame.home.black === 15)
+            nextGame.status = Status.GameOver;
     }
-    return { state: nextGame, moveLabel };
+    return { state: nextGame, moveLabel, usedDie };
 }
 
 const audioCache: { [key: string]: HTMLAudioElement } = {};
