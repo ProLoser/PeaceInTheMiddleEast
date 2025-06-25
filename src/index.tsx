@@ -186,6 +186,7 @@ export function App() {
     }
 
     setUsedDice([]);
+    setSelected(null);
     diceSound.play();
     vibrate();
   }, [match?.game, game, user]);

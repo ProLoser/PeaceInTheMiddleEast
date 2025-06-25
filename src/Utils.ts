@@ -222,7 +222,7 @@ export function calculate(state: GameType, from: number | Color | undefined | nu
                 nextGame.home.white++;
             } else {
                 // Black
-                usedDie = fromInt - HOME_INDEXES.black[0] + 1;
+                usedDie = HOME_INDEXES.black[1] - fromInt + 1;
                 nextGame.home.black++;
             }
         } else if (!defense || Math.sign(defense) === Math.sign(offense)) {
