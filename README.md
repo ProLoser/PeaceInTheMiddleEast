@@ -1,5 +1,13 @@
 # Open Source BackGammon
 
+Personal passion side project that came from an idea on how to connect the Turkish and Israeli sides of my family through common hobbies.
+
+I use this project to test out the latest AI tools. Open to feedback.
+
+Play for free with anyone, no registration or installation required.
+
+https://backgammon.family
+
 ## Goals
 - [x] Works on phone, tablet, and computers
 - [x] Simple SheshBesh Backgammon (rules)
