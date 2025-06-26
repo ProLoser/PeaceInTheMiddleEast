@@ -17,9 +17,18 @@ https://backgammon.family
 - [ ] I can play with my father-in-law (translations)
 - [x] No ads, no fee, no complexity
 
-## Contributing
-Try starting a Codespace since the project is open source it's free!
-<img width="920" alt="image" src="https://github.com/ProLoser/PeaceInTheMiddleEast/assets/67395/d359b701-2eed-482c-9b23-055c57d980a5">
-Securely use Copilot for free in-browser
+## AI Tools Tested
+This wasn't originally a goal but ended up being a great way to test AI 
+- [x] GitHub Codespaces  
+<img width="920" alt="image" src="https://github.com/ProLoser/PeaceInTheMiddleEast/assets/67395/d359b701-2eed-482c-9b23-055c57d980a5">  
 ![Screenshot 2024-06-12 at 4 56 15 PM](https://github.com/ProLoser/PeaceInTheMiddleEast/assets/67395/5dc9a48c-6dfc-473d-9ce4-85ff62057794)
-Just run `yarn dev` to start the server and click on the pop-up to preview the server in a second tab
+- [x] GitHub Copilot
+- [x] studio.firebase.google.com
+- [x] Jules.google.com
+- [x] aistudio.google.com
+- [x] cursor
+- [x] Amazon q
+- [x] ChatGPT 
+## Setup
+1. `yarn`
+2. `yarn start`
