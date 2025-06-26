@@ -195,6 +195,7 @@ export function App() {
     if (match?.game && (!moves.has(to) || game.status !== Status.Moving)) return;
     const { state: nextState, moveLabel, usedDie } = calculate(game, from, to);
     if (!moveLabel) return;
+    navigator.vibrate?.(10);
     playCheckerSound();
     setGame(nextState);
     setUsedDice(prev => [...prev, { 

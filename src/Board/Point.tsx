@@ -17,8 +17,6 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
     const pieceRef = useRef<HTMLImageElement>(null);
     const onDragOver: DragEventHandler = useCallback((event) => { event.preventDefault(); }, [])
     const onDrop: DragEventHandler = useCallback((event) => {
-        // if (!enabled) return;
-        navigator.vibrate?.(10);
         event.preventDefault();
         onSelect(null)
         let from = event.dataTransfer?.getData("text")! as number|Color
@@ -46,6 +44,7 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
             onSelect(null)
             move(selected, position)
         } else if (enabled) {
+            navigator.vibrate?.(5)
             onSelect(position)
         }
     }, [position, onSelect, dragging, enabled])
