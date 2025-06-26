@@ -114,6 +114,8 @@ export function App() {
           console.log('Creating user', data);
           userRef.set(data);
           saveFcmToken();
+        } else if (!snapshot.val().fcmToken) {
+          saveFcmToken();
         }
         userRef.on('value', user => {
           setUser(user);

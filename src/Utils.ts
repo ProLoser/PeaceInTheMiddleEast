@@ -209,35 +209,37 @@ export function calculate(state: GameType, from: number | Color | undefined | nu
             return { state };
         }
     } else {
-        const fromInt = parseInt(from)
+        if (from === undefined || from === null) return { state };
+        if (typeof from === 'string')
+            from = parseInt(from)
         // TODO: indexToPoint needs a color, but we don't have it for local games
-        const offense = nextGame.board[fromInt];
+        const offense = nextGame.board[from];
         const defense = nextGame.board[to];
+        const player = Math.sign(defense) === 1 ? Color.White : Color.Black;
         if (defense === undefined) {
             // bear off
             moveLabel = `${from}/off`;
             if (offense > 0) {
                 // White
-                usedDie = HOME_INDEXES.white[1] - fromInt + 1;
+                usedDie = HOME_INDEXES.white[1] - from + 1;
                 nextGame.home.white++;
             } else {
                 // Black
-                usedDie = HOME_INDEXES.black[1] - fromInt + 1;
+                usedDie = HOME_INDEXES.black[1] - from + 1;
                 nextGame.home.black++;
             }
         } else if (!defense || Math.sign(defense) === Math.sign(offense)) {
             // move
-            moveLabel = `${fromInt}/${to}`;
-            const player = state.color;
+            
+            moveLabel = `${from}/${to}`;
             const dice = [...state.dice];
-            usedDie = dice.find(die => destination(player, fromInt, die) === to);
+            usedDie = dice.find(die => destination(player, from, die) === to);
             nextGame.board[to] += Math.sign(offense);
         } else if (Math.abs(defense) === 1) {
             // hit
-            moveLabel = `${fromInt}/${to}*`;
-            const player = state.color;
+            moveLabel = `${from}/${to}*`;
             const dice = [...state.dice];
-            usedDie = dice.find(die => destination(player, fromInt, die) === to);
+            usedDie = dice.find(die => destination(player, from, die) === to);
             nextGame.board[to] = -Math.sign(defense);
             if (offense > 0) nextGame.prison.black++;
             else nextGame.prison.white++;
@@ -246,7 +248,7 @@ export function calculate(state: GameType, from: number | Color | undefined | nu
             return { state };
         }
         // remove from previous position
-        nextGame.board[fromInt] -= Math.sign(nextGame.board[fromInt]);
+        nextGame.board[from] -= Math.sign(nextGame.board[from]);
         if (nextGame.home.white === 15 || nextGame.home.black === 15)
             nextGame.status = Status.GameOver;
     }
