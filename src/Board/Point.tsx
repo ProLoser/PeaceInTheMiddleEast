@@ -29,7 +29,8 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
         onSelect(position)
         setDragging(true)
         navigator.vibrate?.(5)
-        event.dataTransfer?.setDragImage(pieceRef.current!, 50, 50);
+        if (event.target === event.currentTarget)
+            event.dataTransfer?.setDragImage(pieceRef.current!, 50, 50);
         event.dataTransfer?.setData('text', position?.toString());
     }, [position, pieceRef, onSelect]);
 
