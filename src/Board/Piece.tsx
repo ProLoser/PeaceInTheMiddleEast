@@ -15,20 +15,19 @@ type PieceProps = {
 }
 
 const Piece = forwardRef<HTMLImageElement, PieceProps>(({ color, position, onSelect, enabled = false }, ref) => {
-    const onDragStart: DragEventHandler = useCallback((event) => {
+    const onDragStart: DragEventHandler = useCallback(event => {
         if (!enabled || position === undefined) { // home
             onSelect?.(null)
             event.preventDefault()
             return;
         }
         navigator.vibrate?.(5);
+        event.stopPropagation()
         if (position === -1) {
             event.dataTransfer?.setData('text', color)
-            event.stopPropagation()
             onSelect?.(-1)
         } else {
             event.dataTransfer?.setData('text', position.toString())
-            event.stopPropagation()
             onSelect?.(position)
         }
     }, [position, color, onSelect, enabled]);

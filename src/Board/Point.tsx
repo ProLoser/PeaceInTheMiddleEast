@@ -32,7 +32,7 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
         onSelect(position)
         setDragging(true)        
         event.dataTransfer?.setDragImage(pieceRef.current!, 50, 50);
-        event.dataTransfer?.setData('text/plain', position?.toString());
+        event.dataTransfer?.setData('text', position?.toString());
     }, [position, pieceRef, onSelect, enabled]);
 
     const onDragEnd = useCallback(() => {
