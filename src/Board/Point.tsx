@@ -28,15 +28,16 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
     const color = pieces > 0 ? Color.White : Color.Black;
 
     const onDragStart: DragEventHandler = useCallback((event) => {
-        if (!enabled) return;
         onSelect(position)
-        setDragging(true)        
+        setDragging(true)
+        navigator.vibrate?.(5)
         event.dataTransfer?.setDragImage(pieceRef.current!, 50, 50);
         event.dataTransfer?.setData('text', position?.toString());
-    }, [position, pieceRef, onSelect, enabled]);
+    }, [position, pieceRef, onSelect]);
 
     const onDragEnd = useCallback(() => {
         setDragging(false);
+        onSelect(null);
     }, []);
 
     const onPointerUp = useCallback(() => {
