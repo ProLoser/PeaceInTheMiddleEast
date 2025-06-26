@@ -33,50 +33,75 @@ export function App() {
   const [selected, setSelected] = useState<number | null>(null);
   const [usedDice, setUsedDice] = useState<UsedDie[]>([]);
 
-  const load = useCallback(async (friendId: string = '', authUser?: string) => {
+  const load = useCallback(async (friendId?: string, authUserUid?: string) => {
     if (friendId === 'PeaceInTheMiddleEast') return;
-    console.log('Loading', friendId);
+    console.log('Loading', friendId, 'with authUserUid:', authUserUid);
 
-    // Update URL
-    if (window.location.pathname !== `/${friendId}`) {
-      window.history.pushState(null, '', `/${friendId}`);
+    // Update URL if friendId is provided, otherwise ensure it's cleared or set to root
+    if (friendId) {
+      if (window.location.pathname !== `/${friendId}`) {
+        window.history.pushState(null, '', `/${friendId}`);
+      }
+    } else {
+      if (window.location.pathname !== `/`) {
+        window.history.pushState(null, '', `/`);
+      }
     }
 
     if (!friendId) {
+      setFriend(null);
       setMatch(null);
       setChats(null);
-      setFriend(null);
       return;
     }
 
-    if (!authUser) {
-      console.error('Cannot load friend without being authenticated');
-      return;
-    }
-
+    // Fetch friend data regardless of authentication state, if friendId is present
     const friendSnapshot = await database.ref(`users/${friendId}`).get();
     if (!friendSnapshot.exists()) {
       console.error('User not found', friendId);
+      setFriend(null); // Clear friend if not found
+      // Potentially clear match/chats as well if they depended on this friend
+      setMatch(null);
+      setChats(null);
+      if (window.location.pathname !== `/`) { // Redirect to root if friend not found
+        window.history.pushState(null, '', `/`);
+      }
+      return;
+    }
+    setFriend(friendSnapshot);
+
+    // Only load/create match data if authenticated
+    if (!authUserUid) {
+      // If not authenticated, ensure match and chats are null for this friend
+      setMatch(null);
+      setChats(null);
+      console.log('User not authenticated, only loaded friend details.');
       return;
     }
 
-    setFriend(friendSnapshot);
-    const matchSnapshot = await database.ref(`matches/${authUser}/${friendId}`).get();
+    // Proceed with match loading/creation since user is authenticated
+    const matchSnapshot = await database.ref(`matches/${authUserUid}/${friendId}`).get();
     if (matchSnapshot.exists()) {
       setMatch(await matchSnapshot.val());
+      // Assuming chats are related to the match, or handled similarly
+      // For now, let's say chat loading depends on match.game or match.chat key
+      // If your chat structure is different, this might need adjustment
+      // Example: const chatSnapshot = await database.ref(`chats/${matchSnapshot.val().chat}`).get(); setChats(chatSnapshot);
     } else {
       // Create new match
       const gameRef = database.ref('games').push();
       const chatRef = database.ref('chats').push();
-      // Point match to game
       const data: Match = {
         sort: new Date().toISOString(),
         game: gameRef.key!,
         chat: chatRef.key!,
       };
-      database.ref(`matches/${authUser}/${friendId}`).set(data);
-      database.ref(`matches/${friendId}/${authUser}`).set(data);
+      database.ref(`matches/${authUserUid}/${friendId}`).set(data);
+      database.ref(`matches/${friendId}/${authUserUid}`).set(data);
       setMatch(data);
+      // New match implies new chat, setChats accordingly if needed
+      // For example, if chats are directly identified by chatRef.key
+      // const newChatSnapshot = await database.ref(`chats/${chatRef.key}`).get(); setChats(newChatSnapshot);
     }
   }, [database]);
 
@@ -93,15 +118,16 @@ export function App() {
   }, [match?.game, database]);
 
   useEffect(() => {
-    // Autoload Match upon Login
-    const friendId = location.pathname.split('/').pop()
-    if (friendId) load(friendId)
-    
+    // Determine friendId from URL path
+    const pathParts = location.pathname.split('/');
+    const friendIdFromPath = pathParts.length > 1 && pathParts[1] ? pathParts[1] : undefined;
+
     // onLogin/Logout
     const unregisterAuthObserver = firebase.auth().onAuthStateChanged(async authUser => {
       if (authUser) {
-        const userRef = database.ref(`users/${authUser.uid}`)
-        let snapshot = await userRef.get()
+        // User is signed in
+        const userRef = database.ref(`users/${authUser.uid}`);
+        let snapshot = await userRef.get();
         if (!snapshot.exists()) {
           // Upload initial user data
           const data: UserData = {
@@ -113,20 +139,42 @@ export function App() {
           };
           console.log('Creating user', data);
           userRef.set(data);
-          saveFcmToken();
+          saveFcmToken(); // Ensure FCM token is saved for new users
         } else if (!snapshot.val().fcmToken) {
-          saveFcmToken();
+          saveFcmToken(); // Ensure FCM token is saved if missing for existing users
         }
-        userRef.on('value', user => {
-          setUser(user);
-          if (friendId) load(friendId, authUser.uid)
+
+        // Subscribe to user data changes
+        userRef.on('value', userSnapshot => {
+          setUser(userSnapshot);
+          // Load friend and match data if friendIdFromPath is available
+          if (friendIdFromPath) {
+            load(friendIdFromPath, authUser.uid);
+          } else {
+            // If no friendId in path, ensure any existing friend/match context is cleared
+            // or load last known match, depending on desired app behavior.
+            // For now, explicitly calling load without friendId to clear.
+            load(undefined, authUser.uid); // Clears friend, loads user's general state if any
+          }
         });
       } else {
+        // User is signed out
         setUser(null);
-        setMatch(null);
+        setMatch(null); // Clear match state
+        // If there's a friendId in the path, load only friend details for the login modal
+        if (friendIdFromPath) {
+          load(friendIdFromPath); // Only friendId, no authUserUid
+        } else {
+          // No friendId in path, ensure friend state is also cleared
+          load(); // Calls load with no arguments
+        }
       }
     });
-    return () => unregisterAuthObserver();
+    return () => {
+      unregisterAuthObserver();
+      // Potentially turn off userRef listener if user logs out and it was set
+      // firebase.database().ref(`users/${firebase.auth().currentUser?.uid}`).off('value'); // Example, needs authUser context
+    };
   }, []);
 
   const moves = useMemo(() => {
