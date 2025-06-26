@@ -6,6 +6,7 @@ import { DialogContext } from '.'; // Added DialogContext
 import 'firebase/compat/database';
 import './Profile.css'
 import { SnapshotOrNullType } from '../Types';
+import { saveFcmToken } from '../firebase.config';
 
 export const LANGUAGES = ["af", "af-NA", "af-ZA", "agq", "agq-CM", "ak", "ak-GH", "am",
     "am-ET", "ar", "ar-001", "ar-AE", "ar-BH", "ar-DJ", "ar-DZ",
@@ -117,6 +118,8 @@ export default function Profile({ user }: ProfileProps) {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [name, setName] = useState(user?.val()?.name || '');
+    const [notificationMessage, setNotificationMessage] = useState<string | null>(null);
+    const [notificationPermission, setNotificationPermission] = useState(Notification.permission);
 
     const handleNameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         setName(e.target.value);
@@ -142,6 +145,23 @@ export default function Profile({ user }: ProfileProps) {
         return false;
     }, [user?.key, name, toggle]);
 
+    const handleEnableNotifications = useCallback(async () => {
+        setNotificationMessage(null);
+        try {
+            const permission = await Notification.requestPermission();
+            if (permission === 'granted') {
+                await saveFcmToken();
+                setNotificationMessage('Notifications enabled successfully!');
+                setNotificationPermission('granted');
+            } else {
+                setNotificationMessage('Notification permission denied.');
+                setNotificationPermission('denied');
+            }
+        } catch (err) {
+            setNotificationMessage(err instanceof Error ? err.message : 'An error occurred while enabling notifications');
+        }
+    }, []);
+
     if (!user) return null;
 
     return (
@@ -151,6 +171,7 @@ export default function Profile({ user }: ProfileProps) {
             </header>
             <form className="content" onSubmit={handleSave}>
                 {error && <div className="error">{error}</div>}
+                {notificationMessage && <div className="notification-message">{notificationMessage}</div>} {/* Added notification message display */}
                 <div className="form-group">
                     <label htmlFor="name">Name</label>
                     <input
@@ -167,6 +188,14 @@ export default function Profile({ user }: ProfileProps) {
                     type="submit"
                 >
                     {isLoading ? 'Saving...' : 'Save Profile'}
+                </button>
+                <button
+                    className="enable-notifications"
+                    type="button"
+                    onClick={handleEnableNotifications}
+                    disabled={notificationPermission === 'granted'} // Disable if permission is granted
+                >
+                    {notificationPermission === 'granted' ? 'Notifications Enabled' : 'Enable Notifications'}
                 </button>
                 <button
                     className="cancel"
