@@ -10,7 +10,7 @@
     "dev": "vite",
     "start": "vite",
     "build": "vite build",
-    "post build": "cp dist/index.html dist/404.html",
+    "postbuild": "cp dist/index.html dist/404.html",
     "tsc": "tsc",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
