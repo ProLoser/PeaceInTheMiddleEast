@@ -19,9 +19,11 @@ https://backgammon.family
 
 ## AI Tools Tested
 This wasn't originally a goal but ended up being a great way to test AI 
-- [x] GitHub Codespaces  
+
 <img width="920" alt="image" src="https://github.com/ProLoser/PeaceInTheMiddleEast/assets/67395/d359b701-2eed-482c-9b23-055c57d980a5">
 <img width="920" alt="image" src="https://github.com/ProLoser/PeaceInTheMiddleEast/assets/67395/5dc9a48c-6dfc-473d-9ce4-85ff62057794">
+
+- [x] GitHub Codespaces
 - [x] GitHub Copilot
 - [x] studio.firebase.google.com
 - [x] Jules.google.com
