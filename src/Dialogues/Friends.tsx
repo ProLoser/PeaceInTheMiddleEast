@@ -10,7 +10,7 @@ import { UserData, Match, SnapshotOrNullType } from '../Types';
 import Avatar from '../Avatar';
 import './Friends.css'
 import ToggleFullscreen from './ToggleFullscreen';
-import { saveMessagingDeviceToken } from '../firebase-messaging-setup';
+import { saveFcmToken } from '../firebase.config';
 
 type Users = { [key: string]: UserData }
 
@@ -28,24 +28,26 @@ export default function Friends({ user, load, reset }: FriendsProps) {
     const [isExpanded, setIsExpanded] = useState(false);
     const [matches, setMatches] = useState<firebase.database.DataSnapshot>([]);
     const [searchResults, setSearchResults] = useState<firebase.database.DataSnapshot>([]);
-    const [hasAttemptedNotificationPermission, setHasAttemptedNotificationPermission] = useState(false);
+    const [requestedNotifications, setRequestedNotifications] = useState(false);
 
     // Request notification permission when Friends component mounts
     useEffect(() => {
         const requestPermission = async () => {
-            if (user && Notification.permission === 'default' && !hasAttemptedNotificationPermission) {
+            if (user && Notification.permission === 'default' && !requestedNotifications) {
                 console.log("Friends modal opened, attempting notification permission request...");
                 try {
-                    await saveMessagingDeviceToken();
+                    const permission = await Notification.requestPermission();
+                    if (permission === 'granted')
+                        saveFcmToken();
                 } catch (error) {
                     console.error("Error requesting notification permission:", error);
                 } finally {
-                    setHasAttemptedNotificationPermission(true);
+                    setRequestedNotifications(true);
                 }
             }
         };
         requestPermission();
-    }, [user, hasAttemptedNotificationPermission]);
+    }, [user, requestedNotifications]);
 
     // Synchronize Matches
     useEffect(() => {

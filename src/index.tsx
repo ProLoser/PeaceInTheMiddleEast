@@ -13,7 +13,7 @@ import './index.css'
 import './Board/Board.css';
 import './Board/Toolbar.css'
 import { calculate, newGame, nextMoves, populated, rollDie, vibrate } from './Utils';
-import firebase from "./firebase.config";
+import firebase, { saveFcmToken } from "./firebase.config";
 import { playCheckerSound } from './Utils';
 import type firebaseType from 'firebase/compat/app';
 
@@ -113,6 +113,7 @@ export function App() {
           };
           console.log('Creating user', data);
           userRef.set(data);
+          saveFcmToken();
         }
         userRef.on('value', user => {
           setUser(user);
@@ -129,7 +130,7 @@ export function App() {
   const moves = useMemo(() => {
     if (game.turn && (game.turn !== user?.val().uid || game.status !== Status.Moving))
       return new Set();
-    return nextMoves(game, usedDice, selected)
+    return nextMoves(game, usedDice, selected!)
   }, [selected, game, usedDice])
 
   // Subscribe to match

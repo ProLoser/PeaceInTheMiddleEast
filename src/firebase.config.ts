@@ -15,4 +15,14 @@ export const config = {
     measurementId: "G-NKGPNTLDF1"
 };
 
+const vapidKey = 'BM1H9qfv1e_XcIB31ZeLCn8IpGOdMIwMShRej6wld8QAMkV4YqJ-eMQa1rSnwhkmVmAFw3tvUdlP2JzZmgTq4Fk';
+
 export default firebase.initializeApp(config);
+
+export async function saveFcmToken() {
+    const userId = firebase.auth().currentUser?.uid;
+    if (Notification.permission === 'granted' && userId)
+        await firebase.database().ref(`/users/${userId}/fcmToken`).set(
+            await firebase.messaging().getToken({ vapidKey })
+        )
+}
