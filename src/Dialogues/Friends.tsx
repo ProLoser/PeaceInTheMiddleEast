@@ -28,26 +28,6 @@ export default function Friends({ user, load, reset }: FriendsProps) {
     const [isExpanded, setIsExpanded] = useState(false);
     const [matches, setMatches] = useState<firebase.database.DataSnapshot>([]);
     const [searchResults, setSearchResults] = useState<firebase.database.DataSnapshot>([]);
-    const [requestedNotifications, setRequestedNotifications] = useState(false);
-
-    // Request notification permission when Friends component mounts
-    useEffect(() => {
-        const requestPermission = async () => {
-            if (user && Notification.permission === 'default' && !requestedNotifications) {
-                console.log("Friends modal opened, attempting notification permission request...");
-                try {
-                    const permission = await Notification.requestPermission();
-                    if (permission === 'granted')
-                        saveFcmToken();
-                } catch (error) {
-                    console.error("Error requesting notification permission:", error);
-                } finally {
-                    setRequestedNotifications(true);
-                }
-            }
-        };
-        requestPermission();
-    }, [user, requestedNotifications]);
 
     // Synchronize Matches
     useEffect(() => {
@@ -171,6 +151,12 @@ export default function Friends({ user, load, reset }: FriendsProps) {
                         Edit Profile
                     </a>
                 </li>
+                {Notification.permission === 'default' ? <li>
+                    <a onPointerUp={() => saveFcmToken(true)} href="#">
+                        <span className="material-icons notranslate">notifications</span>
+                        Notifications
+                    </a>
+                </li> : null}
                 <li>
                     <a onPointerUp={handleReset} href="#">
                         <span className="material-icons notranslate">restart_alt</span>

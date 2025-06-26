@@ -139,9 +139,9 @@ export function App() {
           };
           console.log('Creating user', data);
           userRef.set(data);
-          saveFcmToken(); // Ensure FCM token is saved for new users
+          saveFcmToken(true);
         } else if (!snapshot.val().fcmToken) {
-          saveFcmToken(); // Ensure FCM token is saved if missing for existing users
+          saveFcmToken();
         }
 
         // Subscribe to user data changes
