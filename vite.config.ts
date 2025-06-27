@@ -57,13 +57,13 @@ export default defineConfig({
       }
     })
   ],
-  build: {
-    rollupOptions: {
-      input: {
-        // 404 page for github pages will be same as index.html
-        '404': 'index.html'
-      }
-    }
-  }
+  // build: {
+  //   rollupOptions: {
+  //     input: {
+  //       // 404 page for github pages will be same as index.html
+  //       '404': 'index.html'
+  //     }
+  //   }
+  // }
   // base: '/PeaceInTheMiddleEast/'
 })
