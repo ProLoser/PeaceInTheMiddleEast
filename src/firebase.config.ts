@@ -22,10 +22,19 @@ export default firebase.initializeApp(config);
 export async function saveFcmToken(requestPermission = false) {
     const userId = firebase.auth().currentUser?.uid;
     if (!userId) return;
-    if (Notification.permission === 'default' && requestPermission) 
+
+    if (!('Notification' in window)) {
+        console.log("Notifications are not supported in this browser.");
+        return;
+    }
+
+    if (Notification.permission === 'default' && requestPermission) {
         await Notification.requestPermission();
-    if (Notification.permission === 'granted')
+    }
+
+    if (Notification.permission === 'granted') {
         await firebase.database().ref(`/users/${userId}/fcmToken`).set(
             await firebase.messaging().getToken({ vapidKey })
-        )
+        );
+    }
 }
