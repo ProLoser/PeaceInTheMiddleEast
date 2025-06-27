@@ -151,7 +151,7 @@ export default function Friends({ user, load, reset }: FriendsProps) {
                         Edit Profile
                     </a>
                 </li>
-                {Notification.permission === 'default' ? <li>
+                {Notification?.permission === 'default' ? <li>
                     <a onPointerUp={() => saveFcmToken(true)} href="#">
                         <span className="material-icons notranslate">notifications</span>
                         Notifications
