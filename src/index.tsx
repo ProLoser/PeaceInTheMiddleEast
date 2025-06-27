@@ -1,3 +1,5 @@
+// Sentry initialization should be imported first!
+import "./instrument";
 import { StrictMode, useEffect, useState, useCallback, type DragEventHandler, useMemo } from "react";
 import ReactDOM from 'react-dom/client'
 // TODO: Upgrade to modular after firebaseui upgrades
@@ -17,8 +19,16 @@ import firebase, { saveFcmToken } from "./firebase.config";
 import { playCheckerSound } from './Utils';
 import type firebaseType from 'firebase/compat/app';
 
+import * as Sentry from "@sentry/react";
+
 // Start React
-ReactDOM.createRoot(document.getElementById('root')!).render(<StrictMode><App /></StrictMode>)
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <StrictMode>
+    <Sentry.ErrorBoundary fallback={<p>An error has occurred</p>}>
+      <App />
+    </Sentry.ErrorBoundary>
+  </StrictMode>
+);
 
 const diceSound = new Audio('./shake-and-roll-dice-soundbible.mp3');
 
