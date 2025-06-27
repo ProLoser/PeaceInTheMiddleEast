@@ -37,10 +37,18 @@ messaging.onBackgroundMessage(payload => {
     }
   };
 
-  self.registration.showNotification(title, notificationOptions);
+  if ('Notification' in self && 'showNotification' in self.registration) {
+    self.registration.showNotification(title, notificationOptions);
+  } else {
+    console.log('Notifications are not supported in this browser.');
+  }
 });
 
 self.addEventListener('notificationclick', event => {
+  if (!event.notification) {
+    console.log('Notification object not found in event.');
+    return;
+  }
   console.log('Notification clicked:', event.notification);
   event.notification.close();
 
