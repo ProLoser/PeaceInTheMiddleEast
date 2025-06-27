@@ -176,14 +176,6 @@ export default function Profile({ user }: ProfileProps) {
                     Cancel
                 </button>
             </form>
-            <button
-                type="button"
-                onClick={() => {
-                    throw new Error("Sentry Test Error from Profile");
-                }}
-            >
-                Test Sentry
-            </button>
         </section>
     );
 }
