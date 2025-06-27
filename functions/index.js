@@ -29,10 +29,19 @@ exports.sendMoveNotification = onValueCreated('/moves/{moveId}', async event => 
     return null;
   }
 
+  // Query the player's name from the database
+  let playerName = move.player;
+  if (move.player) {
+    const playerNameSnapshot = await db.ref(`/users/${move.player}/name`).once('value');
+    if (playerNameSnapshot.exists()) {
+      playerName = playerNameSnapshot.val();
+    }
+  }
+
   const payload = {
     token: recipientToken,
     notification: {
-      title: `It's your turn!`,
+      title: `${playerName} made a move`,
       body: move.move
     },
     data: {
