@@ -215,7 +215,7 @@ export function calculate(state: GameType, from: number | Color | undefined | nu
         // TODO: indexToPoint needs a color, but we don't have it for local games
         const offense = nextGame.board[from];
         const defense = nextGame.board[to];
-        const player = Math.sign(defense) === 1 ? Color.White : Color.Black;
+        const player = Math.sign(offense) === 1 ? Color.White : Color.Black;
         if (defense === undefined) {
             // bear off
             moveLabel = `${from}/off`;

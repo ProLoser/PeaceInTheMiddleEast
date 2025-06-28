@@ -325,6 +325,7 @@ export function App() {
           values={game.dice}
           color={game.color}
           used={usedDice}
+          disabled={game.status === Status.Rolling && game.turn === user?.val().uid}
         />
         <div className="bar">
           {Array.from({ length: game.prison?.white }, (_, index) =>

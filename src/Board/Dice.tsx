@@ -8,9 +8,10 @@ type DiceProps = {
     values: [number?, number?],
     used: UsedDie[],
     color?: Color,
+    disabled?: boolean,
 }
 
-export default function Dice({ onPointerUp, values = [6, 6], used = [], color }: DiceProps) {
+export default function Dice({ onPointerUp, values = [6, 6], used = [], color, disabled }: DiceProps) {
     let dice = values;
     
     const usedClone = [...used];
@@ -29,7 +30,7 @@ export default function Dice({ onPointerUp, values = [6, 6], used = [], color }:
                 <img 
                     key={index}
                     src={IMAGES[src]} 
-                    className={isUsed ? 'used' : ''} 
+                    className={disabled || isUsed ? 'used' : ''} 
                 />
             );
         })}
