@@ -228,7 +228,7 @@ export function App() {
     if (dice[0] === dice[1]) dice.push(dice[0], dice[0]); // doubles
     if (match?.game) {
       // online
-      if (game.turn === user?.val().uid)
+      if (game.turn === user?.val().uid || game.status !== Status.Rolling)
         return console.log("You cannot roll the dice twice in a row.");
 
       database.ref(`games/${match?.game}`).update({
