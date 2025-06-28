@@ -136,13 +136,13 @@ export function nextMoves(state: GameType, usedDice: UsedDie[] = [], from?: numb
             }
         }
     } else { // calculate destinations, assume only valid from points are provided
-        if (state.prison[player]) {
+        if (from === -1) {
             availableDice.forEach(die => {
-                const point = player == Color.White ? 12 - die : 24 - die
+                const point = HOME_INDEXES[player==Color.White ? Color.Black : Color.White][1] - die + 1
                 if (unprotected(player, state.board[point]))
                     availableMoves.add(point)
             })
-        } else {
+        } else if (!state.prison[player]) {
             availableDice.forEach(die => {
                 const point = destination(player, from, die)
                 if (point !== undefined && (point === -1 || unprotected(player, state.board[point])))
@@ -174,7 +174,7 @@ export function calculate(state: GameType, from: number | Color | undefined | nu
     let usedDie: number | undefined;
     if (from === Color.White) {
         // white re-enter
-        usedDie = 12 - to;
+        usedDie = HOME_INDEXES.black[1] - to + 1;
         if (nextGame.board[to] === -1) {
             // hit
             moveLabel = `bar/${indexToPoint(Color.White, to)}*`;
@@ -192,7 +192,7 @@ export function calculate(state: GameType, from: number | Color | undefined | nu
         }
     } else if (from === Color.Black) {
         // black re-enter
-        usedDie = 24 - to;
+        usedDie = HOME_INDEXES.white[1] - to + 1;
         if (nextGame.board[to] === 1) {
             // hit
             moveLabel = `bar/${indexToPoint(Color.Black, to)}*`;
