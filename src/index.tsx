@@ -247,7 +247,8 @@ export function App() {
     }
 
     setUsedDice([]);
-    setSelected(null);
+    setSelected(match?.game && game.prison[game.color] ? -1 : null);
+    
     diceSound.play();
     vibrate();
   }, [match?.game, game, user]);
