@@ -62,6 +62,11 @@
             border-width: 0;
         }
     }
+
+    &.valid {
+        --primary: green;
+        --secondary: green;
+    }
 }
 
 /*
@@ -195,10 +200,6 @@ order:
         width: var(--point-piece-size);
     }
     .point {
-        &.valid {
-            --primary: green;
-            --secondary: green;
-        }
         &:nth-child(even):hover::before {
             /* border-right-color: var(--primary-hover) !important; */
         }
