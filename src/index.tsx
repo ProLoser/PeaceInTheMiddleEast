@@ -47,7 +47,6 @@ export function App() {
     if (friendId === 'PeaceInTheMiddleEast') return;
     console.log('Loading', friendId, 'with authUserUid:', authUserUid);
 
-    // Update URL if friendId is provided, otherwise ensure it's cleared or set to root
     if (friendId) {
       if (window.location.pathname !== `/${friendId}`) {
         window.history.pushState(null, '', `/${friendId}`);
@@ -65,12 +64,10 @@ export function App() {
       return;
     }
 
-    // Fetch friend data regardless of authentication state, if friendId is present
     const friendSnapshot = await database.ref(`users/${friendId}`).get();
     if (!friendSnapshot.exists()) {
       console.error('User not found', friendId);
-      setFriend(null); // Clear friend if not found
-      // Potentially clear match/chats as well if they depended on this friend
+      setFriend(null);
       setMatch(null);
       setChats(null);
       if (window.location.pathname !== `/`) { // Redirect to root if friend not found
@@ -80,23 +77,16 @@ export function App() {
     }
     setFriend(friendSnapshot);
 
-    // Only load/create match data if authenticated
     if (!authUserUid) {
-      // If not authenticated, ensure match and chats are null for this friend
       setMatch(null);
       setChats(null);
       console.log('User not authenticated, only loaded friend details.');
       return;
     }
 
-    // Proceed with match loading/creation since user is authenticated
     const matchSnapshot = await database.ref(`matches/${authUserUid}/${friendId}`).get();
     if (matchSnapshot.exists()) {
       setMatch(await matchSnapshot.val());
-      // Assuming chats are related to the match, or handled similarly
-      // For now, let's say chat loading depends on match.game or match.chat key
-      // If your chat structure is different, this might need adjustment
-      // Example: const chatSnapshot = await database.ref(`chats/${matchSnapshot.val().chat}`).get(); setChats(chatSnapshot);
     } else {
       // Create new match
       const gameRef = database.ref('games').push();
@@ -109,9 +99,6 @@ export function App() {
       database.ref(`matches/${authUserUid}/${friendId}`).set(data);
       database.ref(`matches/${friendId}/${authUserUid}`).set(data);
       setMatch(data);
-      // New match implies new chat, setChats accordingly if needed
-      // For example, if chats are directly identified by chatRef.key
-      // const newChatSnapshot = await database.ref(`chats/${chatRef.key}`).get(); setChats(newChatSnapshot);
     }
   }, [database]);
 
@@ -157,15 +144,7 @@ export function App() {
         // Subscribe to user data changes
         userRef.on('value', userSnapshot => {
           setUser(userSnapshot);
-          // Load friend and match data if friendIdFromPath is available
-          if (friendIdFromPath) {
-            load(friendIdFromPath, authUser.uid);
-          } else {
-            // If no friendId in path, ensure any existing friend/match context is cleared
-            // or load last known match, depending on desired app behavior.
-            // For now, explicitly calling load without friendId to clear.
-            load(undefined, authUser.uid); // Clears friend, loads user's general state if any
-          }
+          load(friendIdFromPath, authUser.uid);
         });
       } else {
         // User is signed out
@@ -196,23 +175,23 @@ export function App() {
   // Subscribe to match
   useEffect(() => {
     if (match?.game) {
-      const gameRef = database.ref(`games/${match?.game}`)
+      const gameRef = database.ref(`games/${match.game}`); // Ensure match.game is used as it's confirmed to exist
       const onValue = (snapshot: firebaseType.database.DataSnapshot) => {
         const value = snapshot.val();
         if (value) {
-          setGame(game => {
-            if (game.color && game.color !== value.color) {
+          setGame(currentGame => { // Renamed 'game' to 'currentGame' for clarity within functional update
+            if (currentGame.color && currentGame.color !== value.color) {
               diceSound.play();
               vibrate();
               setUsedDice([]);
             }
-            return value
+            return value;
           });
         } else {
           const blankGame = newGame();
           setGame(blankGame);
           setUsedDice([]);
-          // TODO: do i need to set this?
+          setSelected(null);
           gameRef.set(blankGame);
         }
       };
@@ -220,8 +199,13 @@ export function App() {
       return () => {
         gameRef.off("value", onValue);
       };
+    } else {
+      // If match is null, or match.game is null/undefined, reset the game state.
+      setGame(newGame());
+      setUsedDice([]);
+      setSelected(null);
     }
-  }, [match?.game]);
+  }, [match?.game, database]);
 
   const rollDice = useCallback(() => {
     const dice = [rollDie(), rollDie()] as Game['dice'];

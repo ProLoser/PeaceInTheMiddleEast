@@ -1,6 +1,6 @@
 // TODO: Cleanup this file 
 // https://github.com/firebase/firebaseui-web-react/pull/173#issuecomment-1151532176
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback, useContext } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
 import 'firebaseui/dist/firebaseui.css';
 import * as firebaseui from 'firebaseui';
@@ -8,6 +8,7 @@ import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import ToggleFullscreen from './ToggleFullscreen';
 import './Login.css';
+import { DialogContext } from '.';
 
 // Configure FirebaseUI.
 const uiConfig = {
@@ -37,6 +38,7 @@ export default function Login({ reset, friend, load }: LoginProps) {
     const [userSignedIn, setUserSignedIn] = useState(false);
     const elementRef = useRef(null);
     const [isExpanded, setIsExpanded] = useState(false);
+    const { toggle } = useContext(DialogContext)!;
 
     useEffect(() => {
         // Get or Create a firebaseUI instance.
@@ -63,6 +65,7 @@ export default function Login({ reset, friend, load }: LoginProps) {
 
     const decline = useCallback(() => {
         load()
+        toggle(false)
     }, [load]);
 
     return (
