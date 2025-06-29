@@ -196,32 +196,40 @@ export function App() {
   // Subscribe to match
   useEffect(() => {
     if (match?.game) {
-      const gameRef = database.ref(`games/${match?.game}`)
+      const gameRef = database.ref(`games/${match.game}`); // Ensure match.game is used as it's confirmed to exist
       const onValue = (snapshot: firebaseType.database.DataSnapshot) => {
         const value = snapshot.val();
         if (value) {
-          setGame(game => {
-            if (game.color && game.color !== value.color) {
+          setGame(currentGame => { // Renamed 'game' to 'currentGame' for clarity within functional update
+            if (currentGame.color && currentGame.color !== value.color) {
               diceSound.play();
               vibrate();
               setUsedDice([]);
             }
-            return value
+            return value;
           });
         } else {
+          // The game node for match.game doesn't exist or is null in Firebase.
+          // Reset to a new game locally and optionally try to set it in Firebase.
           const blankGame = newGame();
           setGame(blankGame);
           setUsedDice([]);
-          // TODO: do i need to set this?
-          gameRef.set(blankGame);
+          setSelected(null); // Ensure selection is cleared
+          // Consider if we should automatically create/set this blankGame on gameRef.
+          // gameRef.set(blankGame); // This might be desired if a game is expected to always exist.
         }
       };
       gameRef.on("value", onValue);
       return () => {
         gameRef.off("value", onValue);
       };
+    } else {
+      // If match is null, or match.game is null/undefined, reset the game state.
+      setGame(newGame());
+      setUsedDice([]);
+      setSelected(null);
     }
-  }, [match?.game]);
+  }, [match?.game, database]); // Added database to dependencies as gameRef uses it. newGame, setGame, setUsedDice, setSelected are stable or component-bound.
 
   const rollDice = useCallback(() => {
     const dice = [rollDie(), rollDie()] as GameType['dice'];
