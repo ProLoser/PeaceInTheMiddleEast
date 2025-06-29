@@ -3,7 +3,7 @@ import Friends from './Friends';
 import Chat from './Chat';
 import Profile from './Profile';
 import Login from './Login';
-import type { UserData, SnapshotOrNullType } from '../Types';
+import type { User, SnapshotOrNullType } from '../Types';
 
 export type DialogContextType = {
   state: string | boolean;
@@ -14,7 +14,7 @@ export const DialogContext = createContext<DialogContextType | undefined>(undefi
 
 interface DialoguesProps {
   user: SnapshotOrNullType;
-  friendData: UserData | null | undefined;
+  friendData: User | null | undefined;
   load: (friendId?: string, authUser?: string) => void;
   reset: () => void;
   chats: SnapshotOrNullType; 

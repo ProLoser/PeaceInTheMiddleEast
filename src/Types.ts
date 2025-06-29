@@ -3,7 +3,7 @@ import 'firebase/compat/database';
 
 export type SnapshotOrNullType = firebase.database.DataSnapshot | null
 
-export type UserData = {
+export type User = {
     uid: string;
     name: string;
     search: string;
@@ -40,18 +40,18 @@ export type Match = {
 }
 
 export type Move = {
-    player: UserData['uid'];
+    player: User['uid'];
     move: string;
     time: string;
-    friend?: UserData['uid'];
+    friend?: User['uid'];
 }
 
-export type GameType = {
+export type Game = {
     status?: Status;
     board: number[] & { length: 24 };
     dice: [number, number];
     color: Color;
-    turn: UserData['uid'];
+    turn: User['uid'];
     prison: {
         [color in Color]: number;
     };
@@ -70,7 +70,7 @@ export type Chat = {
         // timestamp
         [key: number]: {
             // cj123
-            author: UserData['uid'],
+            author: User['uid'],
             // Hello World!
             message: string
         }

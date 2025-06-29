@@ -1,11 +1,11 @@
-import { Color, Status, UsedDie, type GameType } from "./Types";
+import { Color, Status, UsedDie, type Game } from "./Types";
 
 export const PLAYER_SIGN = {
     white: 1,
     black: -1
 };
 
-export const DEFAULT_BOARD: GameType['board'] = [
+export const DEFAULT_BOARD: Game['board'] = [
     // index:           6             11
     5, 0, 0, 0, -3, 0, -5, 0, 0, 0, 0, 2,
     // index:         18              23
@@ -25,7 +25,7 @@ export function vibrate() {
     navigator.vibrate?.([50, 100, 60, 60, 90, 40, 110, 20, 150]);
 }
 
-export const newGame = (oldGame?: GameType) => ({
+export const newGame = (oldGame?: Game) => ({
     board: [...(oldGame?.board || DEFAULT_BOARD)],
     dice: oldGame?.dice || [6, 6],
     color: oldGame?.color || null,
@@ -39,7 +39,7 @@ export const newGame = (oldGame?: GameType) => ({
         white: 0,
     },
     status: oldGame?.status || Status.Rolling
-} as GameType);
+} as Game);
 
 
 export const indexToPoint = (color: Color, index: number) => 
@@ -52,7 +52,7 @@ export const indexToPoint = (color: Color, index: number) =>
 
 export const populated = (player: Color, pieces: number) => PLAYER_SIGN[player] * pieces > 0
 export const unprotected = (player: Color, pieces: number) => PLAYER_SIGN[player] * pieces >= -1;
-export const allHome = (player: Color, state: GameType) => 
+export const allHome = (player: Color, state: Game) => 
     15 === state.board
         .slice(HOME_INDEXES[player][0], HOME_INDEXES[player][1])
         .reduce(
@@ -60,7 +60,7 @@ export const allHome = (player: Color, state: GameType) =>
             state.home[player]
         )
 
-export const farthestHome = (player: Color, state: GameType) => {
+export const farthestHome = (player: Color, state: Game) => {
     for (let point = HOME_INDEXES[player][0]; point <= HOME_INDEXES[player][1]; point++) {
         if (populated(player, state.board[point])) {
             return point
@@ -94,7 +94,7 @@ export const destination = (player: Color, point: number, die: number) => {
     }
 }
 
-export function nextMoves(state: GameType, usedDice: UsedDie[] = [], from?: number) {
+export function nextMoves(state: Game, usedDice: UsedDie[] = [], from?: number) {
     const availableMoves = new Set<number>();
     if (!state.color) return availableMoves;
     const player = state.color;
@@ -161,7 +161,7 @@ export function nextMoves(state: GameType, usedDice: UsedDie[] = [], from?: numb
  * @param to 
  * @returns moveLabel is not returned if the move is blocked
  */
-export function calculate(state: GameType, from: number | Color | undefined | null, to: number) {
+export function calculate(state: Game, from: number | Color | undefined | null, to: number) {
     // If from is unspecified and there are pieces on the bar, treat the bar as the from point
     if ((from === undefined || from === null) && state.color) {
         if (state.prison[state.color] > 0) {
@@ -169,7 +169,7 @@ export function calculate(state: GameType, from: number | Color | undefined | nu
         }
     }
     if (from === to) return { state }; // no move
-    const nextGame: GameType = newGame(state);
+    const nextGame: Game = newGame(state);
     let moveLabel: string; // @see https://en.wikipedia.org/wiki/Backgammon_notation
     let usedDie: number | undefined;
     if (from === Color.White) {

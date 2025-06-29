@@ -1,8 +1,8 @@
-import { UserData } from './Types';
+import { User } from './Types';
 import './Avatar.css';
 
 export type AvatarProps = {
-    user?: UserData;
+    user?: User;
 }
 
 export default function Avatar({ user }: AvatarProps) {

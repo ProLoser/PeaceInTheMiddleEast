@@ -4,7 +4,7 @@ import { StrictMode, useEffect, useState, useCallback, type DragEventHandler, us
 import ReactDOM from 'react-dom/client'
 // TODO: Upgrade to modular after firebaseui upgrades
 // import { initializeApp } from 'firebase/app';
-import type { Match, Move, GameType, SnapshotOrNullType, UserData, UsedDie } from "./Types";
+import type { Match, Move, Game, SnapshotOrNullType, User, UsedDie } from "./Types";
 import { Color, Status } from './Types';
 import Dialogues from './Dialogues';
 import Dice from './Board/Dice';
@@ -35,7 +35,7 @@ const diceSound = new Audio('./shake-and-roll-dice-soundbible.mp3');
 // React App
 export function App() {
   const database = firebase.database();
-  const [game, setGame] = useState<GameType>(newGame);
+  const [game, setGame] = useState<Game>(newGame);
   const [user, setUser] = useState<SnapshotOrNullType>(null);
   const [match, setMatch] = useState<Match | null>(null);
   const [chats, setChats] = useState<SnapshotOrNullType>(null);
@@ -140,7 +140,7 @@ export function App() {
         let snapshot = await userRef.get();
         if (!snapshot.exists()) {
           // Upload initial user data
-          const data: UserData = {
+          const data: User = {
             uid: authUser.uid,
             name: authUser.displayName || authUser.uid,
             search: (authUser.displayName || authUser.uid).toLocaleLowerCase(),
@@ -224,7 +224,7 @@ export function App() {
   }, [match?.game]);
 
   const rollDice = useCallback(() => {
-    const dice = [rollDie(), rollDie()] as GameType['dice'];
+    const dice = [rollDie(), rollDie()] as Game['dice'];
     if (dice[0] === dice[1]) dice.push(dice[0], dice[0]); // doubles
     if (match?.game) {
       // online

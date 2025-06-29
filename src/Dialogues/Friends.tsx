@@ -6,13 +6,13 @@ import { DialogContext } from '.';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/database';
-import { UserData, Match, SnapshotOrNullType } from '../Types';
+import { User, Match, SnapshotOrNullType } from '../Types';
 import Avatar from '../Avatar';
 import './Friends.css'
 import ToggleFullscreen from './ToggleFullscreen';
 import { saveFcmToken } from '../firebase.config';
 
-type Users = { [key: string]: UserData }
+type Users = { [key: string]: User }
 
 type FriendsProps = {
     user: SnapshotOrNullType;
@@ -81,7 +81,7 @@ export default function Friends({ user, load, reset }: FriendsProps) {
         toggle(false);
     }, [reset, toggle]);
 
-    const row = (user: UserData, match?: Match) => 
+    const row = (user: User, match?: Match) => 
         <li key={user.uid} onPointerUp={() => handleLoad(user.uid)}>
             <Avatar user={user} />
             <div>
@@ -91,7 +91,7 @@ export default function Friends({ user, load, reset }: FriendsProps) {
             </div>
         </li>
 
-    const searchReject = (user: UserData) =>
+    const searchReject = (user: User) =>
         searchRef.current?.value
         && !(new RegExp(searchRef.current?.value, 'i')).test(user.name)
         && !(new RegExp(searchRef.current?.value, 'i')).test(user.uid)
@@ -105,7 +105,7 @@ export default function Friends({ user, load, reset }: FriendsProps) {
         renderFriends.unshift(row(users[match.key], matchData))
     })
     searchResults.forEach(result => {
-        const resultData: UserData = result.val()
+        const resultData: User = result.val()
         if (result.key === user.key || friends.includes(result.key) || searchReject(resultData)) {
             return;
         }
