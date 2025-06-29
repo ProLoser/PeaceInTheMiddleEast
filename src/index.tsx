@@ -115,9 +115,8 @@ export function App() {
   }, [match?.game, database]);
 
   useEffect(() => {
-    // Determine friendId from URL path
-    const pathParts = location.pathname.split('/');
-    const friendIdFromPath = pathParts.length > 1 && pathParts[1] ? pathParts[1] : undefined;
+
+    const friendId = location.pathname.split('/')[1]
 
     // onLogin/Logout
     const unregisterAuthObserver = firebase.auth().onAuthStateChanged(async authUser => {
@@ -144,25 +143,17 @@ export function App() {
         // Subscribe to user data changes
         userRef.on('value', userSnapshot => {
           setUser(userSnapshot);
-          load(friendIdFromPath, authUser.uid);
+          load(friendId, authUser.uid);
         });
       } else {
         // User is signed out
         setUser(null);
-        setMatch(null); // Clear match state
-        // If there's a friendId in the path, load only friend details for the login modal
-        if (friendIdFromPath) {
-          load(friendIdFromPath); // Only friendId, no authUserUid
-        } else {
-          // No friendId in path, ensure friend state is also cleared
-          load(); // Calls load with no arguments
-        }
+        setMatch(null);
+        load(friendId);
       }
     });
     return () => {
       unregisterAuthObserver();
-      // Potentially turn off userRef listener if user logs out and it was set
-      // firebase.database().ref(`users/${firebase.auth().currentUser?.uid}`).off('value'); // Example, needs authUser context
     };
   }, []);
 
@@ -177,15 +168,16 @@ export function App() {
     if (match?.game) {
       const gameRef = database.ref(`games/${match.game}`); // Ensure match.game is used as it's confirmed to exist
       const onValue = (snapshot: firebaseType.database.DataSnapshot) => {
-        const value = snapshot.val();
-        if (value) {
-          setGame(currentGame => { // Renamed 'game' to 'currentGame' for clarity within functional update
-            if (currentGame.color && currentGame.color !== value.color) {
+        const nextGame = snapshot.val();
+        if (nextGame) {
+          setGame(prevGame => {
+            if (prevGame.color && prevGame.color !== nextGame.color) {
               diceSound.play();
               vibrate();
               setUsedDice([]);
+              setSelected(null);
             }
-            return value;
+            return nextGame;
           });
         } else {
           const blankGame = newGame();
@@ -297,10 +289,8 @@ export function App() {
   // PopState listener (browser history navigation)
   useEffect(() => {
     const onPopState = () => {
-      // Determine friendId from URL path
-      const pathParts = location.pathname.split('/');
-      const friendIdFromPath = pathParts.length > 1 && pathParts[1] ? pathParts[1] : undefined;
-      load(friendIdFromPath, user?.val?.()?.uid);
+      const friendId = location.pathname.split('/')[1];
+      load(friendId, user?.val?.()?.uid);
     };
     window.addEventListener('popstate', onPopState);
     return () => {
