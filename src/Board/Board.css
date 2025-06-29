@@ -9,7 +9,6 @@
     grid-template-rows: repeat(2, 50%);
     height: 100%;
     width: 100%;
-    flex-wrap: wrap;
     touch-action: none;
     .selected {
         --primary: red;
@@ -182,8 +181,6 @@ order:
    
 @media (orientation: portrait) {/* Portrait layout (mobile phone) */
     #board {
-        flex-direction: column;
-        flex-wrap: wrap-reverse;
         writing-mode: sideways-rl;
     }
     #toolbar {
