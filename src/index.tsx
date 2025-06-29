@@ -294,6 +294,20 @@ export function App() {
     return user.val().uid === game.turn;
   }, [match?.game, user, game.turn]);
 
+  // PopState listener (browser history navigation)
+  useEffect(() => {
+    const onPopState = () => {
+      // Determine friendId from URL path
+      const pathParts = location.pathname.split('/');
+      const friendIdFromPath = pathParts.length > 1 && pathParts[1] ? pathParts[1] : undefined;
+      load(friendIdFromPath, user?.val?.()?.uid);
+    };
+    window.addEventListener('popstate', onPopState);
+    return () => {
+      window.removeEventListener('popstate', onPopState);
+    };
+  }, [load, user]);
+
   return (
     <Dialogues
       user={user}
