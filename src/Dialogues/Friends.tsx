@@ -119,7 +119,10 @@ export default function Friends({ user, load, reset }: FriendsProps) {
             navigator.share?.({
                 url: shareUrl,
                 title: 'Dean invited you to play Backgammon'
-            })
+            }).catch((error) => {
+                // Handle sharing cancellation or other errors
+                console.error('Error sharing:', error);
+            });
         }
     }
 
