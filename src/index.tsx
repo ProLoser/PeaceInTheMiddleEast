@@ -34,7 +34,6 @@ const diceSound = new Audio('./shake-and-roll-dice-soundbible.mp3');
 
 // React App
 export function App() {
-  const database = firebase.database();
   const [game, setGame] = useState<Game>(newGame);
   const [user, setUser] = useState<SnapshotOrNullType>(null);
   const [match, setMatch] = useState<Match | null>(null);
@@ -63,6 +62,8 @@ export function App() {
       setChats(null);
       return;
     }
+
+    const database = firebase.database();
 
     const friendSnapshot = await database.ref(`users/${friendId}`).get();
     if (!friendSnapshot.exists()) {
@@ -100,104 +101,25 @@ export function App() {
       database.ref(`matches/${friendId}/${authUserUid}`).set(data);
       setMatch(data);
     }
-  }, [database]);
+  }, []);
 
   const reset = useCallback(() => {
     if (confirm('Are you sure you want to reset the match?')) {
       console.log('Resetting', match?.game);
       let data = newGame()
       if (match?.game)
-        database.ref(`games/${match?.game}`).set(data);
+        firebase.database().ref(`games/${match?.game}`).set(data);
       setGame(data);
       setUsedDice([]);
       setSelected(null);
     }
-  }, [match?.game, database]);
-
-  useEffect(() => {
-
-    const friendId = location.pathname.split('/')[1]
-
-    // onLogin/Logout
-    const unregisterAuthObserver = firebase.auth().onAuthStateChanged(async authUser => {
-      if (authUser) {
-        // User is signed in
-        const userRef = database.ref(`users/${authUser.uid}`);
-        let snapshot = await userRef.get();
-        if (!snapshot.exists()) {
-          // Upload initial user data
-          const data: User = {
-            uid: authUser.uid,
-            name: authUser.displayName || authUser.uid,
-            search: (authUser.displayName || authUser.uid).toLocaleLowerCase(),
-            photoURL: authUser.photoURL,
-            language: navigator.language,
-          };
-          console.log('Creating user', data);
-          userRef.set(data);
-          saveFcmToken(true);
-        } else if (!snapshot.val().fcmToken) {
-          saveFcmToken();
-        }
-
-        // Subscribe to user data changes
-        userRef.on('value', userSnapshot => {
-          setUser(userSnapshot);
-          load(friendId, authUser.uid);
-        });
-      } else {
-        // User is signed out
-        setUser(null);
-        setMatch(null);
-        load(friendId);
-      }
-    });
-    return () => {
-      unregisterAuthObserver();
-    };
-  }, []);
+  }, [match?.game, ]);
 
   const moves = useMemo(() => {
     if (game.turn && (game.turn !== user?.val().uid || game.status !== Status.Moving))
       return new Set();
     return nextMoves(game, usedDice, selected!)
   }, [selected, game, usedDice])
-
-  // Subscribe to match
-  useEffect(() => {
-    if (match?.game) {
-      const gameRef = database.ref(`games/${match.game}`); // Ensure match.game is used as it's confirmed to exist
-      const onValue = (snapshot: firebaseType.database.DataSnapshot) => {
-        const nextGame = snapshot.val();
-        if (nextGame) {
-          setGame(prevGame => {
-            if (prevGame.color && prevGame.color !== nextGame.color) {
-              diceSound.play();
-              vibrate();
-              setUsedDice([]);
-              setSelected(null);
-            }
-            return nextGame;
-          });
-        } else {
-          const blankGame = newGame();
-          setGame(blankGame);
-          setUsedDice([]);
-          setSelected(null);
-          gameRef.set(blankGame);
-        }
-      };
-      gameRef.on("value", onValue);
-      return () => {
-        gameRef.off("value", onValue);
-      };
-    } else {
-      // If match is null, or match.game is null/undefined, reset the game state.
-      setGame(newGame());
-      setUsedDice([]);
-      setSelected(null);
-    }
-  }, [match?.game, database]);
 
   const rollDice = useCallback(() => {
     const dice = [rollDie(), rollDie()] as Game['dice'];
@@ -207,7 +129,7 @@ export function App() {
       if (game.turn === user?.val().uid || game.status !== Status.Rolling)
         return console.log("You cannot roll the dice twice in a row.");
 
-      database.ref(`games/${match?.game}`).update({
+      firebase.database().ref(`games/${match?.game}`).update({
         dice,
         color: game.color === Color.White ? Color.Black : Color.White,
         turn: user?.val().uid,
@@ -242,28 +164,6 @@ export function App() {
     }]);
   }, [game, match?.game, user, friend, moves]);
 
-  // Publish move after all dice are used
-  useEffect(() => {
-    if (usedDice.length === game.dice.length && match?.game) {
-      const time = new Date().toISOString();
-      const moveLabels = usedDice.map(die => die.label).join(' ');
-      const nextMove: Move = {
-        player: user?.val().uid,
-        move: `${game.dice.join("-")}: ${moveLabels}`,
-        time,
-        friend: friend?.key!,
-      }
-      const update = {
-        sort: time,
-      };
-      game.status = Status.Rolling;
-      database.ref('moves').push(nextMove)
-      database.ref(`games/${match.game}`).set(game)
-      database.ref(`matches/${user?.key}/${friend?.key}`).update(update);
-      database.ref(`matches/${friend?.key}/${user?.key}`).update(update);
-    }
-  }, [usedDice, game, match?.game, friend, user]);
-
   const onDragOver: DragEventHandler = useCallback((event) => { event.preventDefault(); }, [])
   const onDrop: DragEventHandler = useCallback((event) => {
     event.preventDefault();
@@ -289,14 +189,125 @@ export function App() {
   // PopState listener (browser history navigation)
   useEffect(() => {
     const onPopState = () => {
-      const friendId = location.pathname.split('/')[1];
-      load(friendId, user?.val?.()?.uid);
+      load(
+        location.pathname.split('/')[1],
+        user?.val?.()?.uid
+      )
     };
     window.addEventListener('popstate', onPopState);
     return () => {
       window.removeEventListener('popstate', onPopState);
     };
   }, [load, user]);
+
+  useEffect(() => {
+    const friendId = location.pathname.split('/')[1]
+
+    let unsubscribeUser: (() => void) | null;
+
+    // onLogin/Logout
+    const unregisterAuthObserver = firebase.auth().onAuthStateChanged(async authUser => {
+      if (authUser) {
+        // User is signed in
+        const userRef = firebase.database().ref(`users/${authUser.uid}`);
+        let snapshot = await userRef.get();
+        if (!snapshot.exists()) {
+          // Upload initial user data
+          const data: User = {
+            uid: authUser.uid,
+            name: authUser.displayName || authUser.uid,
+            search: (authUser.displayName || authUser.uid).toLocaleLowerCase(),
+            photoURL: authUser.photoURL,
+            language: navigator.language,
+          };
+          console.log('Creating user', data);
+          userRef.set(data);
+          saveFcmToken(true);
+        } else if (!snapshot.val().fcmToken) {
+          saveFcmToken();
+        }
+
+        // Subscribe to user data changes
+        const onUserValue = (userSnapshot: SnapshotOrNullType) => {
+          setUser(userSnapshot);
+          load(friendId, authUser.uid);
+        }
+        userRef.on('value', onUserValue);
+        unsubscribeUser = () => {
+          userRef.off('value', onUserValue)
+          unsubscribeUser = null
+        }
+      } else {
+        // User is signed out
+        setUser(null);
+        setMatch(null);
+        load(friendId);
+      }
+    });
+    return () => {
+      unregisterAuthObserver();
+      unsubscribeUser?.()
+    };
+  }, [load]);
+
+  // Subscribe to match
+  useEffect(() => {
+    if (match?.game) {
+      const gameRef = firebase.database().ref(`games/${match.game}`); // Ensure match.game is used as it's confirmed to exist
+      const onValue = (snapshot: firebaseType.database.DataSnapshot) => {
+        const nextGame = snapshot.val();
+        if (nextGame) {
+          setGame(prevGame => {
+            if (prevGame.color && prevGame.color !== nextGame.color) {
+              diceSound.play();
+              vibrate();
+              setUsedDice([]);
+              setSelected(null);
+            }
+            return nextGame;
+          });
+        } else {
+          const blankGame = newGame();
+          setGame(blankGame);
+          setUsedDice([]);
+          setSelected(null);
+          gameRef.set(blankGame);
+        }
+      };
+      gameRef.on("value", onValue);
+      return () => {
+        gameRef.off("value", onValue);
+      };
+    } else {
+      // If match is null, or match.game is null/undefined, reset the game state.
+      setGame(newGame());
+      setUsedDice([]);
+      setSelected(null);
+    }
+  }, [match?.game]);
+
+  // Publish move after all dice are used
+  useEffect(() => {
+    if (usedDice.length === game.dice.length && match?.game) {
+      const time = new Date().toISOString();
+      const moveLabels = usedDice.map(die => die.label).join(' ');
+      const nextMove: Move = {
+        player: user?.val().uid,
+        move: `${game.dice.join("-")}: ${moveLabels}`,
+        time,
+        friend: friend?.key!,
+      }
+      const update = {
+        sort: time,
+      };
+      const database = firebase.database();
+      game.status = Status.Rolling;
+      database.ref('moves').push(nextMove)
+      database.ref(`games/${match.game}`).set(game)
+      database.ref(`matches/${user?.key}/${friend?.key}`).update(update);
+      database.ref(`matches/${friend?.key}/${user?.key}`).update(update);
+    }
+  }, [usedDice, game, match?.game, friend, user]);
 
   return (
     <Dialogues
