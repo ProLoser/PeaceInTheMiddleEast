@@ -166,24 +166,27 @@ export function App() {
   // Subscribe to match
   useEffect(() => {
     if (match?.game) {
+      // Reset turn-specific state when the match context changes
+      setUsedDice([]);
+      setSelected(null);
+
       const gameRef = database.ref(`games/${match.game}`); // Ensure match.game is used as it's confirmed to exist
       const onValue = (snapshot: firebaseType.database.DataSnapshot) => {
         const nextGame = snapshot.val();
         if (nextGame) {
           setGame(prevGame => {
+            // Check if dice sound/vibration should occur due to turn change,
+            // but avoid resetting usedDice/selected here as it's handled above.
             if (prevGame.color && prevGame.color !== nextGame.color) {
               diceSound.play();
               vibrate();
-              setUsedDice([]);
-              setSelected(null);
             }
             return nextGame;
           });
         } else {
           const blankGame = newGame();
           setGame(blankGame);
-          setUsedDice([]);
-          setSelected(null);
+          // usedDice and selected are already reset above when match.game is valid.
           gameRef.set(blankGame);
         }
       };
