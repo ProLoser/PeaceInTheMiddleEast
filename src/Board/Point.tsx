@@ -1,6 +1,7 @@
 import { useCallback, useRef, useState, type DragEventHandler } from "react";
 import Piece from './Piece'
 import { Color } from "../Types";
+import { Vibrations } from "../Utils";
 
 type PointProps = {
     pieces: number,
@@ -28,7 +29,7 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
     const onDragStart: DragEventHandler = useCallback((event) => {
         onSelect(position)
         setDragging(true)
-        navigator.vibrate?.(5)
+        navigator.vibrate?.(Vibrations.Up)
         if (event.target === event.currentTarget)
             event.dataTransfer?.setDragImage(pieceRef.current!, 50, 50);
         event.dataTransfer?.setData('text', position?.toString());
@@ -45,7 +46,7 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
             onSelect(null)
             move(selected, position)
         } else if (enabled) {
-            navigator.vibrate?.(5)
+            navigator.vibrate?.(Vibrations.Up)
             onSelect(position)
         }
     }, [position, onSelect, dragging, enabled])

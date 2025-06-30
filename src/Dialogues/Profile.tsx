@@ -5,7 +5,7 @@ import 'firebase/compat/auth';
 import 'firebase/compat/database';
 import { DialogContext } from '.';
 import Avatar from '../Avatar';
-import type { User, SnapshotOrNullType } from '../Types';
+import { type User, type SnapshotOrNullType, Modal } from '../Types';
 import './Profile.css'
 
 export const LANGUAGES = ["af", "af-NA", "af-ZA", "agq", "agq-CM", "ak", "ak-GH", "am",
@@ -122,7 +122,7 @@ export default function Profile({ user }: ProfileProps) {
         const userRef = firebase.database().ref(`users/${user!.key}`);
         userRef.set(editing);
         console.log('Saved', editing);
-        toggle('friends')
+        toggle(Modal.Friends)
     }, [editing, user]);
 
     const generateOnChange = (key: string) => (event: ChangeEvent<HTMLInputElement|HTMLSelectElement>) => {
@@ -132,7 +132,7 @@ export default function Profile({ user }: ProfileProps) {
     return <form onSubmit={save} id="profile">
         <header>
             <h1>
-                <a onPointerUp={() => toggle('friends')}>
+                <a onPointerUp={() => toggle(Modal.Friends)}>
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-x"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M18 6l-12 12" /><path d="M6 6l12 12" /></svg>
                 </a>
                 Edit Profile

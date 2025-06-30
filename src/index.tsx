@@ -14,14 +14,12 @@ import Toolbar from './Board/Toolbar';
 import './index.css'
 import './Board/Board.css';
 import './Board/Toolbar.css'
-import { calculate, newGame, nextMoves, populated, rollDie, vibrate } from './Utils';
+import { calculate, newGame, nextMoves, populated, rollDie, Vibrations } from './Utils';
 import firebase, { saveFcmToken } from "./firebase.config";
 import { playCheckerSound } from './Utils';
 import type firebaseType from 'firebase/compat/app';
-
 import * as Sentry from "@sentry/react";
 
-// Start React
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <Sentry.ErrorBoundary fallback={<p>An error has occurred</p>}>
@@ -32,7 +30,6 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 
 const diceSound = new Audio('./shake-and-roll-dice-soundbible.mp3');
 
-// React App
 export function App() {
   const [game, setGame] = useState<Game>(newGame);
   const [user, setUser] = useState<SnapshotOrNullType>(null);
@@ -88,8 +85,7 @@ export function App() {
     const matchSnapshot = await database.ref(`matches/${authUserUid}/${friendId}`).get();
     if (matchSnapshot.exists()) {
       setMatch(await matchSnapshot.val());
-    } else {
-      // Create new match
+    } else { // Create new match
       const gameRef = database.ref('games').push();
       const chatRef = database.ref('chats').push();
       const data: Match = {
@@ -107,36 +103,41 @@ export function App() {
     if (confirm('Are you sure you want to reset the match?')) {
       console.log('Resetting', match?.game);
       let data = newGame()
-      if (match?.game)
-        firebase.database().ref(`games/${match?.game}`).set(data);
+      if (match)
+        firebase.database().ref(`games/${match.game}`).set(data);
       setGame(data);
       setUsedDice([]);
       setSelected(null);
     }
-  }, [match?.game, ]);
+  }, [match]);
+
+  const isMyTurn = useMemo<boolean>(() => 
+    !match 
+      || !game.turn 
+      || !!user?.key 
+      && user.key === game.turn
+  , [match, user, game.turn]);
 
   const moves = useMemo(() => {
-    if (game.turn && (game.turn !== user?.val().uid || game.status !== Status.Moving))
+    if (!isMyTurn || game.status !== Status.Moving)
       return new Set();
     return nextMoves(game, usedDice, selected!)
-  }, [selected, game, usedDice])
+  }, [game, isMyTurn, usedDice, selected])
 
   const rollDice = useCallback(() => {
     const dice = [rollDie(), rollDie()] as Game['dice'];
     if (dice[0] === dice[1]) dice.push(dice[0], dice[0]); // doubles
-    if (match?.game) {
-      // online
-      if (game.turn === user?.val().uid || game.status !== Status.Rolling)
+    if (match) { // online
+      if (!isMyTurn || game.status !== Status.Rolling)
         return console.log("You cannot roll the dice twice in a row.");
 
-      firebase.database().ref(`games/${match?.game}`).update({
+      firebase.database().ref(`games/${match.game}`).update({
         dice,
         color: game.color === Color.White ? Color.Black : Color.White,
-        turn: user?.val().uid,
+        turn: user?.key,
         status: Status.Moving
       });
-    } else {
-      // local
+    } else { // local
       setGame({
         ...game,
         dice,
@@ -144,27 +145,27 @@ export function App() {
       });
     }
 
-    setUsedDice([]);
-    setSelected(match?.game && game.prison[game.color] ? -1 : null);
-    
     diceSound.play();
-    vibrate();
-  }, [match?.game, game, user]);
+    navigator.vibrate?.(Vibrations.Dice);
+    setUsedDice([]);
+    setSelected(match && game.prison[game.color] ? -1 : null);
+  }, [match, game, isMyTurn]);
 
   const move = useCallback((from: number | Color, to: number) => {
-    if (match?.game && (!moves.has(to) || game.status !== Status.Moving)) return;
-    const { state: nextState, moveLabel, usedDie } = calculate(game, from, to);
-    if (!moveLabel) return;
-    navigator.vibrate?.(10);
-    playCheckerSound();
-    setGame(nextState);
+    if (match && (!moves.has(to) || game.status !== Status.Moving)) return;
+    const { state: nextState, moveLabel, usedDie } = calculate(game, from, to)
+    if (!moveLabel) return; // invalid
+    playCheckerSound()
+    navigator.vibrate?.(Vibrations.Down)
+    setGame(nextState)
     setUsedDice(prev => [...prev, { 
       value: usedDie!,
       label: moveLabel 
-    }]);
-  }, [game, match?.game, user, friend, moves]);
+    }])
+  }, [game, match, moves]);
 
   const onDragOver: DragEventHandler = useCallback((event) => { event.preventDefault(); }, [])
+  
   const onDrop: DragEventHandler = useCallback((event) => {
     event.preventDefault();
     let from = parseInt(event.dataTransfer?.getData("text")!)
@@ -175,23 +176,13 @@ export function App() {
     setSelected(position)
   }, [selected]) // this dependency is necessary for some reason
 
-  const friendData = friend?.val();
+  const friendData: User | undefined = useMemo(() => friend?.val(), [friend])
 
-  // Helper to check if it's the current player's turn
-  const isMyTurn = useMemo(() => {
-    // If local game (no match), allow all moves
-    if (!match?.game) return true;
-    // If user or game.turn is not set, disallow
-    if (!user?.val?.() || !game.turn) return false;
-    return user.val().uid === game.turn;
-  }, [match?.game, user, game.turn]);
-
-  // PopState listener (browser history navigation)
-  useEffect(() => {
+  useEffect(() => { // PopState observer (browser history navigation)
     const onPopState = () => {
       load(
         location.pathname.split('/')[1],
-        user?.val?.()?.uid
+        user?.key
       )
     };
     window.addEventListener('popstate', onPopState);
@@ -200,19 +191,16 @@ export function App() {
     };
   }, [load, user]);
 
-  useEffect(() => {
+  useEffect(() => { // auth observer
     const friendId = location.pathname.split('/')[1]
 
     let unsubscribeUser: (() => void) | null;
 
-    // onLogin/Logout
     const unregisterAuthObserver = firebase.auth().onAuthStateChanged(async authUser => {
-      if (authUser) {
-        // User is signed in
+      if (authUser) { // User is signed in
         const userRef = firebase.database().ref(`users/${authUser.uid}`);
         let snapshot = await userRef.get();
-        if (!snapshot.exists()) {
-          // Upload initial user data
+        if (!snapshot.exists()) { // Upload initial user data
           const data: User = {
             uid: authUser.uid,
             name: authUser.displayName || authUser.uid,
@@ -237,8 +225,7 @@ export function App() {
           userRef.off('value', onUserValue)
           unsubscribeUser = null
         }
-      } else {
-        // User is signed out
+      } else { // User is signed out
         setUser(null);
         setMatch(null);
         load(friendId);
@@ -250,19 +237,18 @@ export function App() {
     };
   }, [load]);
 
-  // Subscribe to match
-  useEffect(() => {
-    if (match?.game) {
-      const gameRef = firebase.database().ref(`games/${match.game}`); // Ensure match.game is used as it's confirmed to exist
+  useEffect(() => { // match observer
+    if (match) {
+      const gameRef = firebase.database().ref(`games/${match.game}`);
       const onValue = (snapshot: firebaseType.database.DataSnapshot) => {
         const nextGame = snapshot.val();
         if (nextGame) {
           setGame(prevGame => {
             if (prevGame.color && prevGame.color !== nextGame.color) {
-              diceSound.play();
-              vibrate();
-              setUsedDice([]);
-              setSelected(null);
+              diceSound.play()
+              navigator.vibrate?.(Vibrations.Dice)
+              setUsedDice([])
+              setSelected(null)
             }
             return nextGame;
           });
@@ -279,20 +265,27 @@ export function App() {
         gameRef.off("value", onValue);
       };
     } else {
-      // If match is null, or match.game is null/undefined, reset the game state.
       setGame(newGame());
       setUsedDice([]);
       setSelected(null);
     }
-  }, [match?.game]);
+  }, [match]);
 
-  // Publish move after all dice are used
-  useEffect(() => {
-    if (usedDice.length === game.dice.length && match?.game) {
+  useEffect(() => { // usedDice observer to publish moves
+    if (
+      match
+      && isMyTurn
+      && game.status === Status.Moving
+      && game.dice?.length 
+      && (
+        usedDice.length === game.dice.length
+        || (!moves.size && (selected === null || selected === -1))
+      )
+    ) {
       const time = new Date().toISOString();
       const moveLabels = usedDice.map(die => die.label).join(' ');
       const nextMove: Move = {
-        player: user?.val().uid,
+        player: user?.key!,
         move: `${game.dice.join("-")}: ${moveLabels}`,
         time,
         friend: friend?.key!,
@@ -301,30 +294,35 @@ export function App() {
         sort: time,
       };
       const database = firebase.database();
-      game.status = Status.Rolling;
+      const nextGame = {
+        ...game,
+        status: Status.Rolling,
+        turn: friend?.key
+      }
       database.ref('moves').push(nextMove)
-      database.ref(`games/${match.game}`).set(game)
+      database.ref(`games/${match.game}`).set(nextGame)
       database.ref(`matches/${user?.key}/${friend?.key}`).update(update);
       database.ref(`matches/${friend?.key}/${user?.key}`).update(update);
+      setUsedDice([])
     }
-  }, [usedDice, game, match?.game, friend, user]);
+  }, [usedDice, game, match, friend, user]);
 
   return (
     <Dialogues
       user={user}
-      friendData={friendData}
+      friend={friendData}
       load={load}
       reset={reset}
       chats={chats}
     >
       <div id="board">
-        <Toolbar friendData={friend} />
+        <Toolbar friend={friendData} />
         <Dice
           onPointerUp={rollDice}
           values={game.dice}
           color={game.color}
           used={usedDice}
-          disabled={game.status === Status.Rolling && game.turn === user?.val().uid}
+          disabled={!!game.turn && !isMyTurn}
         />
         <div className="bar">
           {Array.from({ length: game.prison?.white }, (_, index) =>

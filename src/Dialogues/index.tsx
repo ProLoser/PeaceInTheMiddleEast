@@ -3,7 +3,7 @@ import Friends from './Friends';
 import Chat from './Chat';
 import Profile from './Profile';
 import Login from './Login';
-import type { User, SnapshotOrNullType } from '../Types';
+import { Modal, type User, type SnapshotOrNullType } from '../Types';
 
 export type DialogContextType = {
   state: string | boolean;
@@ -14,16 +14,16 @@ export const DialogContext = createContext<DialogContextType | undefined>(undefi
 
 interface DialoguesProps {
   user: SnapshotOrNullType;
-  friendData: User | null | undefined;
+  friend: User | undefined;
   load: (friendId?: string, authUser?: string) => void;
   reset: () => void;
   chats: SnapshotOrNullType; 
   children: React.ReactNode
 }
 
-export default function Dialogues({ user, friendData, load, reset, chats, children }: DialoguesProps) {
+export default function Dialogues({ user, friend, load, reset, chats, children }: DialoguesProps) {
   const [state, setState] = useState<string | boolean>(false);
-  const [lastDialog, setLastDialog] = useState<string>("friends");
+  const [lastDialog, setLastDialog] = useState<Modal>(Modal.Friends);
   const dialogRef = useRef<HTMLDialogElement>(null);
 
   const toggle = useCallback((value?: string | boolean) => {
@@ -39,7 +39,7 @@ export default function Dialogues({ user, friendData, load, reset, chats, childr
 
   const value = useMemo(() => ({ state, toggle }), [state, toggle]);
 
-  const isOpen = (friendData && !user) || !!state;
+  const isOpen = (friend && !user) || !!state;
 
   useEffect(() => {
     const handleClickOutside = () => {
@@ -67,7 +67,7 @@ export default function Dialogues({ user, friendData, load, reset, chats, childr
             <Chat chats={chats} user={user} />
           ) : null
         ) : (
-          <Login reset={reset} friend={friendData} load={load} />
+          <Login reset={reset} friend={friend} load={load} />
         )}
       </dialog>
       {children}

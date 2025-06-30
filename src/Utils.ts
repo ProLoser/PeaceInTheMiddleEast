@@ -21,8 +21,10 @@ export function rollDie() {
     return Math.floor(Math.random() * 6) + 1;
 }
 
-export function vibrate() {
-    navigator.vibrate?.([50, 100, 60, 60, 90, 40, 110, 20, 150]);
+export const Vibrations = {
+    Dice: [50, 100, 60, 60, 90, 40, 110, 20, 150],
+    Up: 2,
+    Down: 10
 }
 
 export const newGame = (oldGame?: Game) => ({
@@ -212,13 +214,12 @@ export function calculate(state: Game, from: number | Color | undefined | null, 
         if (from === undefined || from === null) return { state };
         if (typeof from === 'string')
             from = parseInt(from)
-        // TODO: indexToPoint needs a color, but we don't have it for local games
         const offense = nextGame.board[from];
         const defense = nextGame.board[to];
         const player = Math.sign(offense) === 1 ? Color.White : Color.Black;
         if (defense === undefined) {
             // bear off
-            moveLabel = `${from}/off`;
+            moveLabel = `${indexToPoint(player, from)}/off`;
             if (offense > 0) {
                 // White
                 usedDie = HOME_INDEXES.white[1] - from + 1;
@@ -230,14 +231,13 @@ export function calculate(state: Game, from: number | Color | undefined | null, 
             }
         } else if (!defense || Math.sign(defense) === Math.sign(offense)) {
             // move
-            
-            moveLabel = `${from}/${to}`;
+            moveLabel = `${indexToPoint(player, from)}/${indexToPoint(player, to)}`;
             const dice = [...state.dice];
             usedDie = dice.find(die => destination(player, from, die) === to);
             nextGame.board[to] += Math.sign(offense);
         } else if (Math.abs(defense) === 1) {
             // hit
-            moveLabel = `${from}/${to}*`;
+            moveLabel = `${indexToPoint(player, from)}/${indexToPoint(player, to)}*`;
             const dice = [...state.dice];
             usedDie = dice.find(die => destination(player, from, die) === to);
             nextGame.board[to] = -Math.sign(defense);

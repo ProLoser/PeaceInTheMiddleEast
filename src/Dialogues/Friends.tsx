@@ -6,7 +6,7 @@ import { DialogContext } from '.';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/database';
-import { User, Match, SnapshotOrNullType } from '../Types';
+import { User, Match, SnapshotOrNullType, Modal } from '../Types';
 import Avatar from '../Avatar';
 import './Friends.css'
 import ToggleFullscreen from './ToggleFullscreen';
@@ -149,7 +149,7 @@ export default function Friends({ user, load, reset }: FriendsProps) {
                     </li>
                     : null}
                 <li>
-                    <a onPointerUp={() => toggle('profile')} href="#">
+                    <a onPointerUp={() => toggle(Modal.Profile)} href="#">
                         <span className="material-icons notranslate">manage_accounts</span>
                         Edit Profile
                     </a>

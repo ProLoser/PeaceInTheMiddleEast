@@ -9,6 +9,7 @@ import 'firebase/compat/auth';
 import ToggleFullscreen from './ToggleFullscreen';
 import './Login.css';
 import { DialogContext } from '.';
+import { User } from '../Types';
 
 // Configure FirebaseUI.
 const uiConfig = {
@@ -30,7 +31,7 @@ const uiConfig = {
 
 type LoginProps = {
     reset: () => void;
-    friend?: { name: string };
+    friend?: User;
     load: () => void;
 };
 
@@ -104,7 +105,7 @@ export default function Login({ reset, friend, load }: LoginProps) {
                         </a>
                     </li>
                 </menu>
-                <h1>Play {friend?friend.name:'Online'}</h1>
+                <h1>Play {friend?.name || 'Online'}</h1>
             </header>
             <div ref={elementRef} />
             {friend ? <>

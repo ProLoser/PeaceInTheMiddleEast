@@ -12,22 +12,27 @@ export type User = {
     fcmToken?: string;
 }
 
-export enum Color {
+export const enum Color {
     White = 'white',
     Black = 'black',
 }
 
-export enum Status {
+export const enum Status {
   Rolling = 'ROLLING',
   Moving = 'MOVING',
   GameOver = 'GAME_OVER',
 }
 
-export type ModalState = 'chat' | 'profile' | 'friends' | 'login';
+export const enum Modal {
+    Chat = 'chat',
+    Profile = 'profile',
+    Friends = 'friends',
+    Login = 'login'
+}
 
 export type ModalContextType = {
-    toggle: (newState?: ModalState | boolean) => void;
-    state: ModalState | false;
+    toggle: (newState?: Modal | boolean) => void;
+    state: Modal | false;
 };
 
 export type Match = {

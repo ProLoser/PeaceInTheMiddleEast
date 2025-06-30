@@ -3,6 +3,7 @@ import black from './images/piece-black-2.png';
 import white from './images/piece-white-2.png';
 import './Piece.css'
 import { Color } from "../Types";
+import { Vibrations } from "../Utils";
 
 const IMAGES = { black, white }
 
@@ -16,7 +17,7 @@ type PieceProps = {
 const Piece = forwardRef<HTMLImageElement, PieceProps>(({ color, position, onSelect, enabled = false }, ref) => {
     const onDragStart: DragEventHandler = useCallback(event => {
         if (position === -1) { // bar
-            navigator.vibrate?.(5);
+            navigator.vibrate?.(Vibrations.Up)
             event.dataTransfer?.setData('text', color)
             onSelect?.(-1)
         }
