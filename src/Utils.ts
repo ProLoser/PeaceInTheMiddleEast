@@ -174,7 +174,7 @@ export function calculate(state: Game, from: number | Color | undefined | null, 
     const nextGame: Game = newGame(state);
     let moveLabel: string; // @see https://en.wikipedia.org/wiki/Backgammon_notation
     let usedDie: number | undefined;
-    if (from === Color.White) {
+    if (from === Color.White || from === "white") {
         // white re-enter
         usedDie = HOME_INDEXES.black[1] - to + 1;
         if (nextGame.board[to] === -1) {
@@ -192,7 +192,7 @@ export function calculate(state: Game, from: number | Color | undefined | null, 
             // blocked
             return { state };
         }
-    } else if (from === Color.Black) {
+    } else if (from === Color.Black || from === "black") {
         // black re-enter
         usedDie = HOME_INDEXES.white[1] - to + 1;
         if (nextGame.board[to] === 1) {
