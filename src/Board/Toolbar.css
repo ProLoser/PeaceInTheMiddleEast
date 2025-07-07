@@ -10,6 +10,8 @@
   }
 
   @media (orientation: portrait) {
+    writing-mode: lr;
+
     h2 {
       text-overflow: ellipsis;
       overflow: hidden;
@@ -22,7 +24,7 @@
     h2 {
       text-overflow: ellipsis;
       overflow: hidden;
-      writing-mode: vertical-rl;
+      writing-mode: tb;
       text-orientation: mixed;
     }
   }

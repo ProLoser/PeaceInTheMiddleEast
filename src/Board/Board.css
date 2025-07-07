@@ -181,11 +181,10 @@ order:
    
 @media (orientation: portrait) {/* Portrait layout (mobile phone) */
     #board {
-        writing-mode: sideways-rl;
+        writing-mode: tb;
     }
     #toolbar {
         order: 6;
-        writing-mode: horizontal-tb;
     }
     .dice {
         order: 1;
