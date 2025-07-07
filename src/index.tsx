@@ -330,6 +330,7 @@ export function App() {
               key={index}
               position={-1}
               color={Color.White}
+              onSelect={onSelect}
               enabled={isMyTurn && (!game.color || game.color === Color.White)}
             />
           )}
@@ -340,6 +341,7 @@ export function App() {
               key={index}
               position={-1}
               color={Color.Black}
+              onSelect={onSelect}
               enabled={isMyTurn && (!game.color || game.color === Color.Black)}
             />
           )}

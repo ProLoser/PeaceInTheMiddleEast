@@ -19,7 +19,7 @@ const Piece = forwardRef<HTMLImageElement, PieceProps>(({ color, position, onSel
         if (position === -1) { // bar
             navigator.vibrate?.(Vibrations.Up)
             event.dataTransfer?.setData('text', color)
-            onSelect?.(-1)
+            onSelect!(-1)
         }
     }, [position, color, onSelect]);
     
