@@ -184,6 +184,12 @@ export default function Friends({ user, load, reset }: FriendsProps) {
                         Logout
                     </a>
                 </li>
+                <li>
+                    <a href="#">
+                        <span className="material-icons notranslate">info</span>
+                        v{import.meta.env.PACKAGE_VERSION} #{import.meta.env.GITHUB_RUN_NUMBER}
+                    </a>
+                </li>
             </menu>
             <h1>
                 <span>
