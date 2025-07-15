@@ -56,7 +56,7 @@ export const populated = (player: Color, pieces: number) => PLAYER_SIGN[player] 
 export const unprotected = (player: Color, pieces: number) => PLAYER_SIGN[player] * pieces >= -1;
 export const allHome = (player: Color, state: Game) => 
     15 === state.board
-        .slice(HOME_INDEXES[player][0], HOME_INDEXES[player][1])
+        .slice(HOME_INDEXES[player][0], HOME_INDEXES[player][1] + 1)
         .reduce(
             (total, value) => total + Math.abs(value), 
             state.home[player]
