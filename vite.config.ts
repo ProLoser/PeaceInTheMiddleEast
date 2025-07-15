@@ -2,9 +2,23 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 import devtoolsJson from 'vite-plugin-devtools-json';
+import { execSync } from 'child_process';
+import { readFileSync } from 'fs';
+
+
+let VITE_VERSION = '1.0.0';
+
+try {
+  VITE_VERSION = JSON.parse(readFileSync('package.json', 'utf8')).version;
+  const gitCommit = execSync('git rev-parse --short HEAD', { encoding: 'utf8' }).trim();
+  VITE_VERSION = `${VITE_VERSION}-${gitCommit}`;
+} catch (error) {}
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  define: {
+    VITE_VERSION: JSON.stringify(VITE_VERSION),
+  },
   plugins: [
     react(),
     devtoolsJson(),

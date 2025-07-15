@@ -11,6 +11,7 @@ import Avatar from '../Avatar';
 import './Friends.css'
 import ToggleFullscreen from './ToggleFullscreen';
 import { saveFcmToken } from '../firebase.config';
+import Version from './Version';
 
 type Users = { [key: string]: User }
 
@@ -178,6 +179,7 @@ export default function Friends({ user, load, reset }: FriendsProps) {
                         About
                     </a>
                 </li>
+                <Version />
                 <li>
                     <a onPointerUp={() => firebase.auth().signOut()} href="#">
                         <span className="material-icons notranslate">logout</span>

@@ -30,7 +30,7 @@ export const Vibrations = {
 export const newGame = (oldGame?: Game) => ({
     board: [...(oldGame?.board || DEFAULT_BOARD)],
     dice: oldGame?.dice || [6, 6],
-    color: oldGame?.color || null,
+    color: oldGame?.color || Color.White,
     turn: oldGame?.turn || null,
     prison: oldGame?.prison || {
         black: 0,

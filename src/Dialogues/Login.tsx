@@ -10,6 +10,7 @@ import ToggleFullscreen from './ToggleFullscreen';
 import './Login.css';
 import { DialogContext } from '.';
 import { User } from '../Types';
+import Version from './Version';
 
 // Configure FirebaseUI.
 const uiConfig = {
@@ -104,6 +105,7 @@ export default function Login({ reset, friend, load }: LoginProps) {
                             About
                         </a>
                     </li>
+                    <Version />
                 </menu>
                 <h1>Play {friend?.name || 'Online'}</h1>
             </header>
