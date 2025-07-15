@@ -250,6 +250,13 @@ export function App() {
               setUsedDice([])
               setSelected(null)
             }
+            if (
+              user?.key &&
+              prevGame.turn !== nextGame.turn &&
+              nextGame.turn === user.key
+            ) {
+              playCheckerSound();
+            }
             return nextGame;
           });
         } else {
@@ -269,7 +276,7 @@ export function App() {
       setUsedDice([]);
       setSelected(null);
     }
-  }, [match]);
+  }, [match, user]);
 
   useEffect(() => { // usedDice observer to publish moves
     if (
