@@ -22,7 +22,7 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
         onSelect(null)
         let from = event.dataTransfer?.getData("text")! as number|Color
         return move(from, position)
-    }, [move, enabled])
+    }, [move])
 
     const color = pieces > 0 ? Color.White : Color.Black;
 

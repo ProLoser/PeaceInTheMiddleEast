@@ -76,21 +76,25 @@ export const destination = (player: Color, point: number, die: number) => {
     if (player === Color.White) {
         if (point > 11) { // bottom
             newPoint = point + die // right
-            if (newPoint > HOME_INDEXES[player][1]) return -1; // off
+            if (newPoint > HOME_INDEXES[player][1]) // off
+                return HOME_INDEXES[player][1] - newPoint;
             return newPoint;
         } else { // top
             let newPoint = point - die; // left
-            if (newPoint < 0) return 11 + (-1 * newPoint) // wrap 
+            if (newPoint < 0) // wrap 
+                return 11 + (-1 * newPoint)
             return newPoint
         }
     } else { // black
         if (point < 12) { // top
             newPoint = point + die; // right
-            if (newPoint > HOME_INDEXES[player][1]) return -1; // off
+            if (newPoint > HOME_INDEXES[player][1]) // off
+                return HOME_INDEXES[player][1] - newPoint;
             return newPoint;
         } else { // bottom
             let newPoint = point - die; // left
-            if (newPoint < 12) return Math.abs(newPoint - 11) // wrap 
+            if (newPoint < 12) // wrap 
+                return Math.abs(newPoint - 11)
             return newPoint
         }
     }
@@ -102,7 +106,7 @@ export function nextMoves(state: Game, usedDice: UsedDie[] = [], from?: number) 
     const player = state.color;
     const [, homeEnd] = HOME_INDEXES[player]
     const availableDice = [...state.dice]
-        // Filter used 
+    // Filter used 
     usedDice.forEach(die => {
         const index = availableDice.indexOf(die.value)  
         if (~index) availableDice.splice(index,1)
@@ -118,7 +122,7 @@ export function nextMoves(state: Game, usedDice: UsedDie[] = [], from?: number) 
                     populated(player, value)
                     && availableDice.find(die => {
                         const dest = destination(player, point, die)
-                        return dest !== undefined && dest !== -1 && unprotected(player, state.board[dest])
+                        return dest !== undefined && dest > -1 && unprotected(player, state.board[dest])
                     })
                 )
                     availableMoves.add(point)
@@ -128,11 +132,10 @@ export function nextMoves(state: Game, usedDice: UsedDie[] = [], from?: number) 
                 const farthestPoint = farthestHome(player, state)
                 availableDice.forEach(die => {
                     const point = homeEnd - die + 1
-                    if (
-                        populated(player, state.board[point]) // exact
-                        || die > homeEnd - farthestPoint // within
-                    ) {
+                    if ( populated(player, state.board[point]) ) { // exact
                         availableMoves.add(point)
+                    } else if (die > homeEnd - farthestPoint) { // within
+                        availableMoves.add(farthestPoint)
                     }
                 })
             }
@@ -145,10 +148,17 @@ export function nextMoves(state: Game, usedDice: UsedDie[] = [], from?: number) 
                     availableMoves.add(point)
             })
         } else if (!state.prison[player]) {
+            const farthestPoint = farthestHome(player, state);
             availableDice.forEach(die => {
                 const point = destination(player, from, die)
-                if (point !== undefined && (point === -1 || unprotected(player, state.board[point])))
-                    availableMoves.add(point)
+                if (
+                    (point === -1) ||
+                    (point !== undefined && point > -1 && unprotected(player, state.board[point]))
+                ) {
+                    availableMoves.add(point);
+                } else if (point < -1 && from === farthestPoint) {
+                    availableMoves.add(-1)
+                }
             })
         }
     }
@@ -163,7 +173,7 @@ export function nextMoves(state: Game, usedDice: UsedDie[] = [], from?: number) 
  * @param to 
  * @returns moveLabel is not returned if the move is blocked
  */
-export function calculate(state: Game, from: number | Color | undefined | null, to: number) {
+export function calculate(state: Game, from: number | Color | undefined | null, to: number, usedDice = []) {
     // If from is unspecified and there are pieces on the bar, treat the bar as the from point
     if ((from === undefined || from === null) && state.color) {
         if (state.prison[state.color] > 0) {
@@ -174,40 +184,32 @@ export function calculate(state: Game, from: number | Color | undefined | null, 
     const nextGame: Game = newGame(state);
     let moveLabel: string; // @see https://en.wikipedia.org/wiki/Backgammon_notation
     let usedDie: number | undefined;
-    if (from === Color.White) {
-        // white re-enter
+    if (from === Color.White) { // white re-enter
         usedDie = HOME_INDEXES.black[1] - to + 1;
-        if (nextGame.board[to] === -1) {
-            // hit
+        if (nextGame.board[to] === -1) { // hit
             moveLabel = `bar/${indexToPoint(Color.White, to)}*`;
             nextGame.prison.black++;
             nextGame.prison.white--;
             nextGame.board[to] = 1;
-        } else if (nextGame.board[to] >= -1) {
-            // move
+        } else if (nextGame.board[to] >= -1) { // move
             moveLabel = `bar/${indexToPoint(Color.White, to)}`;
             nextGame.prison.white--;
             nextGame.board[to]++;
-        } else {
-            // blocked
+        } else { // blocked
             return { state };
         }
-    } else if (from === Color.Black) {
-        // black re-enter
+    } else if (from === Color.Black) { // black re-enter
         usedDie = HOME_INDEXES.white[1] - to + 1;
-        if (nextGame.board[to] === 1) {
-            // hit
+        if (nextGame.board[to] === 1) { // hit
             moveLabel = `bar/${indexToPoint(Color.Black, to)}*`;
             nextGame.prison.white++;
             nextGame.prison.black--;
             nextGame.board[to] = -1;
-        } else if (nextGame.board[to] <= 1) {
-            // move
+        } else if (nextGame.board[to] <= 1) { // move
             moveLabel = `bar/${indexToPoint(Color.Black, to)}`;
             nextGame.prison.black--;
             nextGame.board[to]--;
-        } else {
-            // blocked
+        } else { // blocked
             return { state };
         }
     } else {
@@ -217,34 +219,28 @@ export function calculate(state: Game, from: number | Color | undefined | null, 
         const offense = nextGame.board[from];
         const defense = nextGame.board[to];
         const player = Math.sign(offense) === 1 ? Color.White : Color.Black;
-        if (defense === undefined) {
-            // bear off
+        let dice = [...state.dice];
+        usedDice.forEach(die => dice.splice(dice.indexOf(die), 1))
+        
+        if (defense === undefined) { // bear off        
+            usedDie = dice.find(die => destination(player, from, die) <= -1);    
             moveLabel = `${indexToPoint(player, from)}/off`;
-            if (offense > 0) {
-                // White
-                usedDie = HOME_INDEXES.white[1] - from + 1;
+            if (offense > 0) { // White
                 nextGame.home.white++;
-            } else {
-                // Black
-                usedDie = HOME_INDEXES.black[1] - from + 1;
+            } else { // Black
                 nextGame.home.black++;
             }
-        } else if (!defense || Math.sign(defense) === Math.sign(offense)) {
-            // move
+        } else if (!defense || Math.sign(defense) === Math.sign(offense)) { // move
+            usedDie = dice.find(die => destination(player, from, die) === to);
             moveLabel = `${indexToPoint(player, from)}/${indexToPoint(player, to)}`;
-            const dice = [...state.dice];
-            usedDie = dice.find(die => destination(player, from, die) === to);
             nextGame.board[to] += Math.sign(offense);
-        } else if (Math.abs(defense) === 1) {
-            // hit
-            moveLabel = `${indexToPoint(player, from)}/${indexToPoint(player, to)}*`;
-            const dice = [...state.dice];
+        } else if (Math.abs(defense) === 1) { // hit
             usedDie = dice.find(die => destination(player, from, die) === to);
+            moveLabel = `${indexToPoint(player, from)}/${indexToPoint(player, to)}*`;
             nextGame.board[to] = -Math.sign(defense);
             if (offense > 0) nextGame.prison.black++;
             else nextGame.prison.white++;
-        } else {
-            // blocked
+        } else { // blocked
             return { state };
         }
         // remove from previous position

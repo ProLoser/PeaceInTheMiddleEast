@@ -118,12 +118,6 @@ export function App() {
       && user.key === game.turn
   , [match, user, game.turn]);
 
-  const moves = useMemo(() => {
-    if (!isMyTurn || game.status !== Status.Moving)
-      return new Set();
-    return nextMoves(game, usedDice, selected!)
-  }, [game, isMyTurn, usedDice, selected])
-
   const rollDice = useCallback(() => {
     const dice = [rollDie(), rollDie()] as Game['dice'];
     if (dice[0] === dice[1]) dice.push(dice[0], dice[0]); // doubles
@@ -151,9 +145,15 @@ export function App() {
     setSelected(match && game.prison[game.color] ? -1 : null);
   }, [match, game, isMyTurn]);
 
+  const moves = useMemo(() => {
+    if (!isMyTurn || game.status !== Status.Moving)
+      return new Set();
+    return nextMoves(game, usedDice, selected!)
+  }, [game, isMyTurn, usedDice, selected])
+
   const move = useCallback((from: number | Color, to: number) => {
     if (match && (!moves.has(to) || game.status !== Status.Moving)) return;
-    const { state: nextState, moveLabel, usedDie } = calculate(game, from, to)
+    const { state: nextState, moveLabel, usedDie } = calculate(game, from, to, usedDice)
     if (!moveLabel) return; // invalid
     playCheckerSound()
     navigator.vibrate?.(Vibrations.Down)
@@ -162,7 +162,7 @@ export function App() {
       value: usedDie!,
       label: moveLabel 
     }])
-  }, [game, match, moves]);
+  }, [game, match, moves, usedDice]);
 
   const onDragOver: DragEventHandler = useCallback((event) => { event.preventDefault(); }, [])
   
@@ -170,7 +170,8 @@ export function App() {
     event.preventDefault();
     let from = parseInt(event.dataTransfer?.getData("text")!)
     move(from, -1)
-  }, [move])
+    setSelected(null)
+  }, [move, moves])
 
   const onSelect = useCallback((position: number | null) => {
     setSelected(position)
@@ -365,7 +366,7 @@ export function App() {
         </div>
         {game.board.map((pieces: number, index: number) =>
           <Point
-            enabled={isMyTurn && (!game.color && pieces !== 0 || populated(game.color, pieces))}
+            enabled={moves.has(index)}
             valid={moves.has(index)}
             key={index}
             pieces={pieces}
