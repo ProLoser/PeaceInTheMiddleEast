@@ -158,11 +158,36 @@ export function App() {
     playCheckerSound()
     navigator.vibrate?.(Vibrations.Down)
     setGame(nextState)
-    setUsedDice(prev => [...prev, { 
-      value: usedDie!,
-      label: moveLabel 
-    }])
-  }, [game, match, moves, usedDice]);
+    setUsedDice(prev => {
+      const newUsedDice = [...prev, { value: usedDie!, label: moveLabel }];
+      // If the move ended the game and not all dice were used, publish the game state
+      if (
+        match &&
+        nextState.status === Status.GameOver &&
+        nextState.dice?.length &&
+        newUsedDice.length < nextState.dice.length
+      ) {
+        const time = new Date().toISOString();
+        const moveLabels = newUsedDice.map(die => die.label).join(' ');
+        const nextMove: Move = {
+          player: user?.key!,
+          move: `${nextState.dice.join("-")}: ${moveLabels} (game over)`,
+          time,
+          friend: friend?.key!,
+        };
+        const update = {
+          sort: time,
+        };
+        const database = firebase.database();
+        database.ref('moves').push(nextMove);
+        database.ref(`games/${match.game}`).set(nextState);
+        database.ref(`matches/${user?.key}/${friend?.key}`).update(update);
+        database.ref(`matches/${friend?.key}/${user?.key}`).update(update);
+        return [];
+      }
+      return newUsedDice;
+    });
+  }, [game, match, moves, usedDice, user, friend]);
 
   const onDragOver: DragEventHandler = useCallback((event) => { event.preventDefault(); }, [])
   

@@ -173,7 +173,7 @@ export function nextMoves(state: Game, usedDice: UsedDie[] = [], from?: number) 
  * @param to 
  * @returns moveLabel is not returned if the move is blocked
  */
-export function calculate(state: Game, from: number | Color | undefined | null, to: number, usedDice = []) {
+export function calculate(state: Game, from: number | Color | undefined | null, to: number, usedDice: UsedDie[] = []) {
     // If from is unspecified and there are pieces on the bar, treat the bar as the from point
     if ((from === undefined || from === null) && state.color) {
         if (state.prison[state.color] > 0) {
@@ -213,23 +213,23 @@ export function calculate(state: Game, from: number | Color | undefined | null, 
             return { state };
         }
     } else {
-        if (from === undefined || from === null) return { state };
+        if (from === undefined || from === null) 
+            return { state };
         if (typeof from === 'string')
             from = parseInt(from)
         const offense = nextGame.board[from];
         const defense = nextGame.board[to];
         const player = Math.sign(offense) === 1 ? Color.White : Color.Black;
         let dice = [...state.dice];
-        usedDice.forEach(die => dice.splice(dice.indexOf(die), 1))
+        usedDice.forEach(die => dice.splice(dice.indexOf(die.value), 1))
         
         if (defense === undefined) { // bear off        
             usedDie = dice.find(die => destination(player, from, die) <= -1);    
             moveLabel = `${indexToPoint(player, from)}/off`;
-            if (offense > 0) { // White
+            if (offense > 0) // White
                 nextGame.home.white++;
-            } else { // Black
+            else // Black
                 nextGame.home.black++;
-            }
         } else if (!defense || Math.sign(defense) === Math.sign(offense)) { // move
             usedDie = dice.find(die => destination(player, from, die) === to);
             moveLabel = `${indexToPoint(player, from)}/${indexToPoint(player, to)}`;
