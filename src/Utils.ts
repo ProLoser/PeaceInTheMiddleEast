@@ -269,11 +269,24 @@ checkerSounds.forEach(file => {
   audioCache[file] = audio;
 });
 
+export const playAudio = (audio: HTMLAudioElement) => {
+  audio.currentTime = 0;
+  (async () => {
+    try {
+      await audio.play();
+    } catch (e) {
+      if (e instanceof DOMException && e.name === "NotAllowedError") {
+        // User has not interacted with the page yet
+      } else {
+        console.error(e);
+      }
+    }
+  })();
+};
+
 export const playCheckerSound = () => {
   const randomIndex = Math.floor(Math.random() * checkerSounds.length);
   const randomMp3 = checkerSounds[randomIndex];
-  
   const audio = audioCache[randomMp3];
-  audio.currentTime = 0;
-  audio.play();
+  playAudio(audio);
 };
