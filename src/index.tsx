@@ -14,7 +14,7 @@ import Toolbar from './Board/Toolbar';
 import './index.css'
 import './Board/Board.css';
 import './Board/Toolbar.css'
-import { calculate, newGame, nextMoves, populated, rollDie, Vibrations } from './Utils';
+import { calculate, newGame, nextMoves, populated, rollDie, Vibrations, playAudio } from './Utils';
 import firebase, { saveFcmToken } from "./firebase.config";
 import { playCheckerSound } from './Utils';
 import type firebaseType from 'firebase/compat/app';
@@ -139,7 +139,7 @@ export function App() {
       });
     }
 
-    diceSound.play();
+    playAudio(diceSound);
     navigator.vibrate?.(Vibrations.Dice);
     setUsedDice([]);
     setSelected(match && game.prison[game.color] ? -1 : null);
@@ -271,7 +271,7 @@ export function App() {
         if (nextGame) {
           setGame(prevGame => {
             if (prevGame.color && prevGame.color !== nextGame.color) {
-              diceSound.play()
+              playAudio(diceSound);
               navigator.vibrate?.(Vibrations.Dice)
               setUsedDice([])
               setSelected(null)
