@@ -42,6 +42,7 @@ export function App() {
   const load = useCallback(async (friendId?: string, authUserUid?: string) => {
     if (friendId === 'PeaceInTheMiddleEast') return;
     console.log('Loading', friendId, 'with authUserUid:', authUserUid);
+    setGame(newGame());
 
     if (friendId) {
       if (window.location.pathname !== `/${friendId}`) {
