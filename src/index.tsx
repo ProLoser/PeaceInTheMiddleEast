@@ -391,7 +391,7 @@ export function App() {
         </div>
         {game.board.map((pieces: number, index: number) =>
           <Point
-            enabled={isMyTurn || moves.has(index)}
+            enabled={isMyTurn && !!pieces || moves.has(index)}
             valid={moves.has(index)}
             key={index}
             pieces={pieces}
