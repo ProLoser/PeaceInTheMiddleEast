@@ -28,6 +28,8 @@
         list-style: none;
         padding: 0;
         margin-bottom: 0;
+        max-height: 80vh;
+        overflow-y: auto;
         li {
             display: flex;
             align-items: center;
