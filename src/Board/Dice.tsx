@@ -31,6 +31,7 @@ export default function Dice({ onPointerUp, values = [6, 6], used = [], color, d
                     key={index}
                     src={IMAGES[src]} 
                     className={disabled || isUsed ? 'used' : ''} 
+                    draggable="false"
                 />
             );
         })}
