@@ -25,7 +25,7 @@ export default function ({ chats, user }) {
 
     return (
         <div id="chat">
-            <h1>{t('chat.title')}</h1>
+            <h1>{t('chat')}</h1>
             <ul>
                 {chats.map((chat: firebase.database.DataSnapshot) => (
                     <li key={chat.key} onPointerUp={() => handleChatClick(chat)}>
@@ -34,14 +34,14 @@ export default function ({ chats, user }) {
                 ))}
             </ul>
 
-            <h1>{t('chat.title')}</h1>
+            <h1>{t('chat')}</h1>
             {selectedChat && (
                 <div>
                     <h2>{selectedChat.val().name}</h2>
                     {selectedChat.val().messages.map((message: string, index: number) => (
                         <p key={index}>{message}</p>
                     ))}
-                    <input type="text" placeholder={t('chat.placeholder')} />
+                    <input type="text" placeholder={t('chatPlaceholder')} />
                 </div>
             )}
         </div>

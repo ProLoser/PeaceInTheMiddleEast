@@ -92,29 +92,29 @@ export default function Login({ reset, friend, load }: LoginProps) {
                     <li>
                         <a onPointerUp={reset} href="#">
                             <span className="material-icons notranslate">restart_alt</span>
-                            {t('toolbar.newGame')}
+                            {t('newGame')}
                         </a>
                     </li>
                     <li>
                         <a href="https://github.com/ProLoser/PeaceInTheMiddleEast/issues/new" target="_blank">
                             <span className="material-icons notranslate">bug_report</span>
-                            {t('toolbar.surrender')}
+                            {t('reportBug')}
                         </a>
                     </li>
                     <li>
                         <a href="https://github.com/ProLoser/PeaceInTheMiddleEast/" target="_blank" rel="noopener noreferrer">
                             <span className="material-icons notranslate">info</span>
-                            {t('toolbar.draw')}
+                            {t('info')}
                         </a>
                     </li>
                     <Version />
                 </menu>
-                <h1>{t('login.title')} {friend?.name || t('login.guest')}</h1>
+                <h1>{t('login')} {friend?.name || t('guest')}</h1>
             </header>
             <div ref={elementRef} />
             {friend ? <>
-                <h1>{t('login.title')}</h1>
-                <button className="local" onPointerUp={decline}>{t('login.signOut')}</button>
+                <h1>{t('login')}</h1>
+                <button className="local" onPointerUp={decline}>{t('local')}</button>
             </>:null}
         </section>
     );
