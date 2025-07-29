@@ -1,29 +1,17 @@
 {
-  "login": {
-    "title": "התחבר לשש בש",
-    "email": "אימייל",
-    "password": "סיסמה",
-    "signIn": "התחבר",
-    "signOut": "התנתק",
-    "or": "או",
-    "google": "התחבר עם גוגל",
-    "facebook": "התחבר עם פייסבוק",
-    "twitter": "התחבר עם טוויטר",
-    "github": "התחבר עם Github",
-    "guest": "התחבר כאורח"
-  },
-  "friends": {
-    "title": "חברים",
-    "search": "חפש חברים",
-    "add": "הוסף חבר"
-  },
-  "chat": {
-    "title": "צ'אט",
-    "placeholder": "הקלד הודעה"
-  },
-  "toolbar": {
-    "newGame": "משחק חדש",
-    "surrender": "כניעה",
-    "draw": "תיקו"
-  }
+  "login": "התחבר לשש בש",
+  "signOut": "התנתק",
+  "guest": "התחבר כאורח",
+  "friends": "חברים",
+  "search": "חפש חברים",
+  "addFriend": "הוסף חבר",
+  "chat": "צ'אט",
+  "chatPlaceholder": "הקלד הודעה",
+  "newGame": "משחק חדש",
+  "inviteFriend": "{{name}} הזמין אותך לשחק שש בש",
+  "profile": "פּרוֹפִיל",
+  "notifications": "התראות",
+  "reportBug": "דווח על באג",
+  "info": "מידע",
+  "local": "מְקוֹמִי"
 }

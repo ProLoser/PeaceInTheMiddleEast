@@ -1,32 +1,20 @@
 {
-  "login": {
-    "title": "Login to Backgammon",
-    "email": "Email",
-    "password": "Password",
-    "signIn": "Sign In",
-    "signOut": "Sign Out",
-    "or": "Or",
-    "google": "Sign in with Google",
-    "facebook": "Sign in with Facebook",
-    "twitter": "Sign in with Twitter",
-    "github": "Sign in with Github",
-    "guest": "Sign in as Guest"
-  },
-  "friends": {
-    "title": "Friends",
-    "search": "Search for friends",
-    "add": "Add Friend"
-  },
-  "chat": {
-    "title": "Chat",
-    "placeholder": "Type a message"
-  },
-  "toolbar": {
-    "newGame": "New Game",
-    "surrender": "Surrender",
-    "draw": "Draw"
-  },
   "Game Over": "Game Over",
   "Winner": "Winner: {{name}}",
-  "Play Again": "Play Again"
+  "Play Again": "Play Again",
+  "login": "Login to Backgammon",
+  "signOut": "Sign Out",
+  "guest": "Sign in as Guest",
+  "friends": "Friends",
+  "search": "Search for friends",
+  "addFriend": "Add Friend",
+  "chat": "Chat",
+  "chatPlaceholder": "Type a message",
+  "newGame": "New Game",
+  "inviteFriend": "{{name}} invited you to play Backgammon",
+  "profile": "Profile",
+  "notifications": "Notifications",
+  "reportBug": "Report a Bug",
+  "info": "Info",
+  "local": "Local"
 }

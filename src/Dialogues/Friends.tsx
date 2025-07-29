@@ -121,7 +121,7 @@ export default function Friends({ user, load, reset }: FriendsProps) {
             navigator.clipboard?.writeText?.(shareUrl)
             navigator.share?.({
                 url: shareUrl,
-                title: 'Dean invited you to play Backgammon'
+                title: t('inviteFriend', { name: user.val().name })
             }).catch((error) => {
                 // Handle sharing cancellation or other errors
                 console.error('Error sharing:', error);
@@ -143,7 +143,7 @@ export default function Friends({ user, load, reset }: FriendsProps) {
                 <li>
                     <a onPointerUp={invite} href="#">
                         <span className="material-icons notranslate">person_add_alt_1</span>
-                        {t('friends.add')}
+                        {t('addFriend')}
                     </a>
                 </li>
                 {document.fullscreenEnabled ?
@@ -154,49 +154,49 @@ export default function Friends({ user, load, reset }: FriendsProps) {
                 <li>
                     <a onPointerUp={() => toggle(Modal.Profile)} href="#">
                         <span className="material-icons notranslate">manage_accounts</span>
-                        {t('friends.title')}
+                        {t('profile')}
                     </a>
                 </li>
                 {"Notification" in self && Notification.permission === 'default' ? <li>
                     <a onPointerUp={() => saveFcmToken(true)} href="#">
                         <span className="material-icons notranslate">notifications</span>
-                        {t('friends.title')}
+                        {t('notifications')}
                     </a>
                 </li> : null}
                 <li>
                     <a onPointerUp={handleReset} href="#">
                         <span className="material-icons notranslate">restart_alt</span>
-                        {t('toolbar.newGame')}
+                        {t('newGame')}
                     </a>
                 </li>
                 <li>
                     <a href="https://github.com/ProLoser/PeaceInTheMiddleEast/issues/new" target="_blank">
                         <span className="material-icons notranslate">bug_report</span>
-                        {t('toolbar.surrender')}
+                        {t('reportBug')}
                     </a>
                 </li>
                 <li>
                     <a href="https://github.com/ProLoser/PeaceInTheMiddleEast/" target="_blank" rel="noopener noreferrer">
                         <span className="material-icons notranslate">info</span>
-                        {t('toolbar.draw')}
+                        {t('info')}
                     </a>
                 </li>
                 <Version />
                 <li>
                     <a onPointerUp={() => firebase.auth().signOut()} href="#">
                         <span className="material-icons notranslate">logout</span>
-                        {t('login.signOut')}
+                        {t('signOut')}
                     </a>
                 </li>
             </menu>
             <h1>
                 <span>
                     <span>{user.val().name}'s</span>
-                    {t('friends.title')}
+                    {t('friends')}
                 </span>
             </h1>
         </header>
-        <input name="search" ref={searchRef} type="search" autoComplete="off" placeholder={t('friends.search')} onChange={onSearch} />
+        <input name="search" ref={searchRef} type="search" autoComplete="off" placeholder={t('search')} onChange={onSearch} />
         <ul>
             {renderFriends}
         </ul>

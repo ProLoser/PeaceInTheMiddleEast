@@ -47,6 +47,8 @@ export function App() {
   const load = useCallback(async (friendId?: string, authUserUid?: string) => {
     if (friendId === 'PeaceInTheMiddleEast') return;
     console.log('Loading', friendId, 'with authUserUid:', authUserUid);
+    setSelected(null)
+    setUsedDice([])
     setGame(newGame());
 
     if (friendId) {
