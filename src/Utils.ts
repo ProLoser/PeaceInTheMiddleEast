@@ -114,7 +114,11 @@ export function nextMoves(state: Game, usedDice: UsedDie[] = [], from?: number) 
     
     if (from === undefined || from === null) { // calculate starting points
         if (state.prison[player]) { // pieces are on bar
-            availableMoves.add(-1)
+            if (availableDice.find(die => {
+                const point = HOME_INDEXES[player==Color.White ? Color.Black : Color.White][1] - die + 1
+                return unprotected(player, state.board[point])
+            }))
+                availableMoves.add(-1)
         } else { 
             // normal moves
             state.board.forEach((value, point) => {
