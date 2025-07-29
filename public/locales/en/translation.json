@@ -25,5 +25,8 @@
     "newGame": "New Game",
     "surrender": "Surrender",
     "draw": "Draw"
-  }
+  },
+  "Game Over": "Game Over",
+  "Winner": "Winner: {{name}}",
+  "Play Again": "Play Again"
 }

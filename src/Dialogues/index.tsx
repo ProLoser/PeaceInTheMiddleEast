@@ -3,6 +3,7 @@ import Friends from './Friends';
 import Chat from './Chat';
 import Profile from './Profile';
 import Login from './Login';
+import Gameover from './Gameover';
 import { Modal, type User, type SnapshotOrNullType } from '../Types';
 
 export type DialogContextType = {
@@ -17,11 +18,12 @@ interface DialoguesProps {
   friend: User | undefined;
   load: (friendId?: string, authUser?: string) => void;
   reset: () => void;
-  chats: SnapshotOrNullType; 
+  chats: SnapshotOrNullType;
+  gameover: User | undefined;
   children: React.ReactNode
 }
 
-export default function Dialogues({ user, friend, load, reset, chats, children }: DialoguesProps) {
+export default function Dialogues({ user, friend, load, reset, chats, gameover, children }: DialoguesProps) {
   const [state, setState] = useState<string | boolean>(false);
   const [lastDialog, setLastDialog] = useState<Modal>(Modal.Friends);
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -39,7 +41,7 @@ export default function Dialogues({ user, friend, load, reset, chats, children }
 
   const value = useMemo(() => ({ state, toggle }), [state, toggle]);
 
-  const isOpen = (friend && !user) || !!state;
+  const isOpen = (friend && !user) || !!state || !!gameover;
 
   useEffect(() => {
     const handleClickOutside = () => {
@@ -58,7 +60,9 @@ export default function Dialogues({ user, friend, load, reset, chats, children }
   return (
     <DialogContext.Provider value={value}>
       <dialog ref={dialogRef} onCancel={() => toggle(false)} open={isOpen} onPointerUp={event => event.stopPropagation()}>
-        {user ? (
+        {gameover ? (
+          <Gameover user={gameover} reset={reset} />
+        ) : user ? (
           state === 'friends' ? (
             <Friends user={user} load={load} reset={reset} />
           ) : state === 'profile' ? (
