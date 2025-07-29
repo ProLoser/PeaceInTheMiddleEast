@@ -1,6 +1,7 @@
 // TODO: Cleanup this file 
 // https://github.com/firebase/firebaseui-web-react/pull/173#issuecomment-1151532176
 import { useEffect, useRef, useState, useCallback, useContext } from 'react';
+import { useTranslation } from 'react-i18next';
 import { onAuthStateChanged } from 'firebase/auth';
 import 'firebaseui/dist/firebaseui.css';
 import * as firebaseui from 'firebaseui';
@@ -37,6 +38,7 @@ type LoginProps = {
 };
 
 export default function Login({ reset, friend, load }: LoginProps) {
+    const { t } = useTranslation();
     const [userSignedIn, setUserSignedIn] = useState(false);
     const elementRef = useRef(null);
     const [isExpanded, setIsExpanded] = useState(false);
@@ -90,29 +92,29 @@ export default function Login({ reset, friend, load }: LoginProps) {
                     <li>
                         <a onPointerUp={reset} href="#">
                             <span className="material-icons notranslate">restart_alt</span>
-                            Reset Match
+                            {t('toolbar.newGame')}
                         </a>
                     </li>
                     <li>
                         <a href="https://github.com/ProLoser/PeaceInTheMiddleEast/issues/new" target="_blank">
                             <span className="material-icons notranslate">bug_report</span>
-                            Report Bug
+                            {t('toolbar.surrender')}
                         </a>
                     </li>
                     <li>
                         <a href="https://github.com/ProLoser/PeaceInTheMiddleEast/" target="_blank" rel="noopener noreferrer">
                             <span className="material-icons notranslate">info</span>
-                            About
+                            {t('toolbar.draw')}
                         </a>
                     </li>
                     <Version />
                 </menu>
-                <h1>Play {friend?.name || 'Online'}</h1>
+                <h1>{t('login.title')} {friend?.name || t('login.guest')}</h1>
             </header>
             <div ref={elementRef} />
             {friend ? <>
-                <h1>Play Locally</h1>
-                <button className="local" onPointerUp={decline}>Decline Invitation</button>
+                <h1>{t('login.title')}</h1>
+                <button className="local" onPointerUp={decline}>{t('login.signOut')}</button>
             </>:null}
         </section>
     );

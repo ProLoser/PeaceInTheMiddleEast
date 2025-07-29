@@ -1,9 +1,11 @@
 import { useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/database';
 import './Chat.css';
 
 export default function ({ chats, user }) {
+    const { t } = useTranslation();
     // TODO: Implement Chat form
     const [selectedChat, setSelectedChat] = useState<firebase.database.DataSnapshot | null>(null);
 
@@ -23,7 +25,7 @@ export default function ({ chats, user }) {
 
     return (
         <div id="chat">
-            <h1>Chat List</h1>
+            <h1>{t('chat.title')}</h1>
             <ul>
                 {chats.map((chat: firebase.database.DataSnapshot) => (
                     <li key={chat.key} onPointerUp={() => handleChatClick(chat)}>
@@ -32,13 +34,14 @@ export default function ({ chats, user }) {
                 ))}
             </ul>
 
-            <h1>Conversation</h1>
+            <h1>{t('chat.title')}</h1>
             {selectedChat && (
                 <div>
                     <h2>{selectedChat.val().name}</h2>
                     {selectedChat.val().messages.map((message: string, index: number) => (
                         <p key={index}>{message}</p>
                     ))}
+                    <input type="text" placeholder={t('chat.placeholder')} />
                 </div>
             )}
         </div>

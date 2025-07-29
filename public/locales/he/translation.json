@@ -1,0 +1,29 @@
+{
+  "login": {
+    "title": "התחבר לשש בש",
+    "email": "אימייל",
+    "password": "סיסמה",
+    "signIn": "התחבר",
+    "signOut": "התנתק",
+    "or": "או",
+    "google": "התחבר עם גוגל",
+    "facebook": "התחבר עם פייסבוק",
+    "twitter": "התחבר עם טוויטר",
+    "github": "התחבר עם Github",
+    "guest": "התחבר כאורח"
+  },
+  "friends": {
+    "title": "חברים",
+    "search": "חפש חברים",
+    "add": "הוסף חבר"
+  },
+  "chat": {
+    "title": "צ'אט",
+    "placeholder": "הקלד הודעה"
+  },
+  "toolbar": {
+    "newGame": "משחק חדש",
+    "surrender": "כניעה",
+    "draw": "תיקו"
+  }
+}

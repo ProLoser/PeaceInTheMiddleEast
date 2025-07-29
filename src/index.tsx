@@ -1,5 +1,6 @@
 // Sentry initialization should be imported first!
 import "./instrument";
+import './i18n';
 import { StrictMode, useEffect, useState, useCallback, type DragEventHandler, useMemo } from "react";
 import ReactDOM from 'react-dom/client'
 // TODO: Upgrade to modular after firebaseui upgrades
@@ -20,11 +21,15 @@ import { playCheckerSound } from './Utils';
 import type firebaseType from 'firebase/compat/app';
 import * as Sentry from "@sentry/react";
 
+import { Suspense } from "react";
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <Sentry.ErrorBoundary fallback={<p>An error has occurred</p>}>
-      <App />
-    </Sentry.ErrorBoundary>
+    <Suspense fallback="loading">
+      <Sentry.ErrorBoundary fallback={<p>An error has occurred</p>}>
+        <App />
+      </Sentry.ErrorBoundary>
+    </Suspense>
   </StrictMode>
 );
 
