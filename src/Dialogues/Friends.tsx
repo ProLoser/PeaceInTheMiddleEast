@@ -1,5 +1,6 @@
 // Import FirebaseAuth and firebase.
 import { useState, useCallback, useRef, ReactNode, useEffect, useContext } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { ChangeEventHandler } from 'react';
 import { formatDistance } from 'date-fns';
 import { DialogContext } from '.';
@@ -22,6 +23,7 @@ type FriendsProps = {
 }
 
 export default function Friends({ user, load, reset }: FriendsProps) {
+    const { t } = useTranslation();
     const { toggle } = useContext(DialogContext)!;
 
     const searchRef = useRef<HTMLInputElement>(null);
@@ -141,7 +143,7 @@ export default function Friends({ user, load, reset }: FriendsProps) {
                 <li>
                     <a onPointerUp={invite} href="#">
                         <span className="material-icons notranslate">person_add_alt_1</span>
-                        Invite Friend
+                        {t('friends.add')}
                     </a>
                 </li>
                 {document.fullscreenEnabled ?
@@ -152,49 +154,49 @@ export default function Friends({ user, load, reset }: FriendsProps) {
                 <li>
                     <a onPointerUp={() => toggle(Modal.Profile)} href="#">
                         <span className="material-icons notranslate">manage_accounts</span>
-                        Edit Profile
+                        {t('friends.title')}
                     </a>
                 </li>
                 {"Notification" in self && Notification.permission === 'default' ? <li>
                     <a onPointerUp={() => saveFcmToken(true)} href="#">
                         <span className="material-icons notranslate">notifications</span>
-                        Notifications
+                        {t('friends.title')}
                     </a>
                 </li> : null}
                 <li>
                     <a onPointerUp={handleReset} href="#">
                         <span className="material-icons notranslate">restart_alt</span>
-                        Reset Match
+                        {t('toolbar.newGame')}
                     </a>
                 </li>
                 <li>
                     <a href="https://github.com/ProLoser/PeaceInTheMiddleEast/issues/new" target="_blank">
                         <span className="material-icons notranslate">bug_report</span>
-                        Report Bug
+                        {t('toolbar.surrender')}
                     </a>
                 </li>
                 <li>
                     <a href="https://github.com/ProLoser/PeaceInTheMiddleEast/" target="_blank" rel="noopener noreferrer">
                         <span className="material-icons notranslate">info</span>
-                        About
+                        {t('toolbar.draw')}
                     </a>
                 </li>
                 <Version />
                 <li>
                     <a onPointerUp={() => firebase.auth().signOut()} href="#">
                         <span className="material-icons notranslate">logout</span>
-                        Logout
+                        {t('login.signOut')}
                     </a>
                 </li>
             </menu>
             <h1>
                 <span>
                     <span>{user.val().name}'s</span>
-                    Matches
+                    {t('friends.title')}
                 </span>
             </h1>
         </header>
-        <input name="search" ref={searchRef} type="search" autoComplete="off" placeholder="Search for Friends" onChange={onSearch} />
+        <input name="search" ref={searchRef} type="search" autoComplete="off" placeholder={t('friends.search')} onChange={onSearch} />
         <ul>
             {renderFriends}
         </ul>

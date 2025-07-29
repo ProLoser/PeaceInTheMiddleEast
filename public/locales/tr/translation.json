@@ -1,0 +1,29 @@
+{
+  "login": {
+    "title": "Tavla'ya Giriş Yap",
+    "email": "E-posta",
+    "password": "Şifre",
+    "signIn": "Giriş Yap",
+    "signOut": "Çıkış Yap",
+    "or": "Veya",
+    "google": "Google ile Giriş Yap",
+    "facebook": "Facebook ile Giriş Yap",
+    "twitter": "Twitter ile Giriş Yap",
+    "github": "Github ile Giriş Yap",
+    "guest": "Misafir olarak Giriş Yap"
+  },
+  "friends": {
+    "title": "Arkadaşlar",
+    "search": "Arkadaş ara",
+    "add": "Arkadaş Ekle"
+  },
+  "chat": {
+    "title": "Sohbet",
+    "placeholder": "Bir mesaj yazın"
+  },
+  "toolbar": {
+    "newGame": "Yeni Oyun",
+    "surrender": "Terk Et",
+    "draw": "Berabere"
+  }
+}
