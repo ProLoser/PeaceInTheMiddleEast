@@ -1,29 +1,17 @@
 {
-  "login": {
-    "title": "Tavla'ya Giriş Yap",
-    "email": "E-posta",
-    "password": "Şifre",
-    "signIn": "Giriş Yap",
-    "signOut": "Çıkış Yap",
-    "or": "Veya",
-    "google": "Google ile Giriş Yap",
-    "facebook": "Facebook ile Giriş Yap",
-    "twitter": "Twitter ile Giriş Yap",
-    "github": "Github ile Giriş Yap",
-    "guest": "Misafir olarak Giriş Yap"
-  },
-  "friends": {
-    "title": "Arkadaşlar",
-    "search": "Arkadaş ara",
-    "add": "Arkadaş Ekle"
-  },
-  "chat": {
-    "title": "Sohbet",
-    "placeholder": "Bir mesaj yazın"
-  },
-  "toolbar": {
-    "newGame": "Yeni Oyun",
-    "surrender": "Terk Et",
-    "draw": "Berabere"
-  }
+  "login": "Tavla'ya Giriş Yap",
+  "signOut": "Çıkış Yap",
+  "guest": "Misafir olarak Giriş Yap",
+  "friends": "Arkadaşlar",
+  "search": "Arkadaş ara",
+  "addFriend": "Arkadaş Ekle",
+  "chat": "Sohbet",
+  "chatPlaceholder": "Bir mesaj yazın",
+  "newGame": "Yeni Oyun",
+  "inviteFriend": "{{name}} sizi Tavla oynamaya davet etti",
+  "profile": "Profil",
+  "notifications": "Bildirimler",
+  "reportBug": "Hata Bildir",
+  "info": "Bilgi",
+  "local": "Yerel"
 }
