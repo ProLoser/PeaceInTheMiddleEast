@@ -60,15 +60,15 @@ export default function Dialogues({ user, friend, load, reset, chats, gameover, 
   return (
     <DialogContext.Provider value={value}>
       <dialog ref={dialogRef} onCancel={() => toggle(false)} open={isOpen} onPointerUp={event => event.stopPropagation()}>
-        {gameover ? (
-          <Gameover user={gameover} reset={reset} />
-        ) : user ? (
+        {user ? (
           state === 'friends' ? (
             <Friends user={user} load={load} reset={reset} />
           ) : state === 'profile' ? (
             <Profile user={user} />
           ) : state === 'chat' ? (
             <Chat chats={chats} user={user} />
+          ) : gameover ? (
+            <Gameover user={gameover} reset={reset} />
           ) : null
         ) : (
           <Login reset={reset} friend={friend} load={load} />
