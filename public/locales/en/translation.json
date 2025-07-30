@@ -1,7 +1,6 @@
 {
-  "Game Over": "Game Over",
-  "Winner": "Winner: {{name}}",
-  "Play Again": "Play Again",
+  "gameover": "Game Over",
+  "winner": "Winner: {{name}}",
   "login": "Login to Backgammon",
   "signOut": "Sign Out",
   "guest": "Sign in as Guest",
@@ -10,11 +9,12 @@
   "addFriend": "Add Friend",
   "chat": "Chat",
   "chatPlaceholder": "Type a message",
-  "newGame": "New Game",
+  "reset": "Reset Game",
   "inviteFriend": "{{name}} invited you to play Backgammon",
   "profile": "Profile",
   "notifications": "Notifications",
   "reportBug": "Report a Bug",
   "info": "Info",
-  "local": "Local"
+  "local": "Local",
+  "resetConfirm": "Are you sure you want to reset the match?"
 }

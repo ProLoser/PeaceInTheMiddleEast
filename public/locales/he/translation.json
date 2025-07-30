@@ -7,11 +7,14 @@
   "addFriend": "הוסף חבר",
   "chat": "צ'אט",
   "chatPlaceholder": "הקלד הודעה",
-  "newGame": "משחק חדש",
   "inviteFriend": "{{name}} הזמין אותך לשחק שש בש",
   "profile": "פּרוֹפִיל",
   "notifications": "התראות",
   "reportBug": "דווח על באג",
   "info": "מידע",
-  "local": "מְקוֹמִי"
+  "local": "מְקוֹמִי",
+  "newGame": "משחק חדש",
+  "gameover": "סיום המשחק",
+  "winner": "מנצח: {{name}}",
+  "resetConfirm": "האם אתה בטוח שברצונך לאפס את המשחק?"
 }

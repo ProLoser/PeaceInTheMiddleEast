@@ -108,7 +108,7 @@ export function App() {
   }, []);
 
   const reset = useCallback(() => {
-    if (confirm('Are you sure you want to reset the match?')) {
+    if (confirm(t('resetConfirm'))) {
       console.log('Resetting', match?.game);
       let data = newGame()
       if (match)

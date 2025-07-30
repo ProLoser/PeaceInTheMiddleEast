@@ -7,11 +7,14 @@
   "addFriend": "Arkadaş Ekle",
   "chat": "Sohbet",
   "chatPlaceholder": "Bir mesaj yazın",
-  "newGame": "Yeni Oyun",
   "inviteFriend": "{{name}} sizi Tavla oynamaya davet etti",
   "profile": "Profil",
   "notifications": "Bildirimler",
   "reportBug": "Hata Bildir",
   "info": "Bilgi",
-  "local": "Yerel"
+  "local": "Yerel",
+  "newGame": "Yeni Oyun",
+  "gameover": "Oyun Bitti",
+  "winner": "Kazanan: {{name}}",
+  "resetConfirm": "Maçı sıfırlamak istediğinizden emin misiniz?"
 }
