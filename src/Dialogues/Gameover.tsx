@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { type User } from '../Types';
+import Avatar from '../Avatar';
 
 interface GameoverProps {
   user: User;
@@ -13,6 +14,7 @@ export default function Gameover({ user, reset }: GameoverProps) {
   return (
     <div className="gameover">
       <h1>{t('Game Over')}</h1>
+      <Avatar user={user} />
       <p>{t('Winner', { name: user.name })}</p>
       <button onClick={reset}>{t('Play Again')}</button>
     </div>

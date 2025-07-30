@@ -3,6 +3,7 @@ import Friends from './Friends';
 import Chat from './Chat';
 import Profile from './Profile';
 import Login from './Login';
+import './Dialogues.css';
 import Gameover from './Gameover';
 import { Modal, type User, type SnapshotOrNullType } from '../Types';
 
