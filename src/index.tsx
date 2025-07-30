@@ -108,7 +108,7 @@ export function App() {
   }, []);
 
   const reset = useCallback(() => {
-    if (confirm('Are you sure you want to reset the match?')) {
+    if (confirm(t('resetConfirm'))) {
       console.log('Resetting', match?.game);
       let data = newGame()
       if (match)
@@ -348,6 +348,13 @@ export function App() {
     }
   }, [usedDice, game, match, friend, user]);
 
+  const winner = useMemo(() => {
+    if (game.status !== Status.GameOver) return undefined;
+    if (game.turn === user?.key) return user?.val();
+    if (game.turn === friend?.key) return friend?.val();
+    return undefined
+  }, [game.status, game.turn, user, friend])
+
   return (
     <Dialogues
       user={user}
@@ -355,6 +362,7 @@ export function App() {
       load={load}
       reset={reset}
       chats={chats}
+      gameover={winner}
     >
       <div id="board">
         <Toolbar friend={friendData} />

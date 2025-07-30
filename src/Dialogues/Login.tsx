@@ -92,7 +92,7 @@ export default function Login({ reset, friend, load }: LoginProps) {
                     <li>
                         <a onPointerUp={reset} href="#">
                             <span className="material-icons notranslate">restart_alt</span>
-                            {t('newGame')}
+                            {t('reset')}
                         </a>
                     </li>
                     <li>

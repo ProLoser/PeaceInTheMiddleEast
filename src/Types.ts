@@ -27,7 +27,8 @@ export const enum Modal {
     Chat = 'chat',
     Profile = 'profile',
     Friends = 'friends',
-    Login = 'login'
+    Login = 'login',
+    Gameover = 'gameover'
 }
 
 export type ModalContextType = {

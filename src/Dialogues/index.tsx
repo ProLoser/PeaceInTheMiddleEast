@@ -3,6 +3,8 @@ import Friends from './Friends';
 import Chat from './Chat';
 import Profile from './Profile';
 import Login from './Login';
+import './Dialogues.css';
+import Gameover from './Gameover';
 import { Modal, type User, type SnapshotOrNullType } from '../Types';
 
 export type DialogContextType = {
@@ -17,11 +19,12 @@ interface DialoguesProps {
   friend: User | undefined;
   load: (friendId?: string, authUser?: string) => void;
   reset: () => void;
-  chats: SnapshotOrNullType; 
+  chats: SnapshotOrNullType;
+  gameover: User | undefined;
   children: React.ReactNode
 }
 
-export default function Dialogues({ user, friend, load, reset, chats, children }: DialoguesProps) {
+export default function Dialogues({ user, friend, load, reset, chats, gameover, children }: DialoguesProps) {
   const [state, setState] = useState<string | boolean>(false);
   const [lastDialog, setLastDialog] = useState<Modal>(Modal.Friends);
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -39,7 +42,7 @@ export default function Dialogues({ user, friend, load, reset, chats, children }
 
   const value = useMemo(() => ({ state, toggle }), [state, toggle]);
 
-  const isOpen = (friend && !user) || !!state;
+  const isOpen = (friend && !user) || !!state || !!gameover;
 
   useEffect(() => {
     const handleClickOutside = () => {
@@ -65,6 +68,8 @@ export default function Dialogues({ user, friend, load, reset, chats, children }
             <Profile user={user} />
           ) : state === 'chat' ? (
             <Chat chats={chats} user={user} />
+          ) : gameover ? (
+            <Gameover user={gameover} reset={reset} />
           ) : null
         ) : (
           <Login reset={reset} friend={friend} load={load} />

@@ -166,7 +166,7 @@ export default function Friends({ user, load, reset }: FriendsProps) {
                 <li>
                     <a onPointerUp={handleReset} href="#">
                         <span className="material-icons notranslate">restart_alt</span>
-                        {t('newGame')}
+                        {t('reset')}
                     </a>
                 </li>
                 <li>
