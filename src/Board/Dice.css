@@ -19,5 +19,21 @@
         &.used {
             opacity: .5;
         }
+
+        &.pulsate {
+            animation: pulsate 2s infinite;
+        }
+    }
+}
+
+@keyframes pulsate {
+    0% {
+        opacity: .5;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: .5;
     }
 }

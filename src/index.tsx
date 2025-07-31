@@ -374,6 +374,7 @@ export function App() {
           color={game.color}
           used={usedDice}
           disabled={!!game.turn && !isMyTurn}
+          pulsate={isMyTurn && game.status === Status.Rolling}
         />
         <div className="bar">
           {Array.from({ length: game.prison?.white }, (_, index) =>
