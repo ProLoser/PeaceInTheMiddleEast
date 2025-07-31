@@ -12,8 +12,8 @@
   "inviteFriend": "{{name}} invited you to play Backgammon",
   "profile": "Profile",
   "notifications": "Notifications",
-  "reportBug": "Report a Bug",
-  "info": "Info",
-  "local": "Local",
+  "reportBug": "Report Bug",
+  "about": "About",
+  "decline": "Decline Invitation",
   "resetConfirm": "Are you sure you want to reset the match?"
 }

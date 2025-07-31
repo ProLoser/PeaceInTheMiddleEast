@@ -104,7 +104,7 @@ export default function Login({ reset, friend, load }: LoginProps) {
                     <li>
                         <a href="https://github.com/ProLoser/PeaceInTheMiddleEast/" target="_blank" rel="noopener noreferrer">
                             <span className="material-icons notranslate">info</span>
-                            {t('info')}
+                            {t('about')}
                         </a>
                     </li>
                     <Version />
@@ -113,7 +113,7 @@ export default function Login({ reset, friend, load }: LoginProps) {
             </header>
             <div ref={elementRef} />
             {friend ?
-                <button className="local" onPointerUp={decline}>{t('local')}</button>
+                <button className="local" onPointerUp={decline}>{t('decline')}</button>
             :null}
         </section>
     );
