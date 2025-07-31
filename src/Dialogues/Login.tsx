@@ -109,13 +109,12 @@ export default function Login({ reset, friend, load }: LoginProps) {
                     </li>
                     <Version />
                 </menu>
-                <h1>{t('login')} {friend?.name || t('guest')}</h1>
+                <h1>{t('login', { name: friend?.name || 'online' })}</h1>
             </header>
             <div ref={elementRef} />
-            {friend ? <>
-                <h1>{t('login')}</h1>
+            {friend ?
                 <button className="local" onPointerUp={decline}>{t('local')}</button>
-            </>:null}
+            :null}
         </section>
     );
 }

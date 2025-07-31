@@ -1,9 +1,8 @@
 {
   "gameover": "Game Over",
   "winner": "Winner: {{name}}",
-  "login": "Login to Backgammon",
+  "login": "Play {{name}}",
   "signOut": "Sign Out",
-  "guest": "Sign in as Guest",
   "friends": "Friends",
   "search": "Search for friends",
   "addFriend": "Add Friend",
