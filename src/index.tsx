@@ -405,12 +405,18 @@ export function App() {
             />
           )}
         </div>
-        <div className={classes('home', { valid: moves.has(-1) })} onDragOver={onDragOver} onDrop={onDrop} onPointerUp={onHomeClick}>
+        <div className={classes('home', { valid: typeof selected === 'number' && moves.has(-1) })} 
+          onDragOver={onDragOver} 
+          onDrop={onDrop} 
+          onPointerUp={onHomeClick}>
           {Array.from({ length: game.home?.black }, (_, index) =>
             <Piece key={index} color={Color.Black} />
           )}
         </div>
-        <div className={classes('home', { valid: moves.has(-1) })} onDragOver={onDragOver} onDrop={onDrop} onPointerUp={onHomeClick}>
+        <div className={classes('home', { valid: typeof selected === 'number' && moves.has(-1) })} 
+          onDragOver={onDragOver} 
+          onDrop={onDrop} 
+          onPointerUp={onHomeClick}>
           {Array.from({ length: game.home?.white }, (_, index) =>
             <Piece key={index} color={Color.White} />
           )}
