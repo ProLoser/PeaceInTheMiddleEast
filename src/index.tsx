@@ -208,6 +208,13 @@ export function App() {
     setSelected(null)
   }, [move, moves])
 
+  const onHomeClick = useCallback(() => {
+    if (selected !== null) {
+      move(selected, -1);
+      setSelected(null);
+    }
+  }, [selected, move]);
+
   const onSelect = useCallback((position: number | null) => {
     setSelected(position)
   }, [selected]) // this dependency is necessary for some reason
@@ -397,12 +404,12 @@ export function App() {
             />
           )}
         </div>
-        <div className="home" onDragOver={onDragOver} onDrop={onDrop}>
+        <div className={`home ${moves.has(-1) ? 'valid' : ''}`} onDragOver={onDragOver} onDrop={onDrop} onPointerUp={onHomeClick}>
           {Array.from({ length: game.home?.black }, (_, index) =>
             <Piece key={index} color={Color.Black} />
           )}
         </div>
-        <div className="home" onDragOver={onDragOver} onDrop={onDrop}>
+        <div className={`home ${moves.has(-1) ? 'valid' : ''}`} onDragOver={onDragOver} onDrop={onDrop} onPointerUp={onHomeClick}>
           {Array.from({ length: game.home?.white }, (_, index) =>
             <Piece key={index} color={Color.White} />
           )}
