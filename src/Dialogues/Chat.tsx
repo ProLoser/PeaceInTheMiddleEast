@@ -1,10 +1,16 @@
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/database';
 import './Chat.css';
+import { SnapshotOrNullType } from '../Types';
 
-export default function ({ chats, user }) {
+interface ChatProps {
+    chats: SnapshotOrNullType;
+    user: SnapshotOrNullType;
+}
+
+export default function Chat({ chats }: ChatProps) {
     const { t } = useTranslation();
     // TODO: Implement Chat form
     const [selectedChat, setSelectedChat] = useState<firebase.database.DataSnapshot | null>(null);
@@ -13,33 +19,26 @@ export default function ({ chats, user }) {
         setSelectedChat(chat);
     };
 
-    const chat = useCallback((chatId: string, message: string) => {
-        if (chatId && user) {
-            firebase.database().ref(`chats/${chatId}`).push({
-                message,
-                author: user.key,
-                time: new Date().toISOString()
-            })
-        }
-    }, [user]);
-
     return (
         <div id="chat">
             <h1>{t('chat')}</h1>
             <ul>
-                {chats.map((chat: firebase.database.DataSnapshot) => (
-                    <li key={chat.key} onPointerUp={() => handleChatClick(chat)}>
-                        {chat.val().name}
-                    </li>
-                ))}
+                {chats && chats.val() && Object.keys(chats.val()).map((chatId: string) => {
+                    const chat = chats.child(chatId);
+                    return (
+                        <li key={chatId} onPointerUp={() => handleChatClick(chat)}>
+                            {chat.val()?.name || chatId}
+                        </li>
+                    );
+                })}
             </ul>
 
             <h1>{t('chat')}</h1>
             {selectedChat && (
                 <div>
-                    <h2>{selectedChat.val().name}</h2>
-                    {selectedChat.val().messages.map((message: string, index: number) => (
-                        <p key={index}>{message}</p>
+                    <h2>{selectedChat.val()?.name || selectedChat.key}</h2>
+                    {selectedChat.val()?.messages && Object.values(selectedChat.val().messages).map((message: any, index: number) => (
+                        <p key={index}>{message.message}</p>
                     ))}
                     <input type="text" placeholder={t('chatPlaceholder')} />
                 </div>

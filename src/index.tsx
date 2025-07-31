@@ -1,7 +1,7 @@
 // Sentry initialization should be imported first!
 import "./instrument";
 import './i18n';
-import { StrictMode, useEffect, useState, useCallback, type DragEventHandler, useMemo } from "react";
+import { StrictMode, useEffect, useState, useCallback, useMemo } from "react";
 import ReactDOM from 'react-dom/client'
 // TODO: Upgrade to modular after firebaseui upgrades
 // import { initializeApp } from 'firebase/app';
@@ -15,11 +15,12 @@ import Toolbar from './Board/Toolbar';
 import './index.css'
 import './Board/Board.css';
 import './Board/Toolbar.css'
-import { calculate, newGame, nextMoves, populated, rollDie, Vibrations, playAudio } from './Utils';
+import { calculate, newGame, nextMoves, rollDie, Vibrations, playAudio } from './Utils';
 import firebase, { saveFcmToken } from "./firebase.config";
 import { playCheckerSound } from './Utils';
 import type firebaseType from 'firebase/compat/app';
 import * as Sentry from "@sentry/react";
+import { useTranslation } from 'react-i18next';
 
 import { Suspense } from "react";
 
@@ -36,6 +37,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 const diceSound = new Audio('./shake-and-roll-dice-soundbible.mp3');
 
 export function App() {
+  const { t } = useTranslation();
   const [game, setGame] = useState<Game>(newGame);
   const [user, setUser] = useState<SnapshotOrNullType>(null);
   const [match, setMatch] = useState<Match | null>(null);
@@ -117,7 +119,7 @@ export function App() {
       setUsedDice([]);
       setSelected(null);
     }
-  }, [match]);
+  }, [match, t]);
 
   const isMyTurn = useMemo<boolean>(() => 
     !match 

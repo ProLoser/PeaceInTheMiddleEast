@@ -1,7 +1,7 @@
 // Import FirebaseAuth and firebase.
 import { useState, useCallback, useRef, ReactNode, useEffect, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { ChangeEventHandler } from 'react';
+import type { ChangeEventHandler, PointerEvent } from 'react';
 import { formatDistance } from 'date-fns';
 import { DialogContext } from '.';
 import firebase from 'firebase/compat/app';
@@ -29,8 +29,8 @@ export default function Friends({ user, load, reset }: FriendsProps) {
     const searchRef = useRef<HTMLInputElement>(null);
     const [users, setUsers] = useState<Users>({});
     const [isExpanded, setIsExpanded] = useState(false);
-    const [matches, setMatches] = useState<firebase.database.DataSnapshot>([]);
-    const [searchResults, setSearchResults] = useState<firebase.database.DataSnapshot>([]);
+    const [matches, setMatches] = useState<firebase.database.DataSnapshot | null>(null);
+    const [searchResults, setSearchResults] = useState<firebase.database.DataSnapshot | null>(null);
 
     // Synchronize Matches
     useEffect(() => {
@@ -61,7 +61,7 @@ export default function Friends({ user, load, reset }: FriendsProps) {
             const searchSnapshot = await firebase.database().ref('users').orderByChild('search').startAt(search.toLocaleLowerCase()).get();
             setSearchResults(searchSnapshot)
         } else {
-            setSearchResults([])
+            setSearchResults(null)
         }
     }, []);
 
@@ -78,7 +78,7 @@ export default function Friends({ user, load, reset }: FriendsProps) {
         toggle(false);
     }, [load, user?.key, toggle]);
 
-    const handleReset = useCallback((event: PointerEvent) => {
+    const handleReset = useCallback((event: PointerEvent<HTMLAnchorElement>) => {
         event.preventDefault();
         reset();
         toggle(false);
@@ -107,7 +107,7 @@ export default function Friends({ user, load, reset }: FriendsProps) {
         friends.push(match.key)
         renderFriends.unshift(row(users[match.key], matchData))
     })
-    searchResults.forEach(result => {
+    searchResults?.forEach(result => {
         const resultData: User = result.val()
         if (result.key === user.key || friends.includes(result.key) || searchReject(resultData)) {
             return;
