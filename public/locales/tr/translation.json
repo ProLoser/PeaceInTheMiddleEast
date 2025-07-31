@@ -1,7 +1,6 @@
 {
-  "login": "Tavla'ya Giriş Yap",
+  "login": "{{name}} ile Oyna",
   "signOut": "Çıkış Yap",
-  "guest": "Misafir olarak Giriş Yap",
   "friends": "Arkadaşlar",
   "search": "Arkadaş ara",
   "addFriend": "Arkadaş Ekle",
