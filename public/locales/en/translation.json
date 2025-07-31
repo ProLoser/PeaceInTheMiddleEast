@@ -14,6 +14,8 @@
   "notifications": "Notifications",
   "reportBug": "Report Bug",
   "about": "About",
+  "online": "Online",
   "decline": "Decline Invitation",
-  "resetConfirm": "Are you sure you want to reset the match?"
+  "resetConfirm": "Are you sure you want to reset the match?",
+  "local": "Local"
 }

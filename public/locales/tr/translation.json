@@ -15,5 +15,7 @@
   "newGame": "Yeni Oyun",
   "gameover": "Oyun Bitti",
   "winner": "Kazanan: {{name}}",
+  "online": "Çevrimiçi",
+  "local": "Yerel",
   "resetConfirm": "Maçı sıfırlamak istediğinizden emin misiniz?"
 }
