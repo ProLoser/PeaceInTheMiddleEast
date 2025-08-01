@@ -2,6 +2,7 @@ import type { PointerEventHandler } from 'react';
 import * as IMAGES from './images/dice';
 import './Dice.css'
 import { Color, UsedDie } from '../Types';
+import { classes } from '../Utils';
 
 type DiceProps = {
     onPointerUp: PointerEventHandler,
@@ -17,7 +18,7 @@ export default function Dice({ onPointerUp, values = [6, 6], used = [], color, d
     
     const usedClone = [...used];
     
-    return <div className="dice" onPointerUp={onPointerUp}>
+    return <div className={classes("dice", { pulsate })} onPointerUp={onPointerUp}>
         {dice.map((value, index) => {
             const diceColor = color || (index % 2 === 0 ? Color.Black : Color.White);
             const src = `${diceColor}${value}` as keyof typeof IMAGES;
@@ -31,7 +32,7 @@ export default function Dice({ onPointerUp, values = [6, 6], used = [], color, d
                 <img 
                     key={index}
                     src={IMAGES[src]} 
-                    className={disabled || isUsed ? 'used' : (pulsate ? 'pulsate' : '')}
+                    className={classes({ used: isUsed || disabled })}
                     draggable="false"
                 />
             );

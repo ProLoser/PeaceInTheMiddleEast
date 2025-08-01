@@ -1,7 +1,7 @@
 import { useCallback, useRef, useState, type DragEventHandler } from "react";
 import Piece from './Piece'
 import { Color } from "../Types";
-import { Vibrations } from "../Utils";
+import { Vibrations, classes } from "../Utils";
 
 type PointProps = {
     pieces: number,
@@ -51,7 +51,7 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
         }
     }, [position, onSelect, dragging, enabled])
 
-    return <div className={`point ${selected === position ? 'selected' : ''} ${valid ? 'valid' : ''}`} 
+    return <div className={classes('point', { valid, selected: selected === position })} 
         draggable={enabled}
         onPointerUp={onPointerUp} 
         onDragOver={onDragOver} 
