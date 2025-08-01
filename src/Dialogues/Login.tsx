@@ -109,7 +109,7 @@ export default function Login({ reset, friend, load }: LoginProps) {
                     </li>
                     <Version />
                 </menu>
-                <h1>{t('login', { name: friend?.name || 'online' })}</h1>
+                <h1>{t('login', { name: friend?.name || t('online') })}</h1>
             </header>
             <div ref={elementRef} />
             {friend ?

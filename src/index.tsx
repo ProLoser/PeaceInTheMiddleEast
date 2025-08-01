@@ -15,7 +15,7 @@ import Toolbar from './Board/Toolbar';
 import './index.css'
 import './Board/Board.css';
 import './Board/Toolbar.css'
-import { calculate, newGame, nextMoves, rollDie, Vibrations, playAudio } from './Utils';
+import { calculate, newGame, nextMoves, rollDie, Vibrations, playAudio, classes } from './Utils';
 import firebase, { saveFcmToken } from "./firebase.config";
 import { playCheckerSound } from './Utils';
 import type firebaseType from 'firebase/compat/app';
@@ -373,7 +373,7 @@ export function App() {
       chats={chats}
       gameover={winner}
     >
-      <div id="board">
+      <div id="board" className={game.color}>
         <Toolbar friend={friendData} />
         <Dice
           onPointerUp={rollDice}
@@ -381,6 +381,7 @@ export function App() {
           color={game.color}
           used={usedDice}
           disabled={!!game.turn && !isMyTurn}
+          pulsate={isMyTurn && game.status === Status.Rolling}
         />
         <div className="bar">
           {Array.from({ length: game.prison?.white }, (_, index) =>
@@ -404,12 +405,12 @@ export function App() {
             />
           )}
         </div>
-        <div className={`home ${moves.has(-1) ? 'valid' : ''}`} onDragOver={onDragOver} onDrop={onDrop} onPointerUp={onHomeClick}>
+        <div className={classes('home', { valid: moves.has(-1) })} onDragOver={onDragOver} onDrop={onDrop} onPointerUp={onHomeClick}>
           {Array.from({ length: game.home?.black }, (_, index) =>
             <Piece key={index} color={Color.Black} />
           )}
         </div>
-        <div className={`home ${moves.has(-1) ? 'valid' : ''}`} onDragOver={onDragOver} onDrop={onDrop} onPointerUp={onHomeClick}>
+        <div className={classes('home', { valid: moves.has(-1) })} onDragOver={onDragOver} onDrop={onDrop} onPointerUp={onHomeClick}>
           {Array.from({ length: game.home?.white }, (_, index) =>
             <Piece key={index} color={Color.White} />
           )}

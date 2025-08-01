@@ -3,6 +3,10 @@
     cursor: pointer;
     justify-content: center;
     flex-direction: column;
+
+    &.pulsate {
+        animation: pulsate 1s infinite ease-out alternate-reverse;
+    }
     
     img {
         aspect-ratio: 1;
@@ -19,5 +23,14 @@
         &.used {
             opacity: .5;
         }
+    }
+}
+
+@keyframes pulsate {
+    0% {
+        background-color: white;
+    }
+    100% {
+        background-color: lightgreen;
     }
 }

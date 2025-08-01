@@ -6,6 +6,7 @@
   "addFriend": "הוסף חבר",
   "chat": "צ'אט",
   "chatPlaceholder": "הקלד הודעה",
+  "reset": "איפוס משחק",
   "inviteFriend": "{{name}} הזמין אותך לשחק שש בש",
   "profile": "פּרוֹפִיל",
   "notifications": "התראות",
@@ -15,5 +16,9 @@
   "newGame": "משחק חדש",
   "gameover": "סיום המשחק",
   "winner": "מנצח: {{name}}",
-  "resetConfirm": "האם אתה בטוח שברצונך לאפס את המשחק?"
+  "online": "מחובר",
+  "local": "מקומי",
+  "resetConfirm": "האם אתה בטוח שברצונך לאפס את המשחק?",
+  "fullscreen": "מסך מלא",
+  "exitFullscreen": "צא ממסך מלא"
 }

@@ -18,11 +18,12 @@ type Users = { [key: string]: User }
 
 type FriendsProps = {
     user: SnapshotOrNullType;
+    friend?: User;
     load: (userId: string, key: string) => void;
     reset: () => void;
 }
 
-export default function Friends({ user, load, reset }: FriendsProps) {
+export default function Friends({ user, load, reset, friend }: FriendsProps) {
     const { t } = useTranslation();
     const { toggle } = useContext(DialogContext)!;
 
@@ -198,6 +199,12 @@ export default function Friends({ user, load, reset }: FriendsProps) {
         </header>
         <input name="search" ref={searchRef} type="search" autoComplete="off" placeholder={t('search')} onChange={onSearch} />
         <ul>
+            {friend ? <li className="local">
+                <a href={`${location.origin}/${location.pathname.split('/').filter(Boolean).slice(0, -1).join('/')}`}>
+                    <span className="material-icons notranslate">local</span>
+                    {t('local')}
+                </a>
+            </li> : null}
             {renderFriends}
         </ul>
     </section>

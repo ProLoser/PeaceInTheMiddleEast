@@ -3,6 +3,7 @@
     --secondary: #ffd8a0;
     --primary-hover: #2727ff;
     --secondary-hover: rgb(128, 128, 211);
+    --valid: greenyellow;
     user-select: none;
     display: grid;
     grid-template-columns: repeat(15, 1fr);
@@ -10,6 +11,9 @@
     height: 100%;
     width: 100%;
     touch-action: none;
+    border: 5vmin solid #aaa;
+    transition: border-color 1s;
+    box-sizing: border-box;
     .selected {
         --primary: red;
         --secondary: red;
@@ -19,6 +23,12 @@
         width: 100%;
         align-items: center;
         display: flex;
+    }
+    &.black {
+        border-color: #888;
+    }
+    &.white {
+        border-color: #ccc;
     }
 }
 
@@ -40,7 +50,7 @@
         min-height: 0;
     }
     &.valid {
-        background: green;
+        background: var(--valid);
     }
 }
 
@@ -66,8 +76,8 @@
     }
 
     &.valid {
-        --primary: green;
-        --secondary: green;
+        --primary: var(--valid);
+        --secondary: var(--valid);
     }
 }
 

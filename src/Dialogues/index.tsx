@@ -63,7 +63,7 @@ export default function Dialogues({ user, friend, load, reset, chats, gameover, 
       <dialog ref={dialogRef} onCancel={() => toggle(false)} open={isOpen} onPointerUp={event => event.stopPropagation()}>
         {user ? (
           state === 'friends' ? (
-            <Friends user={user} load={load} reset={reset} />
+            <Friends user={user} load={load} reset={reset} friend={friend} />
           ) : state === 'profile' ? (
             <Profile user={user} />
           ) : state === 'chat' ? (

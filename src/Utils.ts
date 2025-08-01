@@ -27,6 +27,28 @@ export const Vibrations = {
     Down: 10
 }
 
+export function classes(...args: any[]) {
+  let result = '';
+
+  for (const arg of args) {
+    if (!arg) continue;
+
+    const type = typeof arg;
+
+    if (type === 'string' || type === 'number') {
+      result += ' ' + arg;
+    } else if (Array.isArray(arg)) {
+      result += ' ' + classes(...arg);
+    } else if (type === 'object') {
+      for (const key in arg) {
+        if (arg[key]) result += ' ' + key;
+      }
+    }
+  }
+
+  return result;
+}
+
 export const newGame = (oldGame?: Game) => ({
     board: [...(oldGame?.board || DEFAULT_BOARD)],
     dice: oldGame?.dice || [6, 6],
