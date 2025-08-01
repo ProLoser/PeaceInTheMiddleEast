@@ -50,8 +50,7 @@
         min-height: 0;
     }
     &.valid {
-        --primary: var(--valid);
-        --secondary: var(--valid);
+        background: var(--valid);
     }
 }
 
