@@ -174,16 +174,18 @@ export function nextMoves(state: Game, usedDice: UsedDie[] = [], from?: number) 
                     availableMoves.add(point)
             })
         } else if (!state.prison[player]) {
-            const farthestPoint = farthestHome(player, state);
+            const canBearOff = allHome(player, state);
+            const farthestPoint = canBearOff ? farthestHome(player, state) : undefined;
             availableDice.forEach(die => {
                 const point = destination(player, from, die)
-                if (
-                    (point === -1) ||
-                    (point !== undefined && point > -1 && unprotected(player, state.board[point]))
-                ) {
+                if (point !== undefined && point > -1 && unprotected(player, state.board[point])) {
                     availableMoves.add(point);
-                } else if (point < -1 && from === farthestPoint) {
-                    availableMoves.add(-1)
+                } else if (canBearOff) {
+                    if (point === -1) { // exact bear off
+                        availableMoves.add(-1);
+                    } else if (point < -1 && from === farthestPoint) { // bear off from a point further away
+                        availableMoves.add(-1);
+                    }
                 }
             })
         }
