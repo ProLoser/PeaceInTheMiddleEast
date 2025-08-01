@@ -18,5 +18,7 @@
   "winner": "Kazanan: {{name}}",
   "online": "Çevrimiçi",
   "local": "Yerel",
-  "resetConfirm": "Maçı sıfırlamak istediğinizden emin misiniz?"
+  "resetConfirm": "Maçı sıfırlamak istediğinizden emin misiniz?",
+  "fullscreen": "Tam Ekran",
+  "exitFullscreen": "Tam Ekrandan Çık"
 }

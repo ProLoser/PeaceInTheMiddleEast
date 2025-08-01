@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const toggleFullscreen = (event: React.PointerEvent) => {
     event.preventDefault();
@@ -8,6 +9,7 @@ const toggleFullscreen = (event: React.PointerEvent) => {
 }
 
 export default function ToggleFullscreen() {
+    const { t } = useTranslation();
     const [fullscreen, setFullscreen] = useState(!!document.fullscreenElement);
 
     // Synchronize Fullscreen Icon 
@@ -19,6 +21,6 @@ export default function ToggleFullscreen() {
 
     return <a onPointerUp={toggleFullscreen} href="#">
         <span className="material-icons notranslate">{fullscreen ? 'fullscreen_exit' : 'fullscreen'}</span>
-        {fullscreen ? 'Exit Fullscreen' : 'Fullscreen'}
+        {t(fullscreen ? 'exitFullscreen' : 'fullscreen')}
     </a>
 }
