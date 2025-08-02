@@ -1,7 +1,7 @@
 // Sentry initialization should be imported first!
 import "./instrument";
 import './i18n';
-import { StrictMode, useEffect, useState, useCallback, useMemo } from "react";
+import { StrictMode, useEffect, useState, useCallback, useMemo, type DragEventHandler } from "react";
 import ReactDOM from 'react-dom/client'
 // TODO: Upgrade to modular after firebaseui upgrades
 // import { initializeApp } from 'firebase/app';
@@ -203,9 +203,11 @@ export function App() {
   
   const onDrop: DragEventHandler = useCallback((event) => {
     event.preventDefault();
-    let from = parseInt(event.dataTransfer?.getData("text")!)
-    move(from, -1)
-    setSelected(null)
+    if (event.dataTransfer) {
+      let from = parseInt(event.dataTransfer.getData("text"))
+      move(from, -1)
+      setSelected(null)
+    }
   }, [move, moves])
 
   const onHomeClick = useCallback(() => {

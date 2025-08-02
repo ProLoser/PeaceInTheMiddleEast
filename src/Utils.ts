@@ -248,7 +248,7 @@ export function calculate(state: Game, from: number | Color | undefined | null, 
         const offense = nextGame.board[from];
         const defense = nextGame.board[to];
         const player = Math.sign(offense) === 1 ? Color.White : Color.Black;
-        let dice = [...state.dice];
+        let dice = [...state.dice].sort((a, b) => a - b);
         usedDice.forEach(die => dice.splice(dice.indexOf(die.value), 1))
         
         if (defense === undefined) { // bear off        
