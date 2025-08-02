@@ -15,10 +15,30 @@ type PointProps = {
 
 export default function Point({ pieces, move, position, onSelect, selected, enabled, valid }: PointProps) {
     const [dragging, setDragging] = useState(false);
+    const [dragOver, setDragOver] = useState(false);
     const pieceRef = useRef<HTMLImageElement>(null);
-    const onDragOver: DragEventHandler = useCallback((event) => { event.preventDefault(); }, [])
+    
+    const onDragOver: DragEventHandler = useCallback((event) => { 
+        event.preventDefault(); 
+    }, [])
+    
+    const onDragEnter: DragEventHandler = useCallback((event) => {
+        if (valid && !dragOver) {
+            setDragOver(true);
+            navigator.vibrate?.(Vibrations.Up);
+        }
+    }, [valid, dragOver]);
+    
+    const onDragLeave: DragEventHandler = useCallback((event) => {
+        event.preventDefault();
+        if (valid && dragOver) {
+            setDragOver(false);
+        }
+    }, [valid, dragOver]);
+    
     const onDrop: DragEventHandler = useCallback((event) => {
         event.preventDefault();
+        setDragOver(false);
         onSelect(null)
         let from = event.dataTransfer?.getData("text")! as number|Color
         return move(from, position)
@@ -37,6 +57,7 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
 
     const onDragEnd = useCallback(() => {
         setDragging(false);
+        setDragOver(false);
         onSelect(null);
     }, []);
 
@@ -51,10 +72,12 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
         }
     }, [position, onSelect, dragging, enabled])
 
-    return <div className={classes('point', { valid, selected: selected === position })} 
+    return <div className={classes('point', { valid, selected: selected === position, dragOver })} 
         draggable={enabled}
         onPointerUp={onPointerUp} 
-        onDragOver={onDragOver} 
+        onDragOver={onDragOver}
+        onDragEnter={onDragEnter}
+        onDragLeave={onDragLeave}
         onDrop={onDrop}
         onDragStart={onDragStart}
         onDragEnd={onDragEnd}
