@@ -1,0 +1,23 @@
+{
+  "gameover": "Spiel beendet",
+  "winner": "Gewinner: {{name}}",
+  "login": "{{name}} spielen",
+  "signOut": "Abmelden",
+  "friends": "Freunde",
+  "search": "Suche nach Freunden",
+  "addFriend": "Freund hinzufügen",
+  "chat": "Chat",
+  "chatPlaceholder": "Nachricht schreiben",
+  "reset": "Spiel zurücksetzen",
+  "inviteFriend": "{{name}} hat dich zu einer Partie Backgammon eingeladen",
+  "profile": "Profil",
+  "notifications": "Benachrichtigungen",
+  "reportBug": "Fehler melden",
+  "about": "Über",
+  "online": "Online",
+  "decline": "Einladung ablehnen",
+  "resetConfirm": "Bist du sicher, dass du das Spiel zurücksetzen möchtest?",
+  "local": "Lokal",
+  "fullscreen": "Vollbild",
+  "exitFullscreen": "Vollbild beenden"
+}

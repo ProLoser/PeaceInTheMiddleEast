@@ -1,0 +1,23 @@
+{
+  "gameover": "ゲームオーバー",
+  "winner": "勝者: {{name}}",
+  "login": "{{name}} をプレイ",
+  "signOut": "サインアウト",
+  "friends": "友達",
+  "search": "友達を検索",
+  "addFriend": "友達を追加",
+  "chat": "チャット",
+  "chatPlaceholder": "メッセージを入力",
+  "reset": "ゲームをリセット",
+  "inviteFriend": "{{name}} さんがバックギャモンのゲームに招待しました",
+  "profile": "プロフィール",
+  "notifications": "通知",
+  "reportBug": "バグを報告",
+  "about": "概要",
+  "online": "オンライン",
+  "decline": "招待を拒否",
+  "resetConfirm": "本当に試合をリセットしますか？",
+  "local": "ローカル",
+  "fullscreen": "全画面表示",
+  "exitFullscreen": "全画面表示を終了"
+}

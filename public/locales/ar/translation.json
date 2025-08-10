@@ -1,0 +1,23 @@
+{
+  "gameover": "انتهت اللعبة",
+  "winner": "الفائز: {{name}}",
+  "login": "العب {{name}}",
+  "signOut": "تسجيل الخروج",
+  "friends": "أصدقاء",
+  "search": "البحث عن الأصدقاء",
+  "addFriend": "إضافة صديق",
+  "chat": "دردشة",
+  "chatPlaceholder": "اكتب رسالة",
+  "reset": "إعادة تعيين اللعبة",
+  "inviteFriend": "{{name}} دعاك للعب طاولة الزهر",
+  "profile": "الملف الشخصي",
+  "notifications": "إشعارات",
+  "reportBug": "الإبلاغ عن خطأ",
+  "about": "حول",
+  "online": "متصل",
+  "decline": "رفض الدعوة",
+  "resetConfirm": "هل أنت متأكد أنك تريد إعادة تعيين المباراة؟",
+  "local": "محلي",
+  "fullscreen": "ملء الشاشة",
+  "exitFullscreen": "الخروج من ملء الشاشة"
+}
