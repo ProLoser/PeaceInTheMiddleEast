@@ -1,0 +1,23 @@
+{
+  "gameover": "Permainan Selesai",
+  "winner": "Pemenang: {{name}}",
+  "login": "Mainkan {{name}}",
+  "signOut": "Keluar",
+  "friends": "Teman",
+  "search": "Cari teman",
+  "addFriend": "Tambah Teman",
+  "chat": "Obrolan",
+  "chatPlaceholder": "Ketik pesan",
+  "reset": "Setel Ulang Game",
+  "inviteFriend": "{{name}} mengundang Anda untuk bermain Backgammon",
+  "profile": "Profil",
+  "notifications": "Notifikasi",
+  "reportBug": "Laporkan Bug",
+  "about": "Tentang",
+  "online": "Online",
+  "decline": "Tolak Undangan",
+  "resetConfirm": "Apakah Anda yakin ingin mengatur ulang pertandingan?",
+  "local": "Lokal",
+  "fullscreen": "Layar penuh",
+  "exitFullscreen": "Keluar dari layar penuh"
+}
