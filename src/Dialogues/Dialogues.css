@@ -1,6 +1,6 @@
 dialog {
   z-index: 1;
-  background: rgba(255, 255, 255, 0.4);
+  background: var(--dialog-background-color);
   backdrop-filter: blur(10px);
   width: auto;
 
@@ -51,14 +51,14 @@ dialog {
   padding: 5px 10px;
   background: none;
   border: none;
-  color: black;
+  color: var(--primary-color);
   cursor: pointer;
 
   &+menu,
   &+[role="menu"] {
     display: none;
-    background-color: rgba(255, 255, 255, 0.9);
-    border: 1px solid #ccc;
+    background-color: var(--dialog-menu-background-color);
+    border: 1px solid var(--secondary-color);
     border-radius: 4px;
     position: absolute;
     padding: 0;
@@ -77,7 +77,7 @@ dialog {
         display: block;
         padding: .5em;
         text-decoration: none;
-        color: black;
+        color: var(--primary-color);
       }
     }
   }
