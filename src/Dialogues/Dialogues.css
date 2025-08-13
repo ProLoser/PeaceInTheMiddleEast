@@ -1,6 +1,7 @@
 dialog {
   z-index: 1;
   background: var(--dialog-background-color);
+  color: var(--primary-color);
   backdrop-filter: blur(10px);
   width: auto;
 
