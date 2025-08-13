@@ -12,7 +12,7 @@
     height: 100%;
     width: 100%;
     touch-action: none;
-    border: 5vmin solid #aaa;
+    border: 5vmin solid var(--secondary-color);
     transition: border-color 1s;
     box-sizing: border-box;
     .selected {
@@ -26,10 +26,10 @@
         display: flex;
     }
     &.black {
-        border-color: #777;
+        border-color: var(--secondary-color);
     }
     &.white {
-        border-color: #ddd;
+        border-color: var(--background-color-secondary);
     }
 }
 
@@ -38,13 +38,13 @@
 }
 
 .bar {
-    background: lightblue;
+    background: var(--background-color-secondary);
     justify-content: center;
     flex-direction: column;
 }
 
 .home {
-    background: lightblue;
+    background: var(--background-color-secondary);
     flex-direction: column;
     .piece {
         min-width: 0;
