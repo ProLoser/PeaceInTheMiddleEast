@@ -12,7 +12,7 @@
     height: 100%;
     width: 100%;
     touch-action: none;
-    border: 5vmin solid var(--secondary-color);
+    border: 5vmin solid #aaa;
     transition: border-color 1s;
     box-sizing: border-box;
     .selected {
@@ -26,10 +26,10 @@
         display: flex;
     }
     &.black {
-        border-color: var(--secondary-color);
+        border-color: #777;
     }
     &.white {
-        border-color: var(--background-color-secondary);
+        border-color: #ddd;
     }
 }
 
