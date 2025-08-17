@@ -1,0 +1,23 @@
+{
+  "gameover": "Peli ohi",
+  "winner": "Voittaja: {{name}}",
+  "login": "Pelaa {{name}}",
+  "signOut": "Kirjaudu ulos",
+  "friends": "Ystävät",
+  "search": "Etsi ystäviä",
+  "addFriend": "Lisää ystävä",
+  "chat": "Keskustelu",
+  "chatPlaceholder": "Kirjoita viesti",
+  "reset": "Nollaa peli",
+  "inviteFriend": "{{name}} kutsui sinut pelaamaan backgammonia",
+  "profile": "Profiili",
+  "notifications": "Ilmoitukset",
+  "reportBug": "Ilmoita bugista",
+  "about": "Tietoja",
+  "online": "Paikalla",
+  "decline": "Hylkää kutsu",
+  "resetConfirm": "Haluatko varmasti nollata ottelun?",
+  "local": "Paikallinen",
+  "fullscreen": "Koko näyttö",
+  "exitFullscreen": "Poistu koko näytön tilasta"
+}
