@@ -21,6 +21,7 @@ import { playCheckerSound } from './Utils';
 import type firebaseType from 'firebase/compat/app';
 import * as Sentry from "@sentry/react";
 import { useTranslation } from 'react-i18next';
+import i18n from './i18n';
 
 import { Suspense } from "react";
 
@@ -358,6 +359,17 @@ export function App() {
       setUsedDice([])
     }
   }, [usedDice, game, match, friend, user]);
+
+  useEffect(() => { // language observer
+    if (user?.val()?.language) {
+      const userLanguage = user.val().language;
+      // Convert language code to match our available locales
+      const languageCode = userLanguage.substring(0, 2); // Extract base language (e.g., 'fr' from 'fr-FR')
+      if (i18n.language !== languageCode) {
+        i18n.changeLanguage(languageCode);
+      }
+    }
+  }, [user]);
 
   const winner = useMemo(() => {
     if (game.status !== Status.GameOver) return undefined;

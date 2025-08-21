@@ -146,8 +146,21 @@ export default function Profile({ user }: ProfileProps) {
         <label>
             Language
             <select name="language" value={editing.language} onChange={generateOnChange('language')}>
+                <option value="">Auto-detect</option>
+                <option value="en">English</option>
+                <option value="fr">Français (French)</option>
+                <option value="de">Deutsch (German)</option>
+                <option value="es">Español (Spanish)</option>
+                <option value="ar">العربية (Arabic)</option>
+                <option value="el">Ελληνικά (Greek)</option>
+                <option value="ja">日本語 (Japanese)</option>
+                <option value="zh">中文 (Chinese)</option>
+                <option value="tr">Türkçe (Turkish)</option>
+                <option value="it">Italiano (Italian)</option>
+                <option value="he">עברית (Hebrew)</option>
+                <option value="id">Bahasa Indonesia</option>
                 {LANGUAGES.map(language => (
-                    <option key={language}>{language}</option>
+                    <option key={language} value={language}>{language}</option>
                 ))}
             </select>
         </label>
