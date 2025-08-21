@@ -1,0 +1,23 @@
+{
+  "gameover": "Spel voorbij",
+  "winner": "Winnaar: {{name}}",
+  "login": "Speel {{name}}",
+  "signOut": "Uitloggen",
+  "friends": "Vrienden",
+  "search": "Zoek naar vrienden",
+  "addFriend": "Vriend toevoegen",
+  "chat": "Chat",
+  "chatPlaceholder": "Typ een bericht",
+  "reset": "Reset spel",
+  "inviteFriend": "{{name}} heeft je uitgenodigd om Backgammon te spelen",
+  "profile": "Profiel",
+  "notifications": "Notificaties",
+  "reportBug": "Meld een bug",
+  "about": "Over",
+  "online": "Online",
+  "decline": "Uitnodiging afwijzen",
+  "resetConfirm": "Weet je zeker dat je de wedstrijd wilt resetten?",
+  "local": "Lokaal",
+  "fullscreen": "Volledig scherm",
+  "exitFullscreen": "Volledig scherm afsluiten"
+}
