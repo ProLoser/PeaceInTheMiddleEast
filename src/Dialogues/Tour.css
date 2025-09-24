@@ -1,0 +1,135 @@
+#tour {
+  background: var(--bg-light);
+  padding: 2em;
+  border-radius: 8px;
+  max-width: 500px;
+  width: 100%;
+  margin: auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+#tour header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5em;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  padding-bottom: 1em;
+}
+
+#tour h1 {
+  color: var(--fg);
+  font-size: 1.5em;
+  margin: 0;
+  font-weight: 600;
+}
+
+.skip-button {
+  background: none;
+  border: none;
+  color: var(--fg-subtle);
+  cursor: pointer;
+  padding: 0.5em 1em;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.skip-button:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.tour-content {
+  margin-bottom: 2em;
+}
+
+.tour-progress {
+  height: 4px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 2px;
+  margin-bottom: 1.5em;
+  overflow: hidden;
+}
+
+.tour-progress-bar {
+  height: 100%;
+  background: var(--primary, #4a90e2);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.tour-step h2 {
+  color: var(--fg);
+  font-size: 1.2em;
+  margin: 0 0 0.5em 0;
+  font-weight: 600;
+}
+
+.tour-step p {
+  color: var(--fg-subtle);
+  line-height: 1.5;
+  margin: 0 0 1.5em 0;
+}
+
+.tour-step-counter {
+  text-align: center;
+  color: var(--fg-subtle);
+  font-size: 0.9em;
+  margin-top: 1em;
+}
+
+.tour-navigation {
+  display: flex;
+  justify-content: space-between;
+  gap: 1em;
+  padding-top: 1em;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.tour-btn {
+  padding: 0.75em 1.5em;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+  min-width: 100px;
+}
+
+.tour-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.tour-btn-secondary {
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--fg);
+}
+
+.tour-btn-secondary:hover:not(:disabled) {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.tour-btn-primary {
+  background: var(--primary, #4a90e2);
+  color: white;
+}
+
+.tour-btn-primary:hover {
+  background: var(--primary-dark, #357abd);
+  transform: translateY(-1px);
+}
+
+@media (max-width: 600px) {
+  #tour {
+    padding: 1.5em;
+    margin: 1em;
+  }
+  
+  .tour-navigation {
+    flex-direction: column;
+  }
+  
+  .tour-btn {
+    width: 100%;
+  }
+}

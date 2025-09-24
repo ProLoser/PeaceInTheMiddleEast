@@ -1,6 +1,7 @@
 // TODO: Cleanup this file 
 // https://github.com/firebase/firebaseui-web-react/pull/173#issuecomment-1151532176
 import { useEffect, useRef, useState, useCallback, useContext } from 'react';
+import type { PointerEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { onAuthStateChanged } from 'firebase/auth';
 import 'firebaseui/dist/firebaseui.css';
@@ -10,7 +11,7 @@ import 'firebase/compat/auth';
 import ToggleFullscreen from './ToggleFullscreen';
 import './Login.css';
 import { DialogContext } from '.';
-import { User } from '../Types';
+import { User, Modal } from '../Types';
 import Version from './Version';
 
 // Configure FirebaseUI.
@@ -72,6 +73,11 @@ export default function Login({ reset, friend, load }: LoginProps) {
         toggle(false)
     }, [load]);
 
+    const startTour = useCallback((event: PointerEvent<HTMLAnchorElement>) => {
+        event.preventDefault();
+        toggle(Modal.Tour);
+    }, [toggle]);
+
     return (
         <section id="login">
             <header>
@@ -84,6 +90,12 @@ export default function Login({ reset, friend, load }: LoginProps) {
                     settings
                 </button>
                 <menu>
+                    <li>
+                        <a onPointerUp={startTour} href="#">
+                            <span className="material-icons notranslate">help</span>
+                            {t('tour')}
+                        </a>
+                    </li>
                     {document.fullscreenEnabled ?
                         <li>
                             <ToggleFullscreen />
