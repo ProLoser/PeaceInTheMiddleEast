@@ -13,7 +13,15 @@ import './Friends.css'
 import ToggleFullscreen from './ToggleFullscreen';
 import { saveFcmToken } from '../firebase.config';
 import Version from './Version';
-import { SettingsIcon, PersonAddIcon, ManageAccountsIcon, NotificationsIcon, RestartAltIcon, BugReportIcon, InfoIcon, LogoutIcon, LocalIcon } from '../Icons';
+import SettingsIcon from '@material-design-icons/svg/filled/settings.svg?react';
+import PersonAddIcon from '@material-design-icons/svg/filled/person_add_alt_1.svg?react';
+import ManageAccountsIcon from '@material-design-icons/svg/filled/manage_accounts.svg?react';
+import NotificationsIcon from '@material-design-icons/svg/filled/notifications.svg?react';
+import RestartAltIcon from '@material-design-icons/svg/filled/restart_alt.svg?react';
+import BugReportIcon from '@material-design-icons/svg/filled/bug_report.svg?react';
+import InfoIcon from '@material-design-icons/svg/filled/info.svg?react';
+import LogoutIcon from '@material-design-icons/svg/filled/logout.svg?react';
+import LocalIcon from '@material-design-icons/svg/filled/location_on.svg?react';
 
 type Users = { [key: string]: User }
 
@@ -138,12 +146,12 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
                 aria-expanded={isExpanded}
                 onPointerUp={() => setIsExpanded(!isExpanded)}
             >
-                <SettingsIcon />
+                <SettingsIcon className="material-icons-svg notranslate" />
             </button>
             <menu>
                 <li>
                     <a onPointerUp={invite} href="#">
-                        <PersonAddIcon />
+                        <PersonAddIcon className="material-icons-svg notranslate" />
                         {t('addFriend')}
                     </a>
                 </li>
@@ -154,38 +162,38 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
                     : null}
                 <li>
                     <a onPointerUp={() => toggle(Modal.Profile)} href="#">
-                        <ManageAccountsIcon />
+                        <ManageAccountsIcon className="material-icons-svg notranslate" />
                         {t('profile')}
                     </a>
                 </li>
                 {"Notification" in self && Notification.permission === 'default' ? <li>
                     <a onPointerUp={() => saveFcmToken(true)} href="#">
-                        <NotificationsIcon />
+                        <NotificationsIcon className="material-icons-svg notranslate" />
                         {t('notifications')}
                     </a>
                 </li> : null}
                 <li>
                     <a onPointerUp={handleReset} href="#">
-                        <RestartAltIcon />
+                        <RestartAltIcon className="material-icons-svg notranslate" />
                         {t('reset')}
                     </a>
                 </li>
                 <li>
                     <a href="https://github.com/ProLoser/PeaceInTheMiddleEast/issues/new" target="_blank">
-                        <BugReportIcon />
+                        <BugReportIcon className="material-icons-svg notranslate" />
                         {t('reportBug')}
                     </a>
                 </li>
                 <li>
                     <a href="https://github.com/ProLoser/PeaceInTheMiddleEast/" target="_blank" rel="noopener noreferrer">
-                        <InfoIcon />
+                        <InfoIcon className="material-icons-svg notranslate" />
                         {t('about')}
                     </a>
                 </li>
                 <Version />
                 <li>
                     <a onPointerUp={() => firebase.auth().signOut()} href="#">
-                        <LogoutIcon />
+                        <LogoutIcon className="material-icons-svg notranslate" />
                         {t('signOut')}
                     </a>
                 </li>
@@ -201,7 +209,7 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
         <ul>
             {friend ? <li className="local">
                 <a href={`${location.origin}/${location.pathname.split('/').filter(Boolean).slice(0, -1).join('/')}`}>
-                    <LocalIcon />
+                    <LocalIcon className="material-icons-svg notranslate" />
                     {t('local')}
                 </a>
             </li> : null}

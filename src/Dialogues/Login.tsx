@@ -12,7 +12,10 @@ import './Login.css';
 import { DialogContext } from '.';
 import { User } from '../Types';
 import Version from './Version';
-import { SettingsIcon, RestartAltIcon, BugReportIcon, InfoIcon } from '../Icons';
+import SettingsIcon from '@material-design-icons/svg/filled/settings.svg?react';
+import RestartAltIcon from '@material-design-icons/svg/filled/restart_alt.svg?react';
+import BugReportIcon from '@material-design-icons/svg/filled/bug_report.svg?react';
+import InfoIcon from '@material-design-icons/svg/filled/info.svg?react';
 
 // Configure FirebaseUI.
 const uiConfig = {
@@ -81,7 +84,7 @@ export default function Login({ reset, friend, load }: LoginProps) {
                     aria-expanded={isExpanded}
                     onPointerUp={() => setIsExpanded(!isExpanded)}
                 >
-                    <SettingsIcon />
+                    <SettingsIcon className="material-icons-svg notranslate" />
                 </button>
                 <menu>
                     {document.fullscreenEnabled ?
@@ -91,19 +94,19 @@ export default function Login({ reset, friend, load }: LoginProps) {
                         : null}
                     <li>
                         <a onPointerUp={reset} href="#">
-                            <RestartAltIcon />
+                            <RestartAltIcon className="material-icons-svg notranslate" />
                             {t('reset')}
                         </a>
                     </li>
                     <li>
                         <a href="https://github.com/ProLoser/PeaceInTheMiddleEast/issues/new" target="_blank">
-                            <BugReportIcon />
+                            <BugReportIcon className="material-icons-svg notranslate" />
                             {t('reportBug')}
                         </a>
                     </li>
                     <li>
                         <a href="https://github.com/ProLoser/PeaceInTheMiddleEast/" target="_blank" rel="noopener noreferrer">
-                            <InfoIcon />
+                            <InfoIcon className="material-icons-svg notranslate" />
                             {t('about')}
                         </a>
                     </li>

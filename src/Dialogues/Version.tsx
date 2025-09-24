@@ -1,4 +1,4 @@
-import { UpdateIcon } from '../Icons';
+import UpdateIcon from '@material-design-icons/svg/filled/update.svg?react';
 
 export default function Version() {
     const onClick = async (e: React.MouseEvent) => {
@@ -20,7 +20,7 @@ export default function Version() {
     return (
         <li>
             <a href="#" onClick={onClick}>
-                <UpdateIcon />
+                <UpdateIcon className="material-icons-svg notranslate" />
                 {VITE_VERSION}
             </a>
         </li>
