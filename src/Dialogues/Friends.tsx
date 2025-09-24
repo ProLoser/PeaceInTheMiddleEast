@@ -13,6 +13,7 @@ import './Friends.css'
 import ToggleFullscreen from './ToggleFullscreen';
 import { saveFcmToken } from '../firebase.config';
 import Version from './Version';
+import { SettingsIcon, PersonAddIcon, ManageAccountsIcon, NotificationsIcon, RestartAltIcon, BugReportIcon, InfoIcon, LogoutIcon, LocalIcon } from '../Icons';
 
 type Users = { [key: string]: User }
 
@@ -136,14 +137,13 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
                 aria-haspopup="menu"
                 aria-expanded={isExpanded}
                 onPointerUp={() => setIsExpanded(!isExpanded)}
-                className="material-icons notranslate"
             >
-                settings
+                <SettingsIcon />
             </button>
             <menu>
                 <li>
                     <a onPointerUp={invite} href="#">
-                        <span className="material-icons notranslate">person_add_alt_1</span>
+                        <PersonAddIcon />
                         {t('addFriend')}
                     </a>
                 </li>
@@ -154,38 +154,38 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
                     : null}
                 <li>
                     <a onPointerUp={() => toggle(Modal.Profile)} href="#">
-                        <span className="material-icons notranslate">manage_accounts</span>
+                        <ManageAccountsIcon />
                         {t('profile')}
                     </a>
                 </li>
                 {"Notification" in self && Notification.permission === 'default' ? <li>
                     <a onPointerUp={() => saveFcmToken(true)} href="#">
-                        <span className="material-icons notranslate">notifications</span>
+                        <NotificationsIcon />
                         {t('notifications')}
                     </a>
                 </li> : null}
                 <li>
                     <a onPointerUp={handleReset} href="#">
-                        <span className="material-icons notranslate">restart_alt</span>
+                        <RestartAltIcon />
                         {t('reset')}
                     </a>
                 </li>
                 <li>
                     <a href="https://github.com/ProLoser/PeaceInTheMiddleEast/issues/new" target="_blank">
-                        <span className="material-icons notranslate">bug_report</span>
+                        <BugReportIcon />
                         {t('reportBug')}
                     </a>
                 </li>
                 <li>
                     <a href="https://github.com/ProLoser/PeaceInTheMiddleEast/" target="_blank" rel="noopener noreferrer">
-                        <span className="material-icons notranslate">info</span>
+                        <InfoIcon />
                         {t('about')}
                     </a>
                 </li>
                 <Version />
                 <li>
                     <a onPointerUp={() => firebase.auth().signOut()} href="#">
-                        <span className="material-icons notranslate">logout</span>
+                        <LogoutIcon />
                         {t('signOut')}
                     </a>
                 </li>
@@ -201,7 +201,7 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
         <ul>
             {friend ? <li className="local">
                 <a href={`${location.origin}/${location.pathname.split('/').filter(Boolean).slice(0, -1).join('/')}`}>
-                    <span className="material-icons notranslate">local</span>
+                    <LocalIcon />
                     {t('local')}
                 </a>
             </li> : null}

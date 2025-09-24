@@ -1,3 +1,5 @@
+import { UpdateIcon } from '../Icons';
+
 export default function Version() {
     const onClick = async (e: React.MouseEvent) => {
         e.preventDefault();
@@ -18,7 +20,7 @@ export default function Version() {
     return (
         <li>
             <a href="#" onClick={onClick}>
-                <span className="material-icons notranslate">update</span>
+                <UpdateIcon />
                 {VITE_VERSION}
             </a>
         </li>

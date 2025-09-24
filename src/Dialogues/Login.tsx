@@ -12,6 +12,7 @@ import './Login.css';
 import { DialogContext } from '.';
 import { User } from '../Types';
 import Version from './Version';
+import { SettingsIcon, RestartAltIcon, BugReportIcon, InfoIcon } from '../Icons';
 
 // Configure FirebaseUI.
 const uiConfig = {
@@ -79,9 +80,8 @@ export default function Login({ reset, friend, load }: LoginProps) {
                     aria-haspopup="menu"
                     aria-expanded={isExpanded}
                     onPointerUp={() => setIsExpanded(!isExpanded)}
-                    className="material-icons notranslate"
                 >
-                    settings
+                    <SettingsIcon />
                 </button>
                 <menu>
                     {document.fullscreenEnabled ?
@@ -91,19 +91,19 @@ export default function Login({ reset, friend, load }: LoginProps) {
                         : null}
                     <li>
                         <a onPointerUp={reset} href="#">
-                            <span className="material-icons notranslate">restart_alt</span>
+                            <RestartAltIcon />
                             {t('reset')}
                         </a>
                     </li>
                     <li>
                         <a href="https://github.com/ProLoser/PeaceInTheMiddleEast/issues/new" target="_blank">
-                            <span className="material-icons notranslate">bug_report</span>
+                            <BugReportIcon />
                             {t('reportBug')}
                         </a>
                     </li>
                     <li>
                         <a href="https://github.com/ProLoser/PeaceInTheMiddleEast/" target="_blank" rel="noopener noreferrer">
-                            <span className="material-icons notranslate">info</span>
+                            <InfoIcon />
                             {t('about')}
                         </a>
                     </li>
