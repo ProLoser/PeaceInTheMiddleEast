@@ -3,6 +3,7 @@ import Friends from './Friends';
 import Chat from './Chat';
 import Profile from './Profile';
 import Login from './Login';
+import Tour from './Tour';
 import './Dialogues.css';
 import Gameover from './Gameover';
 import { Modal, type User, type SnapshotOrNullType } from '../Types';
@@ -61,7 +62,9 @@ export default function Dialogues({ user, friend, load, reset, chats, gameover, 
   return (
     <DialogContext.Provider value={value}>
       <dialog ref={dialogRef} onCancel={() => toggle(false)} open={isOpen} onPointerUp={event => event.stopPropagation()}>
-        {user ? (
+        {state === 'tour' ? (
+          <Tour />
+        ) : user ? (
           state === 'friends' ? (
             <Friends user={user} load={load} reset={reset} friend={friend} />
           ) : state === 'profile' ? (

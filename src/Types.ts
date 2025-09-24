@@ -28,7 +28,8 @@ export const enum Modal {
     Profile = 'profile',
     Friends = 'friends',
     Login = 'login',
-    Gameover = 'gameover'
+    Gameover = 'gameover',
+    Tour = 'tour'
 }
 
 export type ModalContextType = {
