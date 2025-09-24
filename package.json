@@ -17,6 +17,7 @@
     "functions": "yarn workspace functions deploy"
   },
   "dependencies": {
+    "@material-design-icons/svg": "^0.14.15",
     "@sentry/react": "^7.100.0",
     "date-fns": "^4.1.0",
     "firebase": "^10.12.2",
@@ -46,7 +47,8 @@
     "process": "^0.11.10",
     "typescript": "^5.2.2",
     "vite": "^5.2.11",
-    "vite-plugin-pwa": "^0.20.0"
+    "vite-plugin-pwa": "^0.20.0",
+    "vite-plugin-svgr": "^4.5.0"
   },
   "workspaces": [
     "functions"
