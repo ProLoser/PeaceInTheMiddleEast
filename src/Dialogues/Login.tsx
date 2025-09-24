@@ -12,6 +12,7 @@ import './Login.css';
 import { DialogContext } from '.';
 import { User } from '../Types';
 import Version from './Version';
+import Icon from '../Components/Icon';
 
 // Configure FirebaseUI.
 const uiConfig = {
@@ -79,9 +80,9 @@ export default function Login({ reset, friend, load }: LoginProps) {
                     aria-haspopup="menu"
                     aria-expanded={isExpanded}
                     onPointerUp={() => setIsExpanded(!isExpanded)}
-                    className="material-icons notranslate"
+                    className="notranslate"
                 >
-                    settings
+                    <Icon name="settings" />
                 </button>
                 <menu>
                     {document.fullscreenEnabled ?
@@ -91,19 +92,19 @@ export default function Login({ reset, friend, load }: LoginProps) {
                         : null}
                     <li>
                         <a onPointerUp={reset} href="#">
-                            <span className="material-icons notranslate">restart_alt</span>
+                            <Icon name="restart_alt" className="notranslate" />
                             {t('reset')}
                         </a>
                     </li>
                     <li>
                         <a href="https://github.com/ProLoser/PeaceInTheMiddleEast/issues/new" target="_blank">
-                            <span className="material-icons notranslate">bug_report</span>
+                            <Icon name="bug_report" className="notranslate" />
                             {t('reportBug')}
                         </a>
                     </li>
                     <li>
                         <a href="https://github.com/ProLoser/PeaceInTheMiddleEast/" target="_blank" rel="noopener noreferrer">
-                            <span className="material-icons notranslate">info</span>
+                            <Icon name="info" className="notranslate" />
                             {t('about')}
                         </a>
                     </li>

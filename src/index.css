@@ -41,8 +41,17 @@ body,
   cursor: pointer;
 }
 
-.material-icons {
+.notranslate {
   user-select: none;
+}
+
+/* SVG Icon styling */
+svg.notranslate {
+  width: 24px;
+  height: 24px;
+  fill: currentColor;
+  display: inline-block;
+  vertical-align: middle;
 }
 
 @media (prefers-color-scheme: light) {
