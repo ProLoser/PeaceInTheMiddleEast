@@ -34,3 +34,41 @@ This wasn't originally a goal but ended up being a great way to test AI
 ## Setup
 1. `yarn`
 2. `yarn start`
+
+## Testing
+This project includes comprehensive visual regression testing with screenshots using Playwright.
+
+### Running Tests
+```bash
+# Build and start preview server
+npm run build
+npm run preview
+
+# Run all tests
+npm test
+
+# Run tests with visual UI
+npm run test:ui
+
+# Generate visual documentation
+npm run test:visual
+```
+
+### Test Coverage
+- ✅ **Main Game Board**: Desktop, tablet, and mobile responsive layouts
+- ✅ **Login Modal**: Authentication options with visual verification
+- ✅ **Game Components**: Dice, pieces, and board interactions
+- ✅ **Cross-browser**: Chrome, Mobile Chrome, Mobile Safari
+- ✅ **Screenshot Comparisons**: Automatic visual regression detection
+
+See `tests/README.md` for detailed testing documentation.
+
+### Visual Test Results
+![Main Game Board](https://github.com/user-attachments/assets/d4247042-ee57-45a2-b925-fa5a3cd36c3d)
+*Desktop view showing the complete Backgammon board*
+
+![Login Modal](https://github.com/user-attachments/assets/c71f8648-c181-4d4f-858a-6131ccd35945)
+*Login modal with authentication options*
+
+![Tablet View](https://github.com/user-attachments/assets/4ce114e3-9ce9-416f-a844-aad9bd460ded)
+*Tablet portrait orientation - responsive design*

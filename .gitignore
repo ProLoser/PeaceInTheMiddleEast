@@ -98,3 +98,9 @@ dev-dist
 *.sw?
 
 ### /Vite ###
+
+# Test Results and Screenshots
+test-results/
+playwright-report/
+test-results-*
+/tests/**/test-results/

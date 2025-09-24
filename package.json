@@ -14,7 +14,12 @@
     "tsc": "tsc",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "functions": "yarn workspace functions deploy"
+    "functions": "yarn workspace functions deploy",
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:ui": "playwright test --ui",
+    "test:debug": "playwright test --debug",
+    "test:visual": "node scripts/visual-tests.js"
   },
   "dependencies": {
     "@sentry/react": "^7.100.0",
@@ -34,6 +39,7 @@
     "vite-plugin-devtools-json": "^0.1.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.55.1",
     "@types/react": "^18.3.2",
     "@types/react-dom": "^18.3.0",
     "@typescript-eslint/eslint-plugin": "^7.8.0",
