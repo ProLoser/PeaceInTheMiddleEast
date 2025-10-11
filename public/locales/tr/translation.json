@@ -17,7 +17,7 @@
   "gameover": "Oyun Bitti",
   "winner": "Kazanan: {{name}}",
   "online": "Çevrimiçi",
-  "local": "Yerel",
+  "local": "Çevrimdışı oyun",
   "resetConfirm": "Maçı sıfırlamak istediğinizden emin misiniz?",
   "fullscreen": "Tam Ekran",
   "exitFullscreen": "Tam Ekrandan Çık"

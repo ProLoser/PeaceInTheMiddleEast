@@ -17,7 +17,7 @@
   "online": "Paikalla",
   "decline": "Hylkää kutsu",
   "resetConfirm": "Haluatko varmasti nollata ottelun?",
-  "local": "Paikallinen",
+  "local": "Offline-peli",
   "fullscreen": "Koko näyttö",
   "exitFullscreen": "Poistu koko näytön tilasta"
 }
