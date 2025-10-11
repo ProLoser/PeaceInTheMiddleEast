@@ -43,6 +43,7 @@ body,
 
 .material-icons-svg {
   user-select: none;
+  fill: currentColor;
 }
 
 @media (prefers-color-scheme: light) {
