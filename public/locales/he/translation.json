@@ -17,7 +17,7 @@
   "gameover": "סיום המשחק",
   "winner": "מנצח: {{name}}",
   "online": "מחובר",
-  "local": "מקומי",
+  "local": "משחק לא מקוון",
   "resetConfirm": "האם אתה בטוח שברצונך לאפס את המשחק?",
   "fullscreen": "מסך מלא",
   "exitFullscreen": "צא ממסך מלא"
