@@ -17,12 +17,13 @@ exports.sendMoveNotification = onValueCreated('/moves/{moveId}', async event => 
   let recipientTokens = tokenCache.get(move.friend);
 
   if (!recipientTokens) {
-    // Try new fcmTokens structure (multiple devices)
+    // Get fcmTokens structure (token is the key, value is {ts, ua})
     const fcmTokensSnapshot = await db.ref(`/users/${move.friend}/fcmTokens`).once('value');
     const fcmTokensObject = fcmTokensSnapshot.val();
     
     if (fcmTokensObject && typeof fcmTokensObject === 'object') {
-      recipientTokens = Object.values(fcmTokensObject);
+      // Tokens are the keys of the object
+      recipientTokens = Object.keys(fcmTokensObject);
     } else {
       // Fall back to legacy fcmToken (single device)
       const recipientTokenSnapshot = await db.ref(`/users/${move.friend}/fcmToken`).once('value');
@@ -75,22 +76,13 @@ exports.sendMoveNotification = onValueCreated('/moves/{moveId}', async event => 
       return { success: true, token };
     } catch (error) {
       console.error('Error sending message to device:', error);
-      // Optionally remove bad token from cache
+      // Remove bad token from cache and database
       if (error.code === 'messaging/invalid-registration-token' ||
           error.code === 'messaging/registration-token-not-registered') {
         console.log(`Removing invalid token for user ${move.friend}`);
         tokenCache.delete(move.friend);
-        // Also remove from database
-        const fcmTokensSnapshot = await db.ref(`/users/${move.friend}/fcmTokens`).once('value');
-        const fcmTokensObject = fcmTokensSnapshot.val();
-        if (fcmTokensObject) {
-          for (const [deviceId, deviceToken] of Object.entries(fcmTokensObject)) {
-            if (deviceToken === token) {
-              await db.ref(`/users/${move.friend}/fcmTokens/${deviceId}`).remove();
-              break;
-            }
-          }
-        }
+        // Remove from database (token is the key)
+        await db.ref(`/users/${move.friend}/fcmTokens/${token}`).remove();
       }
       return { success: false, token, error };
     }

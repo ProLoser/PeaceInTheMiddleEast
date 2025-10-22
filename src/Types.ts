@@ -10,7 +10,7 @@ export type User = {
     photoURL: string | null;
     language: string;
     fcmToken?: string; // Legacy: single token (for backward compatibility)
-    fcmTokens?: { [deviceId: string]: string }; // Multiple tokens keyed by device ID
+    fcmTokens?: { [token: string]: { ts: number; ua: string } }; // Token is key, value contains metadata
 }
 
 export const enum Color {
