@@ -19,6 +19,23 @@ const vapidKey = 'BM1H9qfv1e_XcIB31ZeLCn8IpGOdMIwMShRej6wld8QAMkV4YqJ-eMQa1rSnwh
 
 export default firebase.initializeApp(config);
 
+export async function getCurrentFcmToken(): Promise<string | null> {
+    if (!('Notification' in window)) {
+        return null;
+    }
+
+    if (Notification.permission !== 'granted') {
+        return null;
+    }
+
+    try {
+        return await firebase.messaging().getToken({ vapidKey });
+    } catch (error) {
+        console.error("Error getting FCM token:", error);
+        return null;
+    }
+}
+
 export async function saveFcmToken(requestPermission = false) {
     const userId = firebase.auth().currentUser?.uid;
     if (!userId) return;

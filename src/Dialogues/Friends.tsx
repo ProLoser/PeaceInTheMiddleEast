@@ -11,7 +11,7 @@ import { User, Match, SnapshotOrNullType, Modal } from '../Types';
 import Avatar from '../Avatar';
 import './Friends.css'
 import ToggleFullscreen from './ToggleFullscreen';
-import { saveFcmToken } from '../firebase.config';
+import { saveFcmToken, getCurrentFcmToken } from '../firebase.config';
 import Version from './Version';
 import SettingsIcon from '@material-design-icons/svg/filled/settings.svg?react';
 import PersonAddIcon from '@material-design-icons/svg/filled/person_add_alt_1.svg?react';
@@ -41,6 +41,46 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
     const [isExpanded, setIsExpanded] = useState(false);
     const [matches, setMatches] = useState<firebase.database.DataSnapshot | null>(null);
     const [searchResults, setSearchResults] = useState<firebase.database.DataSnapshot | null>(null);
+    const [showNotifications, setShowNotifications] = useState(false);
+
+    // Check if notifications should be shown
+    useEffect(() => {
+        if (!user) return;
+
+        const checkNotifications = async () => {
+            if (!('Notification' in self)) {
+                setShowNotifications(false);
+                return;
+            }
+
+            // Show if permission is default
+            if (Notification.permission === 'default') {
+                setShowNotifications(true);
+                return;
+            }
+
+            // Get current device token
+            const token = await getCurrentFcmToken();
+
+            // Show if notification permission is granted but token doesn't match
+            if (Notification.permission === 'granted') {
+                const userData = user.val();
+                const storedToken = userData?.fcmToken;
+                
+                // Show if we have a token but it doesn't match the stored one
+                if (token && token !== storedToken) {
+                    setShowNotifications(true);
+                } else {
+                    setShowNotifications(false);
+                }
+            } else {
+                // Permission denied or not granted
+                setShowNotifications(false);
+            }
+        };
+
+        checkNotifications();
+    }, [user]);
 
     // Synchronize Matches
     useEffect(() => {
@@ -145,6 +185,7 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
                 aria-haspopup="menu"
                 aria-expanded={isExpanded}
                 onPointerUp={() => setIsExpanded(!isExpanded)}
+                className={showNotifications ? 'unread' : ''}
             >
                 <SettingsIcon className="material-icons-svg notranslate" />
             </button>
@@ -166,7 +207,7 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
                         {t('profile')}
                     </a>
                 </li>
-                {"Notification" in self && Notification.permission === 'default' ? <li>
+                {showNotifications ? <li className="unread">
                     <a onPointerUp={() => saveFcmToken(true)} href="#">
                         <NotificationsIcon className="material-icons-svg notranslate" />
                         {t('notifications')}
