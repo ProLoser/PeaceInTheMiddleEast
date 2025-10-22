@@ -33,8 +33,19 @@ export async function saveFcmToken(requestPermission = false) {
     }
 
     if (Notification.permission === 'granted') {
-        await firebase.database().ref(`/users/${userId}/fcmToken`).set(
-            await firebase.messaging().getToken({ vapidKey })
-        );
+        const token = await firebase.messaging().getToken({ vapidKey });
+        
+        // Generate a unique device ID if not already stored
+        let deviceId = localStorage.getItem('deviceId');
+        if (!deviceId) {
+            deviceId = `${Date.now()}-${Math.random().toString(36).substring(2, 15)}`;
+            localStorage.setItem('deviceId', deviceId);
+        }
+        
+        // Store token in the new fcmTokens structure
+        await firebase.database().ref(`/users/${userId}/fcmTokens/${deviceId}`).set(token);
+        
+        // Also store in legacy fcmToken for backward compatibility (can be removed later)
+        await firebase.database().ref(`/users/${userId}/fcmToken`).set(token);
     }
 }

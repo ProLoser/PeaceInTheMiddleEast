@@ -13,18 +13,31 @@ exports.sendMoveNotification = onValueCreated('/moves/{moveId}', async event => 
     return null;
   }
 
-  let recipientToken = tokenCache.get(move.friend);
+  // Try to get tokens from cache first
+  let recipientTokens = tokenCache.get(move.friend);
 
-  if (!recipientToken) {
-    const recipientTokenSnapshot = await db.ref(`/users/${move.friend}/fcmToken`).once('value');
-    recipientToken = recipientTokenSnapshot.val();
+  if (!recipientTokens) {
+    // Try new fcmTokens structure (multiple devices)
+    const fcmTokensSnapshot = await db.ref(`/users/${move.friend}/fcmTokens`).once('value');
+    const fcmTokensObject = fcmTokensSnapshot.val();
+    
+    if (fcmTokensObject && typeof fcmTokensObject === 'object') {
+      recipientTokens = Object.values(fcmTokensObject);
+    } else {
+      // Fall back to legacy fcmToken (single device)
+      const recipientTokenSnapshot = await db.ref(`/users/${move.friend}/fcmToken`).once('value');
+      const legacyToken = recipientTokenSnapshot.val();
+      if (legacyToken) {
+        recipientTokens = [legacyToken];
+      }
+    }
 
-    if (recipientToken) {
-      tokenCache.set(move.friend, recipientToken);
+    if (recipientTokens && recipientTokens.length > 0) {
+      tokenCache.set(move.friend, recipientTokens);
     }
   }
 
-  if (!recipientToken) {
+  if (!recipientTokens || recipientTokens.length === 0) {
     console.log(`No FCM token found for user ${move.friend}.`);
     return null;
   }
@@ -38,32 +51,58 @@ exports.sendMoveNotification = onValueCreated('/moves/{moveId}', async event => 
     }
   }
 
-  const payload = {
-    token: recipientToken,
-    notification: {
-      title: `${playerName} made a move`,
-      body: move.move
-    },
-    data: {
-      player: move.player
-    },
-    webpush: {
+  // Send notification to all devices
+  const sendPromises = recipientTokens.map(async (token) => {
+    const payload = {
+      token: token,
       notification: {
-        tag: move.player
+        title: `${playerName} made a move`,
+        body: move.move
+      },
+      data: {
+        player: move.player
+      },
+      webpush: {
+        notification: {
+          tag: move.player
+        }
       }
+    };
+
+    try {
+      const response = await admin.messaging().send(payload);
+      console.log('Successfully sent message to device:', response);
+      return { success: true, token };
+    } catch (error) {
+      console.error('Error sending message to device:', error);
+      // Optionally remove bad token from cache
+      if (error.code === 'messaging/invalid-registration-token' ||
+          error.code === 'messaging/registration-token-not-registered') {
+        console.log(`Removing invalid token for user ${move.friend}`);
+        tokenCache.delete(move.friend);
+        // Also remove from database
+        const fcmTokensSnapshot = await db.ref(`/users/${move.friend}/fcmTokens`).once('value');
+        const fcmTokensObject = fcmTokensSnapshot.val();
+        if (fcmTokensObject) {
+          for (const [deviceId, deviceToken] of Object.entries(fcmTokensObject)) {
+            if (deviceToken === token) {
+              await db.ref(`/users/${move.friend}/fcmTokens/${deviceId}`).remove();
+              break;
+            }
+          }
+        }
+      }
+      return { success: false, token, error };
     }
-  };
+  });
 
   try {
-    const response = await admin.messaging().send(payload);
-    console.log('Successfully sent message:', response);
+    const results = await Promise.all(sendPromises);
+    const successCount = results.filter(r => r.success).length;
+    console.log(`Sent notifications to ${successCount}/${recipientTokens.length} devices`);
     return null;
   } catch (error) {
-    console.error('Error sending message:', error);
-    // Optionally remove bad token from cache
-    if (error.code === 'messaging/invalid-registration-token') {
-      tokenCache.delete(move.friend);
-    }
+    console.error('Error in batch send:', error);
     return null;
   }
 });
