@@ -256,10 +256,8 @@ export function App() {
           console.log('Creating user', data);
           userRef.set(data);
           saveFcmToken(true);
-        } else if (!snapshot.val().fcmToken && !snapshot.val().fcmTokens) {
-          saveFcmToken();
         } else {
-          // Update token for this device even if tokens exist
+          // Update token for this device
           saveFcmToken();
         }
 
