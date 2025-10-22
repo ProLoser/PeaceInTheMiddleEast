@@ -257,7 +257,7 @@ export function App() {
           userRef.set(data);
           saveFcmToken(true);
         } else {
-          // Update token for this device
+          // Attempt to update token for this device if notification permission is granted
           saveFcmToken();
         }
 
