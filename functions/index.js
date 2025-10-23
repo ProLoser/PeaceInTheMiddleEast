@@ -71,32 +71,18 @@ exports.sendMoveNotification = onValueCreated('/moves/{moveId}', async event => 
 
   try {
     const response = await admin.messaging().sendEachForMulticast(message);
-    console.log(`Successfully sent ${response.successCount}/${recipientTokens.length} notifications`);
     
     // Clean up invalid tokens
-    if (response.failureCount > 0) {
-      const tokensToRemove = [];
-      response.responses.forEach((resp, idx) => {
-        if (!resp.success) {
-          const error = resp.error;
-          if (error.code === 'messaging/invalid-registration-token' ||
-              error.code === 'messaging/registration-token-not-registered') {
-            tokensToRemove.push(recipientTokens[idx]);
-          }
-        }
-      });
-      
-      if (tokensToRemove.length > 0) {
-        console.log(`Removing ${tokensToRemove.length} invalid token(s) for user ${move.friend}`);
+    response.responses
+      .map((resp, idx) => (!resp.success && 
+        (resp.error.code === 'messaging/invalid-registration-token' ||
+         resp.error.code === 'messaging/registration-token-not-registered')) 
+        ? recipientTokens[idx] : null)
+      .filter(Boolean)
+      .forEach(token => {
         tokenCache.delete(move.friend);
-        // Remove invalid tokens from database
-        await Promise.all(
-          tokensToRemove.map(token => 
-            db.ref(`/users/${move.friend}/fcmTokens/${token}`).remove()
-          )
-        );
-      }
-    }
+        db.ref(`/users/${move.friend}/fcmTokens/${token}`).remove();
+      });
     
     return null;
   } catch (error) {
