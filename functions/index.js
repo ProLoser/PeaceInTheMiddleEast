@@ -73,16 +73,14 @@ exports.sendMoveNotification = onValueCreated('/moves/{moveId}', async event => 
     const response = await admin.messaging().sendEachForMulticast(message);
     
     // Clean up invalid tokens
-    response.responses
-      .map((resp, idx) => (!resp.success && 
-        (resp.error.code === 'messaging/invalid-registration-token' ||
-         resp.error.code === 'messaging/registration-token-not-registered')) 
-        ? recipientTokens[idx] : null)
-      .filter(Boolean)
-      .forEach(token => {
+    response.responses.forEach((resp, idx) => {
+      if (!resp.success && 
+          (resp.error.code === 'messaging/invalid-registration-token' ||
+           resp.error.code === 'messaging/registration-token-not-registered')) {
         tokenCache.delete(move.friend);
-        db.ref(`/users/${move.friend}/fcmTokens/${token}`).remove();
-      });
+        db.ref(`/users/${move.friend}/fcmTokens/${recipientTokens[idx]}`).remove();
+      }
+    });
     
     return null;
   } catch (error) {
