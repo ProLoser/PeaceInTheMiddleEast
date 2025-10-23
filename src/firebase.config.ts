@@ -36,8 +36,6 @@ export async function saveFcmToken(requestPermission = false) {
         const token = await firebase.messaging().getToken({ vapidKey });
         if (!token) return;
         
-        // Store token using token itself as the key (idempotent)
-        // Pattern: users/{uid}/fcmTokens/{token}: { ts, ua }
         await firebase.database().ref(`/users/${userId}/fcmTokens/${token}`).set({
             ts: firebase.database.ServerValue.TIMESTAMP,
             ua: navigator.userAgent || 'unknown'

@@ -13,19 +13,15 @@ exports.sendMoveNotification = onValueCreated('/moves/{moveId}', async event => 
     return null;
   }
 
-  // Try to get tokens from cache first
   let recipientTokens = tokenCache.get(move.friend);
 
   if (!recipientTokens) {
-    // Get fcmTokens structure (token is the key, value is {ts, ua})
     const fcmTokensSnapshot = await db.ref(`/users/${move.friend}/fcmTokens`).once('value');
     const fcmTokensObject = fcmTokensSnapshot.val();
     
     if (fcmTokensObject && typeof fcmTokensObject === 'object') {
-      // Tokens are the keys of the object
       recipientTokens = Object.keys(fcmTokensObject);
     } else {
-      // Fall back to legacy fcmToken (single device)
       const recipientTokenSnapshot = await db.ref(`/users/${move.friend}/fcmToken`).once('value');
       const legacyToken = recipientTokenSnapshot.val();
       if (legacyToken) {
@@ -52,7 +48,6 @@ exports.sendMoveNotification = onValueCreated('/moves/{moveId}', async event => 
     }
   }
 
-  // Send notification to all devices using multicast
   const message = {
     notification: {
       title: `${playerName} made a move`,
@@ -72,7 +67,6 @@ exports.sendMoveNotification = onValueCreated('/moves/{moveId}', async event => 
   try {
     const response = await admin.messaging().sendEachForMulticast(message);
     
-    // Clean up invalid tokens
     response.responses.forEach((resp, idx) => {
       if (!resp.success && 
           (resp.error.code === 'messaging/invalid-registration-token' ||
