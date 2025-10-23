@@ -52,49 +52,55 @@ exports.sendMoveNotification = onValueCreated('/moves/{moveId}', async event => 
     }
   }
 
-  // Send notification to all devices
-  const sendPromises = recipientTokens.map(async (token) => {
-    const payload = {
-      token: token,
+  // Send notification to all devices using multicast
+  const message = {
+    notification: {
+      title: `${playerName} made a move`,
+      body: move.move
+    },
+    data: {
+      player: move.player
+    },
+    webpush: {
       notification: {
-        title: `${playerName} made a move`,
-        body: move.move
-      },
-      data: {
-        player: move.player
-      },
-      webpush: {
-        notification: {
-          tag: move.player
-        }
+        tag: move.player
       }
-    };
-
-    try {
-      const response = await admin.messaging().send(payload);
-      console.log('Successfully sent message to device:', response);
-      return { success: true, token };
-    } catch (error) {
-      console.error('Error sending message to device:', error);
-      // Remove bad token from cache and database
-      if (error.code === 'messaging/invalid-registration-token' ||
-          error.code === 'messaging/registration-token-not-registered') {
-        console.log(`Removing invalid token for user ${move.friend}`);
-        tokenCache.delete(move.friend);
-        // Remove from database (token is the key)
-        await db.ref(`/users/${move.friend}/fcmTokens/${token}`).remove();
-      }
-      return { success: false, token, error };
-    }
-  });
+    },
+    tokens: recipientTokens
+  };
 
   try {
-    const results = await Promise.all(sendPromises);
-    const successCount = results.filter(r => r.success).length;
-    console.log(`Sent notifications to ${successCount}/${recipientTokens.length} devices`);
+    const response = await admin.messaging().sendEachForMulticast(message);
+    console.log(`Successfully sent ${response.successCount}/${recipientTokens.length} notifications`);
+    
+    // Clean up invalid tokens
+    if (response.failureCount > 0) {
+      const tokensToRemove = [];
+      response.responses.forEach((resp, idx) => {
+        if (!resp.success) {
+          const error = resp.error;
+          if (error.code === 'messaging/invalid-registration-token' ||
+              error.code === 'messaging/registration-token-not-registered') {
+            tokensToRemove.push(recipientTokens[idx]);
+          }
+        }
+      });
+      
+      if (tokensToRemove.length > 0) {
+        console.log(`Removing ${tokensToRemove.length} invalid token(s) for user ${move.friend}`);
+        tokenCache.delete(move.friend);
+        // Remove invalid tokens from database
+        await Promise.all(
+          tokensToRemove.map(token => 
+            db.ref(`/users/${move.friend}/fcmTokens/${token}`).remove()
+          )
+        );
+      }
+    }
+    
     return null;
   } catch (error) {
-    console.error('Error in batch send:', error);
+    console.error('Error sending multicast message:', error);
     return null;
   }
 });
