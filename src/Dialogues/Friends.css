@@ -48,10 +48,10 @@
                 }
             }
             &.local {
+                color: var(--primary-color);
                 .material-icons-svg {
                     width: 4em;
                     height: 4em;
-                    color: var(--primary-color);
                 }
             }
         }
