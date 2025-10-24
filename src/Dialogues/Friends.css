@@ -16,6 +16,42 @@
     }  
     menu {
         right: 30px;
+
+        li.unread a {
+            position: relative;
+            
+            svg {
+                position: relative;
+                
+                &::after {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    right: 0;
+                    width: 8px;
+                    height: 8px;
+                    background-color: #ff4444;
+                    border-radius: 50%;
+                    border: 2px solid var(--dialog-background-color);
+                }
+            }
+        }
+    }
+
+    button.unread {
+        position: relative;
+
+        &::after {
+            content: '';
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 8px;
+            height: 8px;
+            background-color: #ff4444;
+            border-radius: 50%;
+            border: 2px solid var(--dialog-background-color);
+        }
     } 
 
     input {
