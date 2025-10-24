@@ -7,6 +7,7 @@ import { DialogContext } from '.';
 import Avatar from '../Avatar';
 import { type User, type SnapshotOrNullType, Modal } from '../Types';
 import './Profile.css'
+import CheckIcon from '@material-design-icons/svg/filled/check.svg?react';
 
 export const LANGUAGES = ["af", "af-NA", "af-ZA", "agq", "agq-CM", "ak", "ak-GH", "am",
     "am-ET", "ar", "ar-001", "ar-AE", "ar-BH", "ar-DJ", "ar-DZ",
@@ -116,27 +117,29 @@ export default function Profile({ user }: ProfileProps) {
     const { toggle } = useContext(DialogContext)!;
     const [editing, setEditing] = useState<User>(user?.val() || { uid: '', name: '', language: '', photoURL: '' });
 
-    const save = useCallback(async (event: React.FormEvent<HTMLFormElement>) => {
+    const save = useCallback(async (event: React.MouseEvent<HTMLAnchorElement>) => {
         event.preventDefault();
         if (!editing) return;
         const userRef = firebase.database().ref(`users/${user!.key}`);
         userRef.set(editing);
         console.log('Saved', editing);
         toggle(Modal.Friends)
-    }, [editing, user]);
+    }, [editing, user, toggle]);
 
     const generateOnChange = (key: string) => (event: ChangeEvent<HTMLInputElement|HTMLSelectElement>) => {
         setEditing(editing => ({ ...editing, [key]: event.target.value }));
     };
 
-    return <form onSubmit={save} id="profile">
+    return <form id="profile">
         <header>
             <h1>
                 <a onPointerUp={() => toggle(Modal.Friends)}>
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-x"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M18 6l-12 12" /><path d="M6 6l12 12" /></svg>
                 </a>
                 Edit Profile
-                <button type="submit">Save</button>
+                <a onPointerUp={save} href="#">
+                    <CheckIcon className="material-icons-svg notranslate" />
+                </a>
             </h1>
         </header>
         <label>
