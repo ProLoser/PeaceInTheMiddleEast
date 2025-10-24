@@ -33,8 +33,12 @@ export async function saveFcmToken(requestPermission = false) {
     }
 
     if (Notification.permission === 'granted') {
-        await firebase.database().ref(`/users/${userId}/fcmToken`).set(
-            await firebase.messaging().getToken({ vapidKey })
-        );
+        const token = await firebase.messaging().getToken({ vapidKey });
+        if (!token) return;
+        
+        await firebase.database().ref(`/users/${userId}/fcmTokens/${token}`).set({
+            ts: firebase.database.ServerValue.TIMESTAMP,
+            ua: navigator.userAgent || 'unknown'
+        });
     }
 }

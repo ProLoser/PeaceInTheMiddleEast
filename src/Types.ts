@@ -9,7 +9,8 @@ export type User = {
     search: string;
     photoURL: string | null;
     language: string;
-    fcmToken?: string;
+    fcmToken?: string; // Legacy: single token (for backward compatibility)
+    fcmTokens?: { [token: string]: { ts: number; ua: string } }; // Token is key, value contains metadata
 }
 
 export const enum Color {

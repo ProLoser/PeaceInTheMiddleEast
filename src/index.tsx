@@ -256,7 +256,7 @@ export function App() {
           console.log('Creating user', data);
           userRef.set(data);
           saveFcmToken(true);
-        } else if (!snapshot.val().fcmToken) {
+        } else {
           saveFcmToken();
         }
 
