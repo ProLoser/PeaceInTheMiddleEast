@@ -117,7 +117,7 @@ export default function Profile({ user }: ProfileProps) {
     const { toggle } = useContext(DialogContext)!;
     const [editing, setEditing] = useState<User>(user?.val() || { uid: '', name: '', language: '', photoURL: '' });
 
-    const save = useCallback(async (event: React.MouseEvent<HTMLAnchorElement>) => {
+    const save = useCallback(async (event: React.PointerEvent<HTMLAnchorElement>) => {
         event.preventDefault();
         if (!editing) return;
         const userRef = firebase.database().ref(`users/${user!.key}`);
@@ -137,7 +137,7 @@ export default function Profile({ user }: ProfileProps) {
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-x"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M18 6l-12 12" /><path d="M6 6l12 12" /></svg>
                 </a>
                 Edit Profile
-                <a onPointerUp={save} href="#">
+                <a onPointerUp={save} href="#" role="button" aria-label="Save profile" tabIndex={0}>
                     <CheckIcon className="material-icons-svg notranslate" />
                 </a>
             </h1>
