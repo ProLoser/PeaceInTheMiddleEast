@@ -93,7 +93,7 @@ export default function Login({ reset, friend, load }: LoginProps) {
                         </li>
                         : null}
                     <li>
-                        <a onPointerUp={reset} href="#">
+                        <a onPointerUp={(e) => { e.preventDefault(); reset(); }} href="#">
                             <RestartAltIcon className="material-icons-svg notranslate" />
                             {t('reset')}
                         </a>

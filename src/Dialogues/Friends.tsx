@@ -125,7 +125,8 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
         renderFriends.push(row(resultData))
     })
 
-    const invite = () => {
+    const invite = (event: PointerEvent<HTMLAnchorElement>) => {
+        event.preventDefault();
         if (user.key) {
             const shareUrl = (new URL(user.key, location.href)).toString()
             navigator.clipboard?.writeText?.(shareUrl)
@@ -161,13 +162,13 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
                     </li>
                     : null}
                 <li>
-                    <a onPointerUp={() => toggle(Modal.Profile)} href="#">
+                    <a onPointerUp={(e) => { e.preventDefault(); toggle(Modal.Profile); }} href="#">
                         <ManageAccountsIcon className="material-icons-svg notranslate" />
                         {t('profile')}
                     </a>
                 </li>
                 {"Notification" in self && Notification.permission === 'default' ? <li>
-                    <a onPointerUp={() => saveFcmToken(true)} href="#">
+                    <a onPointerUp={(e) => { e.preventDefault(); saveFcmToken(true); }} href="#">
                         <NotificationsIcon className="material-icons-svg notranslate" />
                         {t('notifications')}
                     </a>
@@ -192,7 +193,7 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
                 </li>
                 <Version />
                 <li>
-                    <a onPointerUp={() => firebase.auth().signOut()} href="#">
+                    <a onPointerUp={(e) => { e.preventDefault(); firebase.auth().signOut(); }} href="#">
                         <LogoutIcon className="material-icons-svg notranslate" />
                         {t('signOut')}
                     </a>
