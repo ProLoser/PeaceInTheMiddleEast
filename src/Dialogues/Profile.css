@@ -15,11 +15,11 @@
         vertical-align: text-top;
         display: flex;
         justify-content: space-between;
+        margin-top: 0;
     }
 
-    [type="submit"] {
-        /* margin-top: 1em;
-        width: 100%; */
-        padding: 1em;
+    .avatar {
+        display: block;
+        margin: 1em auto;
     }
 }
