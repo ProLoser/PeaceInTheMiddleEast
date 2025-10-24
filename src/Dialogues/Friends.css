@@ -47,6 +47,13 @@
 
                 }
             }
+            &.local {
+                color: var(--primary-color) !important;
+                .material-icons-svg {
+                    width: 4em;
+                    height: 4em;
+                }
+            }
         }
     }
 }
