@@ -84,8 +84,8 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
         onDragStart={onDragStart}
         onDragEnd={onDragEnd}
     >
-        {/* Render ghost pieces from previous board state */}
-        {showGhosts && previousPieces !== null && previousPieces !== 0 && Array.from({ length: Math.abs(previousPieces) }, (_, index) => {
+        {/* Render ghost pieces from previous board state - only show if pieces were removed or changed */}
+        {showGhosts && previousPieces !== null && previousPieces !== 0 && previousPieces !== pieces && Array.from({ length: Math.abs(previousPieces) }, (_, index) => {
             const ghostColor = previousPieces > 0 ? Color.White : Color.Black;
             return <Piece 
                 key={`ghost-${index}`} 
