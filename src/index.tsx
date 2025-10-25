@@ -221,6 +221,7 @@ export function App() {
     setGameHistory(newHistory);
     setUsedDice(prev => prev.slice(0, -1));
     setSelected(null);
+    playCheckerSound();
   }, [match, gameHistory]);
 
   const onDragOver: DragEventHandler = useCallback((event) => { event.preventDefault(); }, [])
