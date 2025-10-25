@@ -48,6 +48,8 @@ export default function Dice({ onPointerUp, values = [6, 6], used = [], color, d
                     e.stopPropagation();
                     onUndo();
                 }}
+                aria-label={t('undo')}
+                type="button"
             >
                 {t('undo')}
             </button>

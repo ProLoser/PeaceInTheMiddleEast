@@ -173,8 +173,9 @@ export function App() {
     navigator.vibrate?.(Vibrations.Down)
     
     // Save game state history for undo (only for online games)
+    // Limit history to last 10 moves to prevent memory issues
     if (match) {
-      setGameHistory(prev => [...prev, game]);
+      setGameHistory(prev => [...prev.slice(-9), game]);
     }
     
     setGame(nextState)
