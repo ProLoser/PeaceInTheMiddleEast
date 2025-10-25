@@ -66,18 +66,19 @@ exports.sendMoveNotification = onValueCreated('/moves/{moveId}', async event => 
     return null;
   }
 
-  // Query the player's name from the database
+  // Query the player's name and recipient's language from the database in parallel
   let playerName = move.player;
-  if (move.player) {
-    const playerNameSnapshot = await db.ref(`/users/${move.player}/name`).once('value');
-    if (playerNameSnapshot.exists()) {
-      playerName = playerNameSnapshot.val();
-    }
-  }
-
-  // Query the recipient's language preference from the database
   let recipientLanguage = 'en';
-  const recipientLanguageSnapshot = await db.ref(`/users/${move.friend}/language`).once('value');
+  
+  const [playerNameSnapshot, recipientLanguageSnapshot] = await Promise.all([
+    move.player ? db.ref(`/users/${move.player}/name`).once('value') : Promise.resolve(null),
+    db.ref(`/users/${move.friend}/language`).once('value')
+  ]);
+  
+  if (playerNameSnapshot && playerNameSnapshot.exists()) {
+    playerName = playerNameSnapshot.val();
+  }
+  
   if (recipientLanguageSnapshot.exists()) {
     recipientLanguage = recipientLanguageSnapshot.val();
   }
