@@ -20,5 +20,6 @@
   "resetConfirm": "Bist du sicher, dass du das Spiel zurücksetzen möchtest?",
   "local": "Offline-Spiel",
   "fullscreen": "Vollbild",
-  "exitFullscreen": "Vollbild beenden"
+  "exitFullscreen": "Vollbild beenden",
+  "moveNotification": "{{name}} hat einen Zug gemacht"
 }
