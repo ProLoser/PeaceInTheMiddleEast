@@ -45,6 +45,7 @@ export function App() {
   const [friend, setFriend] = useState<SnapshotOrNullType>(null);
   const [selected, setSelected] = useState<number | null>(null);
   const [usedDice, setUsedDice] = useState<UsedDie[]>([]);
+  const [previousBoard, setPreviousBoard] = useState<Game['board'] | null>(null);
 
   const load = useCallback(async (friendId?: string, authUserUid?: string) => {
     if (friendId === 'PeaceInTheMiddleEast') return;
@@ -153,6 +154,8 @@ export function App() {
     navigator.vibrate?.(Vibrations.Dice);
     setUsedDice([]);
     setSelected(match && game.prison[game.color] ? -1 : null);
+    // Clear previous board when user starts their turn
+    setPreviousBoard(null);
   }, [match, game, isMyTurn]);
 
   const moves = useMemo(() => {
@@ -301,6 +304,8 @@ export function App() {
               nextGame.turn === user.key
             ) {
               playCheckerSound();
+              // Save the previous board state when it becomes your turn after friend's move
+              setPreviousBoard([...prevGame.board] as Game['board']);
             }
             return nextGame;
           });
@@ -309,6 +314,7 @@ export function App() {
           setGame(blankGame);
           setUsedDice([]);
           setSelected(null);
+          setPreviousBoard(null);
           gameRef.set(blankGame);
         }
       };
@@ -320,6 +326,7 @@ export function App() {
       setGame(newGame());
       setUsedDice([]);
       setSelected(null);
+      setPreviousBoard(null);
     }
   }, [match, user]);
 
@@ -356,6 +363,8 @@ export function App() {
       database.ref(`matches/${user?.key}/${friend?.key}`).update(update);
       database.ref(`matches/${friend?.key}/${user?.key}`).update(update);
       setUsedDice([])
+      // Clear previous board when user completes their turn
+      setPreviousBoard(null);
     }
   }, [usedDice, game, match, friend, user]);
 
@@ -433,6 +442,8 @@ export function App() {
             position={index}
             selected={selected}
             onSelect={onSelect}
+            previousPieces={previousBoard?.[index] ?? null}
+            showGhosts={!!previousBoard && isMyTurn}
           />
         )}
       </div>
