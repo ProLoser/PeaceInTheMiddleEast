@@ -130,8 +130,8 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
         if (user.key) {
             const url = (new URL(user.key, location.href)).toString()
             const name = user.val().name
-            const invitation = t('invitation', { name, url })
-            navigator.clipboard?.writeText?.(invitation)
+            const invitation = t('invitation', { name })
+            navigator.clipboard?.writeText?.(`${invitation}: ${url}`)
             navigator.share?.({
                 url,
                 title: t('inviteFriend'),

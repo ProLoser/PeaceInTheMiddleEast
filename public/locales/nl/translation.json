@@ -6,7 +6,7 @@
   "friends": "Vrienden",
   "search": "Zoek naar vrienden",
   "addFriend": "Vriend uitnodigen",
-  "invitation": "{{name}} heeft je uitgenodigd voor Backgammon: {{url}}",
+  "invitation": "{{name}} heeft je uitgenodigd voor Backgammon",
   "chat": "Chat",
   "chatPlaceholder": "Typ een bericht",
   "reset": "Reset spel",

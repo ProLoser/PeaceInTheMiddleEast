@@ -6,7 +6,7 @@
   "friends": "Amigos",
   "search": "Buscar amigos",
   "addFriend": "Invitar amigo",
-  "invitation": "{{name}} te ha invitado a Backgammon: {{url}}",
+  "invitation": "{{name}} te ha invitado a Backgammon",
   "chat": "Chat",
   "chatPlaceholder": "Escribe un mensaje",
   "reset": "Reiniciar juego",
