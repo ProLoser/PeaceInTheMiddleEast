@@ -19,5 +19,6 @@
   "resetConfirm": "本当に試合をリセットしますか？",
   "local": "オフラインゲーム",
   "fullscreen": "全画面表示",
-  "exitFullscreen": "全画面表示を終了"
+  "exitFullscreen": "全画面表示を終了",
+  "moveNotification": "{{name}} さんが動きました"
 }

@@ -19,5 +19,6 @@
   "resetConfirm": "Haluatko varmasti nollata ottelun?",
   "local": "Offline-peli",
   "fullscreen": "Koko näyttö",
-  "exitFullscreen": "Poistu koko näytön tilasta"
+  "exitFullscreen": "Poistu koko näytön tilasta",
+  "moveNotification": "{{name}} teki siirron"
 }

@@ -19,5 +19,6 @@
   "resetConfirm": "هل أنت متأكد أنك تريد إعادة تعيين المباراة؟",
   "local": "لعبة بدون اتصال",
   "fullscreen": "ملء الشاشة",
-  "exitFullscreen": "الخروج من ملء الشاشة"
+  "exitFullscreen": "الخروج من ملء الشاشة",
+  "moveNotification": "{{name}} قام بحركة"
 }

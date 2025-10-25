@@ -19,5 +19,6 @@
   "resetConfirm": "Apakah Anda yakin ingin mengatur ulang pertandingan?",
   "local": "Permainan Offline",
   "fullscreen": "Layar penuh",
-  "exitFullscreen": "Keluar dari layar penuh"
+  "exitFullscreen": "Keluar dari layar penuh",
+  "moveNotification": "{{name}} membuat gerakan"
 }

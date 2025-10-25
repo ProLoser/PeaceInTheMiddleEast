@@ -20,5 +20,6 @@
   "local": "משחק לא מקוון",
   "resetConfirm": "האם אתה בטוח שברצונך לאפס את המשחק?",
   "fullscreen": "מסך מלא",
-  "exitFullscreen": "צא ממסך מלא"
+  "exitFullscreen": "צא ממסך מלא",
+  "moveNotification": "{{name}} ביצע מהלך"
 }

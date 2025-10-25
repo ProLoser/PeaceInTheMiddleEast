@@ -19,5 +19,6 @@
   "resetConfirm": "Sei sicuro di voler resettare la partita?",
   "local": "Gioco offline",
   "fullscreen": "Schermo intero",
-  "exitFullscreen": "Esci da schermo intero"
+  "exitFullscreen": "Esci da schermo intero",
+  "moveNotification": "{{name}} ha fatto una mossa"
 }

@@ -5,6 +5,33 @@ admin.initializeApp();
 const db = admin.database();
 const tokenCache = new Map();
 
+// Translation strings for "moveNotification"
+const translations = {
+  en: '{{name}} made a move',
+  es: '{{name}} hizo un movimiento',
+  fr: '{{name}} a fait un mouvement',
+  de: '{{name}} hat einen Zug gemacht',
+  ja: '{{name}} さんが動きました',
+  ar: '{{name}} قام بحركة',
+  he: '{{name}} ביצע מהלך',
+  id: '{{name}} membuat gerakan',
+  nl: '{{name}} heeft een zet gedaan',
+  it: '{{name}} ha fatto una mossa',
+  zh: '{{name}} 移动了',
+  fi: '{{name}} teki siirron',
+  el: '{{name}} έκανε μια κίνηση',
+  tr: '{{name}} bir hamle yaptı'
+};
+
+function getTranslatedTitle(language, playerName) {
+  // Extract language code (first 2 characters)
+  const langCode = language ? language.substring(0, 2) : 'en';
+  // Get translation template, fallback to English
+  const template = translations[langCode] || translations['en'];
+  // Replace {{name}} with the actual player name
+  return template.replace('{{name}}', playerName);
+}
+
 exports.sendMoveNotification = onValueCreated('/moves/{moveId}', async event => {
   const move = event.data.val();
 
@@ -48,9 +75,16 @@ exports.sendMoveNotification = onValueCreated('/moves/{moveId}', async event => 
     }
   }
 
+  // Query the recipient's language preference from the database
+  let recipientLanguage = 'en';
+  const recipientLanguageSnapshot = await db.ref(`/users/${move.friend}/language`).once('value');
+  if (recipientLanguageSnapshot.exists()) {
+    recipientLanguage = recipientLanguageSnapshot.val();
+  }
+
   const message = {
     notification: {
-      title: `${playerName} made a move`,
+      title: getTranslatedTitle(recipientLanguage, playerName),
       body: move.move
     },
     data: {

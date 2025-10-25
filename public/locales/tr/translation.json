@@ -20,5 +20,6 @@
   "local": "Çevrimdışı oyun",
   "resetConfirm": "Maçı sıfırlamak istediğinizden emin misiniz?",
   "fullscreen": "Tam Ekran",
-  "exitFullscreen": "Tam Ekrandan Çık"
+  "exitFullscreen": "Tam Ekrandan Çık",
+  "moveNotification": "{{name}} bir hamle yaptı"
 }
