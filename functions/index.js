@@ -5,33 +5,6 @@ admin.initializeApp();
 const db = admin.database();
 const tokenCache = new Map();
 
-// Translation strings for "moveNotification"
-const translations = {
-  en: '{{name}} made a move',
-  es: '{{name}} hizo un movimiento',
-  fr: '{{name}} a fait un mouvement',
-  de: '{{name}} hat einen Zug gemacht',
-  ja: '{{name}} さんが動きました',
-  ar: '{{name}} قام بحركة',
-  he: '{{name}} ביצע מהלך',
-  id: '{{name}} membuat gerakan',
-  nl: '{{name}} heeft een zet gedaan',
-  it: '{{name}} ha fatto una mossa',
-  zh: '{{name}} 移动了',
-  fi: '{{name}} teki siirron',
-  el: '{{name}} έκανε μια κίνηση',
-  tr: '{{name}} bir hamle yaptı'
-};
-
-function getTranslatedTitle(language, playerName) {
-  // Extract language code (first 2 characters)
-  const langCode = language ? language.substring(0, 2) : 'en';
-  // Get translation template, fallback to English
-  const template = translations[langCode] || translations['en'];
-  // Replace {{name}} with the actual player name
-  return template.replace('{{name}}', playerName);
-}
-
 exports.sendMoveNotification = onValueCreated('/moves/{moveId}', async event => {
   const move = event.data.val();
 
@@ -66,26 +39,18 @@ exports.sendMoveNotification = onValueCreated('/moves/{moveId}', async event => 
     return null;
   }
 
-  // Query the player's name and recipient's language from the database in parallel
+  // Query the player's name from the database
   let playerName = move.player;
-  let recipientLanguage = 'en';
-  
-  const [playerNameSnapshot, recipientLanguageSnapshot] = await Promise.all([
-    move.player ? db.ref(`/users/${move.player}/name`).once('value') : Promise.resolve(null),
-    db.ref(`/users/${move.friend}/language`).once('value')
-  ]);
-  
-  if (playerNameSnapshot && playerNameSnapshot.exists()) {
-    playerName = playerNameSnapshot.val();
-  }
-  
-  if (recipientLanguageSnapshot.exists()) {
-    recipientLanguage = recipientLanguageSnapshot.val();
+  if (move.player) {
+    const playerNameSnapshot = await db.ref(`/users/${move.player}/name`).once('value');
+    if (playerNameSnapshot.exists()) {
+      playerName = playerNameSnapshot.val();
+    }
   }
 
   const message = {
     notification: {
-      title: getTranslatedTitle(recipientLanguage, playerName),
+      title: `${playerName} made a move`,
       body: move.move
     },
     data: {
