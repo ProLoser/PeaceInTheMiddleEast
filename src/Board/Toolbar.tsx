@@ -1,5 +1,4 @@
 import { useContext } from 'react';
-import { useTranslation } from 'react-i18next';
 import Avatar from '../Avatar';
 import { DialogContext } from '../Dialogues';
 import type { User } from '../Types';
@@ -12,7 +11,6 @@ interface ToolbarProps {
 }
 
 export default function Toolbar({ friend }: ToolbarProps) {
-  const { t } = useTranslation();
   const { state: dialogState, toggle } = useContext(DialogContext)!;
 
   return (
@@ -20,7 +18,7 @@ export default function Toolbar({ friend }: ToolbarProps) {
       {friend
         ? <Avatar user={friend} />
         : <a className={classes({ active: dialogState })}><AccountCircleIcon className="material-icons-svg notranslate" /></a>}
-      <h2>{friend?.name ?? t('local')}</h2>
+      <h2>{friend?.name ?? 'Local'}</h2>
     </div>
   );
 } 
