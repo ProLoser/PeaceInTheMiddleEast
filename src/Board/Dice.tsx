@@ -3,7 +3,7 @@ import * as IMAGES from './images/dice';
 import './Dice.css'
 import { Color, UsedDie } from '../Types';
 import { classes } from '../Utils';
-import { useTranslation } from 'react-i18next';
+import UndoIcon from '@material-design-icons/svg/filled/undo.svg?react';
 
 type DiceProps = {
     onPointerUp: PointerEventHandler,
@@ -18,7 +18,6 @@ type DiceProps = {
 
 export default function Dice({ onPointerUp, values = [6, 6], used = [], color, disabled, pulsate, onUndo, canUndo }: DiceProps) {
     let dice = values;
-    const { t } = useTranslation();
     
     const usedClone = [...used];
     
@@ -48,10 +47,10 @@ export default function Dice({ onPointerUp, values = [6, 6], used = [], color, d
                     e.stopPropagation();
                     onUndo();
                 }}
-                aria-label={t('undo')}
+                aria-label="Undo"
                 type="button"
             >
-                {t('undo')}
+                <UndoIcon className="undo-icon" />
             </button>
         )}
     </div>
