@@ -6,6 +6,7 @@
   "friends": "أصدقاء",
   "search": "البحث عن الأصدقاء",
   "addFriend": "دعوة صديق",
+  "invitation": "{{name}} دعاك إلى لعبة طاولة الزهر: {{url}}",
   "chat": "دردشة",
   "chatPlaceholder": "اكتب رسالة",
   "reset": "إعادة تعيين اللعبة",

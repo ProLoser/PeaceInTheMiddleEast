@@ -128,11 +128,14 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
     const invite = (event: PointerEvent<HTMLAnchorElement>) => {
         event.preventDefault();
         if (user.key) {
-            const shareUrl = (new URL(user.key, location.href)).toString()
-            navigator.clipboard?.writeText?.(shareUrl)
+            const url = (new URL(user.key, location.href)).toString()
+            const name = user.val().name
+            const invitation = t('invitation', { name, url })
+            navigator.clipboard?.writeText?.(invitation)
             navigator.share?.({
-                url: shareUrl,
-                title: t('inviteFriend', { name: user.val().name })
+                url,
+                title: t('inviteFriend'),
+                text: invitation
             }).catch((error) => {
                 // Handle sharing cancellation or other errors
                 console.error('Error sharing:', error);

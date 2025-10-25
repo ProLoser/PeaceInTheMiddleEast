@@ -6,6 +6,7 @@
   "friends": "Φίλοι",
   "search": "Αναζήτηση φίλων",
   "addFriend": "Πρόσκληση φίλου",
+  "invitation": "Ο {{name}} σας προσκάλεσε στο Backgammon: {{url}}",
   "chat": "Συνομιλία",
   "chatPlaceholder": "Πληκτρολογήστε ένα μήνυμα",
   "reset": "Επαναφορά παιχνιδιού",

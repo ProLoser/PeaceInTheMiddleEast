@@ -6,6 +6,7 @@
   "friends": "Ystävät",
   "search": "Etsi ystäviä",
   "addFriend": "Kutsu ystävä",
+  "invitation": "{{name}} kutsui sinut pelaamaan Backgammonia: {{url}}",
   "chat": "Keskustelu",
   "chatPlaceholder": "Kirjoita viesti",
   "reset": "Nollaa peli",
