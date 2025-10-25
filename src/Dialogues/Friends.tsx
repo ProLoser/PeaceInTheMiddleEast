@@ -28,7 +28,7 @@ type Users = { [key: string]: User }
 type FriendsProps = {
     user: SnapshotOrNullType;
     friend?: User;
-    load: (userId: string, key: string) => void;
+    load: (userId: string | false, key: string) => void;
     reset: () => void;
 }
 
@@ -82,7 +82,7 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
 
     const NOW = new Date()
 
-    const handleLoad = useCallback((userId: string) => {
+    const handleLoad = useCallback((userId: string | false) => {
         if (!user?.key) return;
         load(userId, user.key);
         toggle(false);
@@ -211,11 +211,11 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
         </header>
         <input name="search" ref={searchRef} type="search" autoComplete="off" placeholder={t('search')} onChange={onSearch} />
         <ul>
-            {friend ? <li className="local">
-                <a href={`${location.origin}/${location.pathname.split('/').filter(Boolean).slice(0, -1).join('/')}`}>
-                    <LocalIcon className="material-icons-svg notranslate" />
+            {friend ? <li onPointerUp={() => handleLoad(false)}>
+                <LocalIcon className="material-icons-svg notranslate" />
+                <h3>
                     {t('local')}
-                </a>
+                </h3>
             </li> : null}
             {renderFriends}
         </ul>

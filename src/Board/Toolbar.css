@@ -1,12 +1,8 @@
 #toolbar {
   gap: 5px;
-  
-  > a {
-      font-weight: bold;
-      font-size: 3em;
-  }
-  .avatar {
+  .avatar, svg {
     width: 4em;
+    height: 4em;
   }
 
   @media (orientation: portrait) {

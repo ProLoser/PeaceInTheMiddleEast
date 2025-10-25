@@ -42,17 +42,10 @@
                 margin: 0;
                 overflow: hidden;
                 text-overflow: ellipsis;
-                img {
-                    margin-right: 1em;
-
-                }
             }
-            &.local {
-                color: var(--primary-color) !important;
-                .material-icons-svg {
-                    width: 4em;
-                    height: 4em;
-                }
+            > svg, > img {
+                width: 4em;
+                height: 4em;
             }
         }
     }
