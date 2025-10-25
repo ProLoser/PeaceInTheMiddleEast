@@ -11,11 +11,11 @@ type PointProps = {
     onSelect: (position: number | null) => void,
     enabled: boolean,
     valid: boolean,
-    previousPieces: number | null,
-    showGhosts: boolean
+    ghostCount: number,
+    movedCount: number
 }
 
-export default function Point({ pieces, move, position, onSelect, selected, enabled, valid, previousPieces, showGhosts }: PointProps) {
+export default function Point({ pieces, move, position, onSelect, selected, enabled, valid, ghostCount, movedCount }: PointProps) {
     const [dragging, setDragging] = useState(false);
     const [dragOver, setDragOver] = useState(false);
     const pieceRef = useRef<HTMLImageElement>(null);
@@ -84,9 +84,9 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
         onDragStart={onDragStart}
         onDragEnd={onDragEnd}
     >
-        {/* Render ghost pieces from previous board state - only show if pieces were removed or changed */}
-        {showGhosts && previousPieces !== null && previousPieces !== 0 && previousPieces !== pieces && Array.from({ length: Math.abs(previousPieces) }, (_, index) => {
-            const ghostColor = previousPieces > 0 ? Color.White : Color.Black;
+        {/* Render ghost pieces */}
+        {ghostCount !== 0 && Array.from({ length: Math.abs(ghostCount) }, (_, index) => {
+            const ghostColor = ghostCount > 0 ? Color.White : Color.Black;
             return <Piece 
                 key={`ghost-${index}`} 
                 color={ghostColor} 
@@ -104,6 +104,7 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
                 position={position} 
                 onSelect={onSelect} 
                 enabled={enabled}
+                moved={movedCount > 0}
             />
         )}
     </div>

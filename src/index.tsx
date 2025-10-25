@@ -45,7 +45,8 @@ export function App() {
   const [friend, setFriend] = useState<SnapshotOrNullType>(null);
   const [selected, setSelected] = useState<number | null>(null);
   const [usedDice, setUsedDice] = useState<UsedDie[]>([]);
-  const [previousBoard, setPreviousBoard] = useState<Game['board'] | null>(null);
+  const [ghosts, setGhosts] = useState<{ [position: number]: number } | null>(null);
+  const [moved, setMoved] = useState<{ [position: number]: number } | null>(null);
 
   const load = useCallback(async (friendId?: string, authUserUid?: string) => {
     if (friendId === 'PeaceInTheMiddleEast') return;
@@ -53,6 +54,8 @@ export function App() {
     setSelected(null)
     setUsedDice([])
     setGame(newGame());
+    setGhosts(null);
+    setMoved(null);
 
     if (friendId) {
       if (window.location.pathname !== `/${friendId}`) {
@@ -154,8 +157,8 @@ export function App() {
     navigator.vibrate?.(Vibrations.Dice);
     setUsedDice([]);
     setSelected(match && game.prison[game.color] ? -1 : null);
-    // Clear previous board when user starts their turn
-    setPreviousBoard(null);
+    setGhosts(null);
+    setMoved(null);
   }, [match, game, isMyTurn]);
 
   const moves = useMemo(() => {
@@ -171,6 +174,47 @@ export function App() {
     playCheckerSound()
     navigator.vibrate?.(Vibrations.Down)
     setGame(nextState)
+    
+    // Update ghosts and moved tracking
+    setGhosts(prevGhosts => {
+      const newGhosts = { ...(prevGhosts || {}) };
+      
+      // Handle moves from board positions (not bar or bearing off)
+      if (typeof from === 'number' && from >= 0 && from < 24) {
+        const fromPieces = game.board[from];
+        const sign = Math.sign(fromPieces);
+        // Add ghost for the piece that left this position
+        newGhosts[from] = (newGhosts[from] || 0) + sign;
+      }
+      
+      // Handle hits - add ghost for enemy piece that was hit
+      if (typeof to === 'number' && to >= 0 && to < 24) {
+        const toPieces = game.board[to];
+        // Check if this was a hit (moveLabel contains '*')
+        if (moveLabel.includes('*') && Math.abs(toPieces) === 1) {
+          const hitSign = Math.sign(toPieces);
+          // Add ghost for the piece that was hit
+          newGhosts[to] = (newGhosts[to] || 0) + hitSign;
+        }
+      }
+      
+      return newGhosts;
+    });
+    
+    setMoved(prevMoved => {
+      const newMoved = { ...(prevMoved || {}) };
+      
+      // Track destination (if not bearing off)
+      if (typeof to === 'number' && to >= 0 && to < 24) {
+        const toPieces = nextState.board[to];
+        const sign = Math.sign(toPieces);
+        // Increment moved count at destination
+        newMoved[to] = (newMoved[to] || 0) + Math.abs(sign);
+      }
+      
+      return newMoved;
+    });
+    
     setUsedDice(prev => {
       const newUsedDice = [...prev, { value: usedDie!, label: moveLabel }];
       // If the move ended the game and not all dice were used, publish the game state
@@ -304,8 +348,15 @@ export function App() {
               nextGame.turn === user.key
             ) {
               playCheckerSound();
-              // Save the previous board state when it becomes your turn after friend's move
-              setPreviousBoard([...prevGame.board] as Game['board']);
+              // Initialize ghosts from the difference between prev and current board
+              const newGhosts: { [position: number]: number } = {};
+              for (let i = 0; i < 24; i++) {
+                const diff = prevGame.board[i] - nextGame.board[i];
+                if (diff !== 0) {
+                  newGhosts[i] = diff;
+                }
+              }
+              setGhosts(newGhosts);
             }
             return nextGame;
           });
@@ -314,7 +365,8 @@ export function App() {
           setGame(blankGame);
           setUsedDice([]);
           setSelected(null);
-          setPreviousBoard(null);
+          setGhosts(null);
+          setMoved(null);
           gameRef.set(blankGame);
         }
       };
@@ -326,7 +378,8 @@ export function App() {
       setGame(newGame());
       setUsedDice([]);
       setSelected(null);
-      setPreviousBoard(null);
+      setGhosts(null);
+      setMoved(null);
     }
   }, [match, user]);
 
@@ -363,8 +416,8 @@ export function App() {
       database.ref(`matches/${user?.key}/${friend?.key}`).update(update);
       database.ref(`matches/${friend?.key}/${user?.key}`).update(update);
       setUsedDice([])
-      // Clear previous board when user completes their turn
-      setPreviousBoard(null);
+      setGhosts(null);
+      setMoved(null);
     }
   }, [usedDice, game, match, friend, user]);
 
@@ -442,8 +495,8 @@ export function App() {
             position={index}
             selected={selected}
             onSelect={onSelect}
-            previousPieces={previousBoard?.[index] ?? null}
-            showGhosts={!!previousBoard && isMyTurn}
+            ghostCount={ghosts?.[index] || 0}
+            movedCount={moved?.[index] || 0}
           />
         )}
       </div>
