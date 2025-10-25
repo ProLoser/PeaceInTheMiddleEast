@@ -62,6 +62,7 @@
     --point-primary: solid var(--point-size) var(--primary);
     --point-secondary: solid var(--point-size) var(--secondary);
     position: relative;
+    aspect-ratio: 1;
 
     &::before {
         content: ' ';
