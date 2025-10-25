@@ -75,7 +75,7 @@ dialog {
       overflow: hidden;
       text-overflow: ellipsis;
       a {
-        display: block;
+        display: flex;
         padding: .5em;
         text-decoration: none;
         color: var(--primary-color);
