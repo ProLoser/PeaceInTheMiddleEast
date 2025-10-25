@@ -4,7 +4,7 @@
   "friends": "Arkadaşlar",
   "search": "Arkadaş ara",
   "addFriend": "Arkadaş Davet Et",
-  "invitation": "{{name}} sizi Tavla'ya davet etti: {{url}}",
+  "invitation": "{{name}} sizi Tavla'ya davet etti",
   "chat": "Sohbet",
   "chatPlaceholder": "Bir mesaj yazın",
   "reset": "Oyunu Sıfırla",

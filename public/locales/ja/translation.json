@@ -6,7 +6,7 @@
   "friends": "友達",
   "search": "友達を検索",
   "addFriend": "友達を招待",
-  "invitation": "{{name}} さんがバックギャモンに招待しました: {{url}}",
+  "invitation": "{{name}} さんがバックギャモンに招待しました",
   "chat": "チャット",
   "chatPlaceholder": "メッセージを入力",
   "reset": "ゲームをリセット",
