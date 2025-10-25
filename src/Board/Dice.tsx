@@ -3,6 +3,7 @@ import * as IMAGES from './images/dice';
 import './Dice.css'
 import { Color, UsedDie } from '../Types';
 import { classes } from '../Utils';
+import { useTranslation } from 'react-i18next';
 
 type DiceProps = {
     onPointerUp: PointerEventHandler,
@@ -11,10 +12,13 @@ type DiceProps = {
     color?: Color,
     disabled?: boolean,
     pulsate?: boolean,
+    onUndo?: () => void,
+    canUndo?: boolean,
 }
 
-export default function Dice({ onPointerUp, values = [6, 6], used = [], color, disabled, pulsate }: DiceProps) {
+export default function Dice({ onPointerUp, values = [6, 6], used = [], color, disabled, pulsate, onUndo, canUndo }: DiceProps) {
     let dice = values;
+    const { t } = useTranslation();
     
     const usedClone = [...used];
     
@@ -37,5 +41,16 @@ export default function Dice({ onPointerUp, values = [6, 6], used = [], color, d
                 />
             );
         })}
+        {canUndo && onUndo && (
+            <button 
+                className="undo-button" 
+                onPointerUp={(e) => {
+                    e.stopPropagation();
+                    onUndo();
+                }}
+            >
+                {t('undo')}
+            </button>
+        )}
     </div>
 }

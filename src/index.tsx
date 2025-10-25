@@ -45,6 +45,7 @@ export function App() {
   const [friend, setFriend] = useState<SnapshotOrNullType>(null);
   const [selected, setSelected] = useState<number | null>(null);
   const [usedDice, setUsedDice] = useState<UsedDie[]>([]);
+  const [gameHistory, setGameHistory] = useState<Game[]>([]);
 
   const load = useCallback(async (friendId?: string, authUserUid?: string) => {
     if (friendId === 'PeaceInTheMiddleEast') return;
@@ -52,6 +53,7 @@ export function App() {
     setSelected(null)
     setUsedDice([])
     setGame(newGame());
+    setGameHistory([]);
 
     if (friendId) {
       if (window.location.pathname !== `/${friendId}`) {
@@ -118,6 +120,7 @@ export function App() {
       setGame(data);
       setUsedDice([]);
       setSelected(null);
+      setGameHistory([]);
     }
   }, [match, t]);
 
@@ -153,6 +156,7 @@ export function App() {
     navigator.vibrate?.(Vibrations.Dice);
     setUsedDice([]);
     setSelected(match && game.prison[game.color] ? -1 : null);
+    setGameHistory([]);
   }, [match, game, isMyTurn]);
 
   const moves = useMemo(() => {
@@ -167,6 +171,12 @@ export function App() {
     if (!moveLabel) return; // invalid
     playCheckerSound()
     navigator.vibrate?.(Vibrations.Down)
+    
+    // Save game state history for undo (only for online games)
+    if (match) {
+      setGameHistory(prev => [...prev, game]);
+    }
+    
     setGame(nextState)
     setUsedDice(prev => {
       const newUsedDice = [...prev, { value: usedDie!, label: moveLabel }];
@@ -198,6 +208,19 @@ export function App() {
       return newUsedDice;
     });
   }, [game, match, moves, usedDice, user, friend]);
+
+  const undo = useCallback(() => {
+    if (!match || gameHistory.length === 0) return;
+    
+    // Get the previous game state
+    const previousGame = gameHistory[gameHistory.length - 1];
+    const newHistory = gameHistory.slice(0, -1);
+    
+    setGame(previousGame);
+    setGameHistory(newHistory);
+    setUsedDice(prev => prev.slice(0, -1));
+    setSelected(null);
+  }, [match, gameHistory]);
 
   const onDragOver: DragEventHandler = useCallback((event) => { event.preventDefault(); }, [])
   
@@ -294,6 +317,7 @@ export function App() {
               navigator.vibrate?.(Vibrations.Dice)
               setUsedDice([])
               setSelected(null)
+              setGameHistory([])
             }
             if (
               user?.key &&
@@ -309,6 +333,7 @@ export function App() {
           setGame(blankGame);
           setUsedDice([]);
           setSelected(null);
+          setGameHistory([]);
           gameRef.set(blankGame);
         }
       };
@@ -320,6 +345,7 @@ export function App() {
       setGame(newGame());
       setUsedDice([]);
       setSelected(null);
+      setGameHistory([]);
     }
   }, [match, user]);
 
@@ -366,6 +392,14 @@ export function App() {
     return undefined
   }, [game.status, game.turn, user, friend])
 
+  const canUndo = useMemo(() => 
+    !!match && 
+    isMyTurn && 
+    game.status === Status.Moving && 
+    usedDice.length > 0 && 
+    usedDice.length < game.dice.length
+  , [match, isMyTurn, game.status, usedDice, game.dice])
+
   return (
     <Dialogues
       user={user}
@@ -384,6 +418,8 @@ export function App() {
           used={usedDice}
           disabled={!!game.turn && !isMyTurn}
           pulsate={isMyTurn && game.status === Status.Rolling}
+          onUndo={undo}
+          canUndo={canUndo}
         />
         <div className="bar">
           {Array.from({ length: game.prison?.white }, (_, index) =>

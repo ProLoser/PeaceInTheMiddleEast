@@ -20,5 +20,6 @@
   "resetConfirm": "Êtes-vous sûr de vouloir réinitialiser la partie ?",
   "local": "Jeu hors ligne",
   "fullscreen": "Plein écran",
-  "exitFullscreen": "Quitter le mode plein écran"
+  "exitFullscreen": "Quitter le mode plein écran",
+  "undo": "Annuler"
 }

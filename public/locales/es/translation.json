@@ -20,5 +20,6 @@
   "resetConfirm": "¿Estás seguro de que quieres reiniciar la partida?",
   "local": "Juego sin conexión",
   "fullscreen": "Pantalla completa",
-  "exitFullscreen": "Salir de pantalla completa"
+  "exitFullscreen": "Salir de pantalla completa",
+  "undo": "Deshacer"
 }

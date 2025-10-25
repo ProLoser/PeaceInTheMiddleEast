@@ -20,5 +20,6 @@
   "resetConfirm": "Are you sure you want to reset the match?",
   "local": "Offline Game",
   "fullscreen": "Fullscreen",
-  "exitFullscreen": "Exit Fullscreen"
+  "exitFullscreen": "Exit Fullscreen",
+  "undo": "Undo"
 }
