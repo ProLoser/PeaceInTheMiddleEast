@@ -18,7 +18,7 @@
   "online": "Online",
   "decline": "Decline Invitation",
   "resetConfirm": "Are you sure you want to reset the match?",
-  "local": "Offline Game",
+  "local": "offline mode",
   "fullscreen": "Fullscreen",
   "exitFullscreen": "Exit Fullscreen"
 }
