@@ -46,7 +46,7 @@ export function App() {
   const [selected, setSelected] = useState<number | null>(null);
   const [usedDice, setUsedDice] = useState<UsedDie[]>([]);
 
-  const load = useCallback(async (friendId?: string, authUserUid?: string) => {
+  const load = useCallback(async (friendId?: string | false, authUserUid?: string) => {
     if (friendId === 'PeaceInTheMiddleEast') return;
     console.log('Loading', friendId, 'with authUserUid:', authUserUid);
     setSelected(null)
@@ -227,7 +227,7 @@ export function App() {
     const onPopState = () => {
       load(
         location.pathname.split('/')[1],
-        user?.key
+        user?.key || undefined
       )
     };
     window.addEventListener('popstate', onPopState);

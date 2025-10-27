@@ -245,26 +245,28 @@ export function calculate(state: Game, from: number | Color | undefined | null, 
             return { state };
         if (typeof from === 'string')
             from = parseInt(from)
-        const offense = nextGame.board[from];
+        // At this point, from must be a number
+        const fromIndex = from as number;
+        const offense = nextGame.board[fromIndex];
         const defense = nextGame.board[to];
         const player = Math.sign(offense) === 1 ? Color.White : Color.Black;
         let dice = [...state.dice].sort((a, b) => a - b);
         usedDice.forEach(die => dice.splice(dice.indexOf(die.value), 1))
         
         if (defense === undefined) { // bear off        
-            usedDie = dice.find(die => destination(player, from, die) <= -1);    
-            moveLabel = `${indexToPoint(player, from)}/off`;
+            usedDie = dice.find(die => destination(player, fromIndex, die) <= -1);    
+            moveLabel = `${indexToPoint(player, fromIndex)}/off`;
             if (offense > 0) // White
                 nextGame.home.white++;
             else // Black
                 nextGame.home.black++;
         } else if (!defense || Math.sign(defense) === Math.sign(offense)) { // move
-            usedDie = dice.find(die => destination(player, from, die) === to);
-            moveLabel = `${indexToPoint(player, from)}/${indexToPoint(player, to)}`;
+            usedDie = dice.find(die => destination(player, fromIndex, die) === to);
+            moveLabel = `${indexToPoint(player, fromIndex)}/${indexToPoint(player, to)}`;
             nextGame.board[to] += Math.sign(offense);
         } else if (Math.abs(defense) === 1) { // hit
-            usedDie = dice.find(die => destination(player, from, die) === to);
-            moveLabel = `${indexToPoint(player, from)}/${indexToPoint(player, to)}*`;
+            usedDie = dice.find(die => destination(player, fromIndex, die) === to);
+            moveLabel = `${indexToPoint(player, fromIndex)}/${indexToPoint(player, to)}*`;
             nextGame.board[to] = -Math.sign(defense);
             if (offense > 0) nextGame.prison.black++;
             else nextGame.prison.white++;
@@ -272,7 +274,7 @@ export function calculate(state: Game, from: number | Color | undefined | null, 
             return { state };
         }
         // remove from previous position
-        nextGame.board[from] -= Math.sign(nextGame.board[from]);
+        nextGame.board[fromIndex] -= Math.sign(nextGame.board[fromIndex]);
         if (nextGame.home.white === 15 || nextGame.home.black === 15)
             nextGame.status = Status.GameOver;
     }
