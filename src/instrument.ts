@@ -24,6 +24,23 @@ Sentry.init({
   // Session Replay
   replaysSessionSampleRate: 0.1, // This sets the sample rate at 10%. You may want to change it to 100% while in development and then sample at a lower rate in production.
   replaysOnErrorSampleRate: 1.0, // If you're not already sampling the entire session, change the sample rate to 100% when sampling sessions where errors occur.
+  // Filter out localhost errors - best practice for Sentry
+  beforeSend(event, hint) {
+    // Check if the error originated from localhost
+    const isLocalhost = window.location.hostname === 'localhost' 
+      || window.location.hostname === '127.0.0.1'
+      || window.location.hostname.startsWith('192.168.')
+      || window.location.hostname.startsWith('10.')
+      || window.location.hostname.endsWith('.local');
+    
+    if (isLocalhost) {
+      // Don't send localhost errors to Sentry
+      console.warn('Sentry: Error filtered (localhost):', hint.originalException || hint.syntheticException);
+      return null;
+    }
+    
+    return event;
+  },
 });
 
 
