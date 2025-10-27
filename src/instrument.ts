@@ -25,17 +25,27 @@ Sentry.init({
   replaysSessionSampleRate: 0.1, // This sets the sample rate at 10%. You may want to change it to 100% while in development and then sample at a lower rate in production.
   replaysOnErrorSampleRate: 1.0, // If you're not already sampling the entire session, change the sample rate to 100% when sampling sessions where errors occur.
   // Filter out localhost errors - best practice for Sentry
-  beforeSend(event, hint) {
-    // Check if the error originated from localhost
-    const isLocalhost = window.location.hostname === 'localhost' 
-      || window.location.hostname === '127.0.0.1'
-      || window.location.hostname.startsWith('192.168.')
-      || window.location.hostname.startsWith('10.')
-      || window.location.hostname.endsWith('.local');
+  beforeSend(event: Sentry.ErrorEvent, hint: Sentry.EventHint): Sentry.ErrorEvent | null {
+    // Check if the error originated from localhost or private network
+    const hostname = window.location.hostname;
+    const isLocalhost = hostname === 'localhost' 
+      || hostname === '127.0.0.1'
+      || hostname.startsWith('192.168.')
+      || hostname.startsWith('10.')
+      || hostname.startsWith('172.16.')
+      || hostname.startsWith('172.17.')
+      || hostname.startsWith('172.18.')
+      || hostname.startsWith('172.19.')
+      || hostname.startsWith('172.2')
+      || hostname.startsWith('172.30.')
+      || hostname.startsWith('172.31.')
+      || hostname.endsWith('.local');
     
     if (isLocalhost) {
       // Don't send localhost errors to Sentry
-      console.warn('Sentry: Error filtered (localhost):', hint.originalException || hint.syntheticException);
+      if (import.meta.env.DEV) {
+        console.warn('Sentry: Error filtered (localhost):', hint.originalException || hint.syntheticException);
+      }
       return null;
     }
     
