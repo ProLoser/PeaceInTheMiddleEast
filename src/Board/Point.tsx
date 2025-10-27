@@ -22,7 +22,7 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
         event.preventDefault(); 
     }, [])
     
-    const onDragEnter: DragEventHandler = useCallback((event) => {
+    const onDragEnter: DragEventHandler = useCallback(() => {
         if (valid && !dragOver) {
             setDragOver(true);
             navigator.vibrate?.(Vibrations.Up);

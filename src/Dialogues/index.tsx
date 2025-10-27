@@ -17,7 +17,7 @@ export const DialogContext = createContext<DialogContextType | undefined>(undefi
 interface DialoguesProps {
   user: SnapshotOrNullType;
   friend: User | undefined;
-  load: (friendId?: string, authUser?: string) => void;
+  load: (friendId?: string | false, authUser?: string) => void;
   reset: () => void;
   chats: SnapshotOrNullType;
   gameover: User | undefined;
@@ -34,7 +34,7 @@ export default function Dialogues({ user, friend, load, reset, chats, gameover, 
       setState(state => state ? false : lastDialog);
     } else if (typeof value === 'string') {
       setState(value);
-      setLastDialog(value);
+      setLastDialog(value as Modal);
     } else {
       setState(value);
     }

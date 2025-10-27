@@ -28,7 +28,7 @@ type Users = { [key: string]: User }
 type FriendsProps = {
     user: SnapshotOrNullType;
     friend?: User;
-    load: (userId: string | false, key: string) => void;
+    load: (userId?: string | false, key?: string) => void;
     reset: () => void;
 }
 
