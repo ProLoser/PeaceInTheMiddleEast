@@ -167,9 +167,10 @@ export function App() {
     if (!moveLabel) return; // invalid
     playCheckerSound()
     navigator.vibrate?.(Vibrations.Down)
+    
     setGame(nextState)
     setUsedDice(prev => {
-      const newUsedDice = [...prev, { value: usedDie!, label: moveLabel }];
+      const newUsedDice = [...prev, { value: usedDie!, label: moveLabel, previousState: match ? game : undefined }];
       // If the move ended the game and not all dice were used, publish the game state
       if (
         match &&
@@ -198,6 +199,19 @@ export function App() {
       return newUsedDice;
     });
   }, [game, match, moves, usedDice, user, friend]);
+
+  const undo = useCallback(() => {
+    if (!match || usedDice.length === 0) return;
+    
+    // Get the previous game state from the last used die
+    const lastUsedDie = usedDice[usedDice.length - 1];
+    if (!lastUsedDie.previousState) return;
+    
+    setGame(lastUsedDie.previousState);
+    setUsedDice(prev => prev.slice(0, -1));
+    setSelected(null);
+    playCheckerSound();
+  }, [match, usedDice]);
 
   const onDragOver: DragEventHandler = useCallback((event) => { event.preventDefault(); }, [])
   
@@ -366,6 +380,14 @@ export function App() {
     return undefined
   }, [game.status, game.turn, user, friend])
 
+  const canUndo = useMemo(() => 
+    !!match && 
+    isMyTurn && 
+    game.status === Status.Moving && 
+    usedDice.length > 0 && 
+    usedDice.length < game.dice.length
+  , [match, isMyTurn, game.status, usedDice, game.dice])
+
   return (
     <Dialogues
       user={user}
@@ -384,6 +406,8 @@ export function App() {
           used={usedDice}
           disabled={!!game.turn && !isMyTurn}
           pulsate={isMyTurn && game.status === Status.Rolling}
+          onUndo={undo}
+          canUndo={canUndo}
         />
         <div className="bar">
           {Array.from({ length: game.prison?.white }, (_, index) =>
