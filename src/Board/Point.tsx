@@ -10,10 +10,12 @@ type PointProps = {
     selected: number | null,
     onSelect: (position: number | null) => void,
     enabled: boolean,
-    valid: boolean
+    valid: boolean,
+    ghostCount: number,
+    movedCount: number
 }
 
-export default function Point({ pieces, move, position, onSelect, selected, enabled, valid }: PointProps) {
+export default function Point({ pieces, move, position, onSelect, selected, enabled, valid, ghostCount, movedCount }: PointProps) {
     const [dragging, setDragging] = useState(false);
     const [dragOver, setDragOver] = useState(false);
     const pieceRef = useRef<HTMLImageElement>(null);
@@ -82,15 +84,31 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
         onDragStart={onDragStart}
         onDragEnd={onDragEnd}
     >
-        {Array.from({ length: Math.abs(pieces) }, (_, index) => 
-            <Piece 
+        {/* Render ghost pieces */}
+        {ghostCount !== 0 && Array.from({ length: Math.abs(ghostCount) }, (_, index) => {
+            const ghostColor = ghostCount > 0 ? Color.White : Color.Black;
+            return <Piece 
+                key={`ghost-${index}`} 
+                color={ghostColor} 
+                position={position} 
+                enabled={false}
+                ghost={true}
+            />
+        })}
+        {/* Render current pieces */}
+        {Array.from({ length: Math.abs(pieces) }, (_, index) => {
+            // Only mark the last 'movedCount' pieces as moved
+            const totalPieces = Math.abs(pieces);
+            const isMovedPiece = movedCount > 0 && index >= (totalPieces - movedCount);
+            return <Piece 
                 ref={index == 0 ? pieceRef : null} 
                 key={index} 
                 color={color} 
                 position={position} 
                 onSelect={onSelect} 
                 enabled={enabled}
+                moved={isMovedPiece}
             />
-        )}
+        })}
     </div>
 }
