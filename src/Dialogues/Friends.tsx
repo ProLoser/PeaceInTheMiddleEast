@@ -154,6 +154,12 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
             </button>
             <menu>
                 <li>
+                    <a onPointerUp={() => toggle(Modal.Tour)} href="#">
+                        <span className="material-icons notranslate">help</span>
+                        {t('tour')}
+                    </a>
+                </li>
+                <li>
                     <a onPointerUp={invite} href="#">
                         <PersonAddIcon className="material-icons-svg notranslate" />
                         {t('addFriend')}
