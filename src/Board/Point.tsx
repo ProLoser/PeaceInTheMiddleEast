@@ -96,16 +96,19 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
             />
         })}
         {/* Render current pieces */}
-        {Array.from({ length: Math.abs(pieces) }, (_, index) => 
-            <Piece 
+        {Array.from({ length: Math.abs(pieces) }, (_, index) => {
+            // Only mark the last 'movedCount' pieces as moved
+            const totalPieces = Math.abs(pieces);
+            const isMovedPiece = movedCount > 0 && index >= (totalPieces - movedCount);
+            return <Piece 
                 ref={index == 0 ? pieceRef : null} 
                 key={index} 
                 color={color} 
                 position={position} 
                 onSelect={onSelect} 
                 enabled={enabled}
-                moved={movedCount > 0}
+                moved={isMovedPiece}
             />
-        )}
+        })}
     </div>
 }
