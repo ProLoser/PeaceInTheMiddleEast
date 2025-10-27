@@ -243,9 +243,13 @@ export function calculate(state: Game, from: number | Color | undefined | null, 
     } else {
         if (from === undefined || from === null) 
             return { state };
-        if (typeof from === 'string')
-            from = parseInt(from)
-        // At this point, from must be a number
+        if (typeof from === 'string') {
+            const parsed = parseInt(from);
+            if (isNaN(parsed)) return { state };
+            from = parsed;
+        }
+        // After checks above: from is not Color.White, Color.Black, undefined, null, or invalid string
+        // Therefore, from must be a valid number
         const fromIndex = from as number;
         const offense = nextGame.board[fromIndex];
         const defense = nextGame.board[to];
