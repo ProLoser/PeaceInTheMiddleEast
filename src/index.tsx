@@ -72,9 +72,10 @@ export function App() {
     // Determine if we should preserve the game:
     // - We're going online (authUserUid is provided)
     // - We were offline before (no previousMatch)
-    // - We have a non-default game state (game has progressed)
+    // - Game has actually been played (status is Moving/GameOver OR board has changed)
     const shouldPreserveGame = authUserUid && !previousMatch && currentGame && 
-      (currentGame.status !== Status.Rolling || currentGame.dice.length > 0 || 
+      (currentGame.status === Status.Moving || 
+       currentGame.status === Status.GameOver ||
        JSON.stringify(currentGame.board) !== JSON.stringify(newGame().board));
     
     if (!shouldPreserveGame) {
