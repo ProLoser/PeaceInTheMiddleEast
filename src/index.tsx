@@ -1,7 +1,7 @@
 // Sentry initialization should be imported first!
 import "./instrument";
 import './i18n';
-import { StrictMode, useEffect, useState, useCallback, useMemo, type DragEventHandler } from "react";
+import { StrictMode, useEffect, useState, useCallback, useMemo, useRef, type DragEventHandler } from "react";
 import ReactDOM from 'react-dom/client'
 // TODO: Upgrade to modular after firebaseui upgrades
 // import { initializeApp } from 'firebase/app';
@@ -45,13 +45,41 @@ export function App() {
   const [friend, setFriend] = useState<SnapshotOrNullType>(null);
   const [selected, setSelected] = useState<number | null>(null);
   const [usedDice, setUsedDice] = useState<UsedDie[]>([]);
+  
+  // Use refs to track current state without causing callback recreations
+  const gameRef = useRef<Game>(game);
+  const matchRef = useRef<Match | null>(match);
+  
+  useEffect(() => {
+    gameRef.current = game;
+  }, [game]);
+  
+  useEffect(() => {
+    matchRef.current = match;
+  }, [match]);
 
   const load = useCallback(async (friendId?: string | false, authUserUid?: string) => {
     if (friendId === 'PeaceInTheMiddleEast') return;
     console.log('Loading', friendId, 'with authUserUid:', authUserUid);
+    
+    // Capture current offline game state before we modify anything
+    const previousMatch = matchRef.current;
+    const currentGame = gameRef.current;
+    
     setSelected(null)
     setUsedDice([])
-    setGame(newGame());
+    
+    // Determine if we should preserve the game:
+    // - We're going online (authUserUid is provided)
+    // - We were offline before (no previousMatch)
+    // - We have a non-default game state (game has progressed)
+    const shouldPreserveGame = authUserUid && !previousMatch && currentGame && 
+      (currentGame.status !== Status.Rolling || currentGame.dice.length > 0 || 
+       JSON.stringify(currentGame.board) !== JSON.stringify(newGame().board));
+    
+    if (!shouldPreserveGame) {
+      setGame(newGame());
+    }
 
     if (friendId) {
       if (window.location.pathname !== `/${friendId}`) {
@@ -106,6 +134,10 @@ export function App() {
       database.ref(`matches/${authUserUid}/${friendId}`).set(data);
       database.ref(`matches/${friendId}/${authUserUid}`).set(data);
       setMatch(data);
+      // If we're preserving the offline game, upload it to the new match
+      if (shouldPreserveGame && currentGame) {
+        database.ref(`games/${gameRef.key}`).set(currentGame);
+      }
     }
   }, []);
 
