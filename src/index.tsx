@@ -46,24 +46,18 @@ export function App() {
   const [selected, setSelected] = useState<number | null>(null);
   const [usedDice, setUsedDice] = useState<UsedDie[]>([]);
   
-  // Use refs to track current state without causing callback recreations
+  // Use ref to track current game state without causing callback recreations
   const currentGameRef = useRef<Game>(game);
-  const currentMatchRef = useRef<Match | null>(match);
   
   useEffect(() => {
     currentGameRef.current = game;
   }, [game]);
-  
-  useEffect(() => {
-    currentMatchRef.current = match;
-  }, [match]);
 
   const load = useCallback(async (friendId?: string | false, authUserUid?: string) => {
     if (friendId === 'PeaceInTheMiddleEast') return;
     console.log('Loading', friendId, 'with authUserUid:', authUserUid);
     
     // Capture current offline game state before we modify anything
-    const previousMatch = currentMatchRef.current;
     const currentGame = currentGameRef.current;
     
     setSelected(null)
@@ -71,9 +65,9 @@ export function App() {
     
     // Determine if we should preserve the game:
     // - We're going online (authUserUid is provided)
-    // - We were offline before (no previousMatch)
+    // - We were offline before (no match)
     // - Game has actually been played (status is Moving/GameOver OR board has changed)
-    const shouldPreserveGame = authUserUid && !previousMatch && currentGame && 
+    const shouldPreserveGame = authUserUid && !match && currentGame && 
       (currentGame.status === Status.Moving || 
        currentGame.status === Status.GameOver ||
        JSON.stringify(currentGame.board) !== JSON.stringify(newGame().board));
@@ -140,7 +134,7 @@ export function App() {
         database.ref(`games/${gameRef.key}`).set(currentGame);
       }
     }
-  }, []);
+  }, [match]);
 
   const reset = useCallback(() => {
     if (confirm(t('resetConfirm'))) {
