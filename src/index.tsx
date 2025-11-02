@@ -47,15 +47,15 @@ export function App() {
   const [usedDice, setUsedDice] = useState<UsedDie[]>([]);
   
   // Use refs to track current state without causing callback recreations
-  const gameRef = useRef<Game>(game);
-  const matchRef = useRef<Match | null>(match);
+  const currentGameRef = useRef<Game>(game);
+  const currentMatchRef = useRef<Match | null>(match);
   
   useEffect(() => {
-    gameRef.current = game;
+    currentGameRef.current = game;
   }, [game]);
   
   useEffect(() => {
-    matchRef.current = match;
+    currentMatchRef.current = match;
   }, [match]);
 
   const load = useCallback(async (friendId?: string | false, authUserUid?: string) => {
@@ -63,8 +63,8 @@ export function App() {
     console.log('Loading', friendId, 'with authUserUid:', authUserUid);
     
     // Capture current offline game state before we modify anything
-    const previousMatch = matchRef.current;
-    const currentGame = gameRef.current;
+    const previousMatch = currentMatchRef.current;
+    const currentGame = currentGameRef.current;
     
     setSelected(null)
     setUsedDice([])
