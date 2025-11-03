@@ -5,7 +5,7 @@ import 'firebase/compat/database';
 import 'firebase/compat/auth';
 
 export const config = {
-    apiKey: "AIzaSyA6M2KmhZPGNg_zSEAbTuWrjzthRrtUA9E",
+    apiKey: "AIzaSyAJ-hHh7fs0aOMR6Zqe0Wu_z_y1j9Ivgos",
     authDomain: "peaceinthemiddleeast.firebaseapp.com",
     databaseURL: "https://peaceinthemiddleeast-default-rtdb.firebaseio.com",
     projectId: "peaceinthemiddleeast",
