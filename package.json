@@ -43,6 +43,7 @@
     "eslint": "^8.57.0",
     "eslint-plugin-react-hooks": "^4.6.2",
     "eslint-plugin-react-refresh": "^0.4.7",
+    "firebase-tools": "^14.21.0",
     "parcel": "^2.12.0",
     "process": "^0.11.10",
     "typescript": "^5.2.2",
@@ -55,9 +56,9 @@
   ],
   "packageManager": "yarn@1.22.22+sha1.ac34549e6aa8e7ead463a7407e1c7390f61a6610",
   "engines": {
-    "node": "20.19.5"
+    "node": ">=20.19.5"
   },
   "volta": {
-    "node": "20.19.5"
+    "node": ">=20.19.5"
   }
 }
