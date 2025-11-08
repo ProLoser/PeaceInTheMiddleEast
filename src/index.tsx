@@ -226,8 +226,8 @@ export function App() {
   const friendData: User | undefined = useMemo(() => friend?.val(), [friend])
 
   useEffect(() => { // PopState observer (browser history navigation)
+    if (location.href.includes('__/handler')) return;
     const onPopState = () => {
-      if (location.href.includes('__/handler')) return;
       load(
         location.pathname.split('/')[1],
         user?.key || undefined
