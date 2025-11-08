@@ -59,7 +59,8 @@ export function App() {
       }
     } else {
       if (window.location.pathname !== `/`) {
-        window.history.pushState(null, '', `/`);
+        console.log('disable unfound user redirect while trying to fix login with google popup')
+        // window.history.pushState(null, '', `/`);
       }
     }
 
