@@ -80,7 +80,8 @@ export function App() {
       setMatch(null);
       setChats(null);
       if (window.location.pathname !== `/`) { // Redirect to root if friend not found
-        window.history.pushState(null, '', `/`);
+                console.log('disable unfound user redirect while trying to fix login with google popup')
+        // window.history.pushState(null, '', `/`);
       }
       return;
     }
