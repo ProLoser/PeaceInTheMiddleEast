@@ -227,6 +227,7 @@ export function App() {
 
   useEffect(() => { // PopState observer (browser history navigation)
     const onPopState = () => {
+      if (location.href.includes('__/handler')) return;
       load(
         location.pathname.split('/')[1],
         user?.key || undefined
