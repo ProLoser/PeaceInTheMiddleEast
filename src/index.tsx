@@ -47,7 +47,7 @@ export function App() {
   const [usedDice, setUsedDice] = useState<UsedDie[]>([]);
 
   const load = useCallback(async (friendId?: string | false, authUserUid?: string) => {
-    if (friendId === 'PeaceInTheMiddleEast') return;
+    if (friendId === 'PeaceInTheMiddleEast' || friendId === 'handler') return;
     console.log('Loading', friendId, 'with authUserUid:', authUserUid);
     setSelected(null)
     setUsedDice([])
