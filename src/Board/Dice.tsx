@@ -40,12 +40,12 @@ export default function Dice({ onPointerUp, values = [6, 6], used = [], color, d
                 />
             );
         })}
-        {canUndo && onUndo && (
+        {canUndo && (
             <button 
                 className="undo-button" 
                 onPointerUp={(e) => {
                     e.stopPropagation();
-                    onUndo();
+                    onUndo?.();
                 }}
                 aria-label="Undo"
                 type="button"
