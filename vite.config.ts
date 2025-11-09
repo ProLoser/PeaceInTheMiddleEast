@@ -36,6 +36,10 @@ export default defineConfig({
         'apple-touch-icon.png',
         'safari-pinned-tab.svg' // Added based on existing files in public/
       ],
+      workbox: {
+        // Allows firebase auth routes to pass through service worker
+        navigateFallbackDenylist: [/__/],
+      },
       manifest: {
         theme_color: '#ed7560',
         orientation: 'portrait',
