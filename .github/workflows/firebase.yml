@@ -13,16 +13,28 @@ on:
       - 'vite.config.ts'
       - 'package.json'
 
-  # Allows you to run this workflow manually from the Actions tab
+  # Allows you to run this workflow manually from the Actions tab or from a pull request
   workflow_dispatch:
+
+  # Allow manual deployment from pull requests
+  pull_request:
+    types: [labeled]
 
 jobs:
   deploy-firebase:
     runs-on: ubuntu-latest
+    # Only run on push to main, workflow_dispatch, or PRs with 'deploy' label
+    if: |
+      github.event_name == 'push' ||
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'deploy'))
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          # Checkout PR branch if triggered from pull request
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.ref }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
