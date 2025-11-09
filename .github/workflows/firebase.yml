@@ -1,4 +1,4 @@
-name: Deploy Firebase Functions
+name: Deploy to Firebase
 
 on:
   push:
@@ -6,12 +6,18 @@ on:
       - main
     paths:
       - 'functions/**'
+      - 'firebase.json'
+      - 'src/**'
+      - 'public/**'
+      - 'index.html'
+      - 'vite.config.ts'
+      - 'package.json'
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 jobs:
-  deploy-functions:
+  deploy-firebase:
     runs-on: ubuntu-latest
 
     steps:
@@ -22,11 +28,15 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20.19.5
+          cache: 'yarn'
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
-      - name: Deploy functions
-        run: yarn deploy
+      - name: Build
+        run: yarn build
+
+      - name: Deploy to Firebase
+        run: npx firebase-tools deploy
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
