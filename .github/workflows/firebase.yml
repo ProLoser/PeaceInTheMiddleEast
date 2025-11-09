@@ -16,9 +16,9 @@ on:
   # Allows you to run this workflow manually from the Actions tab or from a pull request
   workflow_dispatch:
 
-  # Allow manual deployment from pull requests
+  # Allow deployment from pull requests with 'deploy' label
   pull_request:
-    types: [labeled]
+    types: [labeled, synchronize]
 
 jobs:
   deploy-firebase:
