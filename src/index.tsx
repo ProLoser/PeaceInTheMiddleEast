@@ -45,6 +45,7 @@ export function App() {
   const [friend, setFriend] = useState<SnapshotOrNullType>(null);
   const [selected, setSelected] = useState<number | null>(null);
   const [usedDice, setUsedDice] = useState<UsedDie[]>([]);
+  const [initialGameState, setInitialGameState] = useState<Game | null>(null);
 
   const load = useCallback(async (friendId?: string, authUserUid?: string) => {
     if (friendId === 'PeaceInTheMiddleEast') return;
@@ -52,6 +53,7 @@ export function App() {
     setSelected(null)
     setUsedDice([])
     setGame(newGame());
+    setInitialGameState(null);
 
     if (friendId) {
       if (window.location.pathname !== `/${friendId}`) {
@@ -118,6 +120,7 @@ export function App() {
       setGame(data);
       setUsedDice([]);
       setSelected(null);
+      setInitialGameState(null);
     }
   }, [match, t]);
 
@@ -153,6 +156,7 @@ export function App() {
     navigator.vibrate?.(Vibrations.Dice);
     setUsedDice([]);
     setSelected(match && game.prison[game.color] ? -1 : null);
+    setInitialGameState(null);
   }, [match, game, isMyTurn]);
 
   const moves = useMemo(() => {
@@ -168,9 +172,14 @@ export function App() {
     playCheckerSound()
     navigator.vibrate?.(Vibrations.Down)
     
+    // Save initial game state on first move (for undo functionality in online games)
+    if (match && usedDice.length === 0) {
+      setInitialGameState(game);
+    }
+    
     setGame(nextState)
     setUsedDice(prev => {
-      const newUsedDice = [...prev, { value: usedDie!, label: moveLabel, previousState: match ? game : undefined }];
+      const newUsedDice = [...prev, { value: usedDie!, label: moveLabel }];
       // If the move ended the game and not all dice were used, publish the game state
       if (
         match &&
@@ -201,17 +210,15 @@ export function App() {
   }, [game, match, moves, usedDice, user, friend]);
 
   const undo = useCallback(() => {
-    if (!match || usedDice.length === 0) return;
+    if (!match || usedDice.length === 0 || !initialGameState) return;
     
-    // Get the previous game state from the last used die
-    const lastUsedDie = usedDice[usedDice.length - 1];
-    if (!lastUsedDie.previousState) return;
-    
-    setGame(lastUsedDie.previousState);
-    setUsedDice(prev => prev.slice(0, -1));
+    // Revert all moves back to the initial state
+    setGame(initialGameState);
+    setUsedDice([]);
     setSelected(null);
+    setInitialGameState(null);
     playCheckerSound();
-  }, [match, usedDice]);
+  }, [match, usedDice, initialGameState]);
 
   const onDragOver: DragEventHandler = useCallback((event) => { event.preventDefault(); }, [])
   
@@ -308,6 +315,7 @@ export function App() {
               navigator.vibrate?.(Vibrations.Dice)
               setUsedDice([])
               setSelected(null)
+              setInitialGameState(null)
             }
             if (
               user?.key &&
@@ -323,6 +331,7 @@ export function App() {
           setGame(blankGame);
           setUsedDice([]);
           setSelected(null);
+          setInitialGameState(null);
           gameRef.set(blankGame);
         }
       };
@@ -334,6 +343,7 @@ export function App() {
       setGame(newGame());
       setUsedDice([]);
       setSelected(null);
+      setInitialGameState(null);
     }
   }, [match, user]);
 

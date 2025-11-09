@@ -70,7 +70,6 @@ export type Game = {
 export type UsedDie = {
     value: number;
     label: string;
-    previousState?: Game;
 };
 
 export type Chat = {
