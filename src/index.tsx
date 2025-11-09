@@ -66,8 +66,9 @@ export function App() {
     // Determine if we should preserve the game:
     // - We're going online (authUserUid is provided)
     // - We were offline before (no match)
+    // - We're signing in from base URL, not an invite/match URL (no friendId)
     // - Game has actually been played (status is Moving/GameOver OR board has changed)
-    const shouldPreserveGame = authUserUid && !match && currentGame && 
+    const shouldPreserveGame = authUserUid && !match && !friendId && currentGame && 
       (currentGame.status === Status.Moving || 
        currentGame.status === Status.GameOver ||
        JSON.stringify(currentGame.board) !== JSON.stringify(newGame().board));
@@ -129,10 +130,6 @@ export function App() {
       database.ref(`matches/${authUserUid}/${friendId}`).set(data);
       database.ref(`matches/${friendId}/${authUserUid}`).set(data);
       setMatch(data);
-      // If we're preserving the offline game, upload it to the new match
-      if (shouldPreserveGame && currentGame) {
-        database.ref(`games/${gameRef.key}`).set(currentGame);
-      }
     }
   }, [match]);
 
