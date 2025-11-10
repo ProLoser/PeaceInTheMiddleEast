@@ -5,7 +5,7 @@ importScripts('https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js
 importScripts('https://www.gstatic.com/firebasejs/10.12.4/firebase-messaging-compat.js');
 
 const firebaseConfig = {
-  apiKey: "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",
+  apiKey: "AIzaSyAJ-hHh7fs0aOMR6Zqe0Wu_z_y1j9Ivgos",
   authDomain: "peaceinthemiddleeast.firebaseapp.com",
   databaseURL: "https://peaceinthemiddleeast-default-rtdb.firebaseio.com",
   projectId: "peaceinthemiddleeast",
