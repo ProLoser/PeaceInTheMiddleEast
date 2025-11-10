@@ -1,5 +1,5 @@
 {
-  "firebase_hosting": {},
-  "cloud_run_deploy": {},
-  "secrets_manager": {}
+  "firebase_hosting": {
+    "deploymentHostingUrl": "https://peaceinthemiddleeast.web.app"
+  }
 }
