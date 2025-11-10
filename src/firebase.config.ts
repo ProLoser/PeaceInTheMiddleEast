@@ -6,8 +6,7 @@ import 'firebase/compat/auth';
 
 export const config = {
     apiKey: "AIzaSyAJ-hHh7fs0aOMR6Zqe0Wu_z_y1j9Ivgos",
-    // authDomain: "peaceinthemiddleeast.firebaseapp.com",
-    authDomain: "backgammon.family",
+    authDomain: "peaceinthemiddleeast.firebaseapp.com",
     databaseURL: "https://peaceinthemiddleeast-default-rtdb.firebaseio.com",
     projectId: "peaceinthemiddleeast",
     storageBucket: "peaceinthemiddleeast.firebasestorage.app",
