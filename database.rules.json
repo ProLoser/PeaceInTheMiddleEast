@@ -4,7 +4,7 @@
     ".read": "auth.uid !== null",
     ".write": false,
     "users": {
-      ".read": true,
+      ".read": "auth.uid !== null",
       ".indexOn": "search",
       "$uid": {
         // Allow write access to owner
@@ -12,18 +12,24 @@
       }
     },
     "matches": {
+      ".read": "auth.uid !== null",
       ".write": "auth.uid !== null",
       "$uid": {
         ".indexOn": "sort"
       }
     },
     "games": {
+      ".read": "auth.uid !== null",
       ".write": "auth.uid !== null"
     },
     "moves": {
-      ".read": true,
+      ".read": "auth.uid !== null",
       ".write": "auth.uid !== null",
       ".indexOn": "friend"
+    },
+    "chats": {
+      ".read": "auth.uid !== null",
+      ".write": "auth.uid !== null"
     }
   }
 }
