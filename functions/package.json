@@ -1,5 +1,6 @@
 {
   "name": "functions",
+  "version": "1.0.0",
   "description": "Cloud Functions for Firebase",
   "scripts": {
     "serve": "firebase emulators:start --only functions",
