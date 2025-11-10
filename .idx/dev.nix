@@ -1,7 +1,8 @@
 {pkgs}: {
   channel = "stable-24.05";
   packages = [
-    pkgs.nodejs_20
+    pkgs.volta
+    pkgs.nodejs_22
     pkgs.corepack_latest
   ];
   idx.extensions = [
