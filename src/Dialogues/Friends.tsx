@@ -11,12 +11,14 @@ import { User, Match, SnapshotOrNullType, Modal } from '../Types';
 import Avatar from '../Avatar';
 import './Friends.css'
 import ToggleFullscreen from './ToggleFullscreen';
-import { saveFcmToken } from '../firebase.config';
+import { saveFcmToken, getNotificationStatus } from '../firebase.config';
 import Version from './Version';
 import SettingsIcon from '@material-design-icons/svg/filled/settings.svg?react';
 import PersonAddIcon from '@material-design-icons/svg/filled/person_add_alt_1.svg?react';
 import ManageAccountsIcon from '@material-design-icons/svg/filled/manage_accounts.svg?react';
 import NotificationsIcon from '@material-design-icons/svg/filled/notifications.svg?react';
+import NotificationsOffIcon from '@material-design-icons/svg/filled/notifications_off.svg?react';
+import NotificationsActiveIcon from '@material-design-icons/svg/filled/notifications_active.svg?react';
 import RestartAltIcon from '@material-design-icons/svg/filled/restart_alt.svg?react';
 import BugReportIcon from '@material-design-icons/svg/filled/bug_report.svg?react';
 import InfoIcon from '@material-design-icons/svg/filled/info.svg?react';
@@ -41,6 +43,16 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
     const [isExpanded, setIsExpanded] = useState(false);
     const [matches, setMatches] = useState<firebase.database.DataSnapshot | null>(null);
     const [searchResults, setSearchResults] = useState<firebase.database.DataSnapshot | null>(null);
+    const [notificationStatus, setNotificationStatus] = useState<NotificationPermission | 'unsupported'>('default');
+
+    useEffect(() => {
+        const updateStatus = () => {
+            setNotificationStatus(getNotificationStatus());
+        };
+        updateStatus();
+        const interval = setInterval(updateStatus, 1000);
+        return () => clearInterval(interval);
+    }, []);
 
     // Synchronize Matches
     useEffect(() => {
@@ -137,9 +149,21 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
                 title: t('inviteFriend'),
                 text: invitation
             }).catch((error) => {
-                // Handle sharing cancellation or other errors
                 console.error('Error sharing:', error);
             });
+        }
+    }
+
+    const handleNotificationClick = async (event: PointerEvent<HTMLAnchorElement>) => {
+        event.preventDefault();
+        
+        if (notificationStatus === 'unsupported') {
+            alert(t('notificationsUnsupported', 'Notifications are not supported in this browser. Please use a modern browser like Chrome, Firefox, Safari, or Edge.'));
+        } else if (notificationStatus === 'denied') {
+            alert(t('notificationsDenied', 'Notifications are blocked. To enable them:\n\n1. Click the lock icon in your browser\'s address bar\n2. Find "Notifications" in the permissions list\n3. Change the setting to "Allow"\n4. Refresh the page'));
+        } else if (notificationStatus === 'default') {
+            await saveFcmToken(true);
+            setNotificationStatus(getNotificationStatus());
         }
     }
 
@@ -170,12 +194,22 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
                         {t('profile')}
                     </a>
                 </li>
-                {"Notification" in self && Notification.permission === 'default' ? <li>
-                    <a onPointerUp={(e) => { e.preventDefault(); saveFcmToken(true); }} href="#">
-                        <NotificationsIcon className="material-icons-svg notranslate" />
+                <li>
+                    <a 
+                        onPointerUp={handleNotificationClick} 
+                        href="#"
+                        style={{ color: (notificationStatus === 'denied' || notificationStatus === 'unsupported') ? '#d32f2f' : undefined }}
+                    >
+                        {notificationStatus === 'granted' ? (
+                            <NotificationsActiveIcon className="material-icons-svg notranslate" />
+                        ) : notificationStatus === 'denied' || notificationStatus === 'unsupported' ? (
+                            <NotificationsOffIcon className="material-icons-svg notranslate" />
+                        ) : (
+                            <NotificationsIcon className="material-icons-svg notranslate" />
+                        )}
                         {t('notifications')}
                     </a>
-                </li> : null}
+                </li>
                 <li>
                     <a onPointerUp={handleReset} href="#">
                         <RestartAltIcon className="material-icons-svg notranslate" />
