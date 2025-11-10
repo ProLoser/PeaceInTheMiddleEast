@@ -49,6 +49,6 @@ jobs:
         run: yarn build
 
       - name: Deploy to Firebase
-        run: npx firebase-tools deploy
+        run: yarn exec firebase-tools deploy
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_PEACEINTHEMIDDLEEAST }}
