@@ -42,3 +42,23 @@ export async function saveFcmToken(requestPermission = false) {
         });
     }
 }
+
+export async function clearFcmTokens() {
+    const userId = firebase.auth().currentUser?.uid;
+    if (!userId) return;
+
+    if (!('Notification' in window)) {
+        return;
+    }
+
+    try {
+        const token = await firebase.messaging().getToken({ vapidKey });
+        if (token) {
+            await firebase.messaging().deleteToken();
+        }
+    } catch (error) {
+        console.error('Error deleting FCM token:', error);
+    }
+
+    await firebase.database().ref(`/users/${userId}/fcmTokens`).remove();
+}
