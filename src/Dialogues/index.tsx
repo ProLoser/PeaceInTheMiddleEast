@@ -1,11 +1,11 @@
-import React, { useRef, useEffect, createContext, useState, useCallback, useMemo } from 'react';
+import React, {useRef, useEffect, createContext, useState, useCallback, useMemo} from 'react';
 import Friends from './Friends';
 import Chat from './Chat';
 import Profile from './Profile';
 import Login from './Login';
 import './Dialogues.css';
 import Gameover from './Gameover';
-import { Modal, type User, type SnapshotOrNullType } from '../Types';
+import {Modal, type User, type SnapshotOrNullType} from '../Types';
 
 export type DialogContextType = {
   state: string | boolean;
@@ -24,14 +24,14 @@ interface DialoguesProps {
   children: React.ReactNode
 }
 
-export default function Dialogues({ user, friend, load, reset, chats, gameover, children }: DialoguesProps) {
+export default function Dialogues({user, friend, load, reset, chats, gameover, children}: DialoguesProps) {
   const [state, setState] = useState<string | boolean>(false);
   const [lastDialog, setLastDialog] = useState<Modal>(Modal.Friends);
   const dialogRef = useRef<HTMLDialogElement>(null);
 
   const toggle = useCallback((value?: string | boolean) => {
     if (value === undefined) {
-      setState(state => state ? false : lastDialog);
+      setState((state) => state ? false : lastDialog);
     } else if (typeof value === 'string') {
       setState(value);
       setLastDialog(value as Modal);
@@ -40,7 +40,7 @@ export default function Dialogues({ user, friend, load, reset, chats, gameover, 
     }
   }, [lastDialog]);
 
-  const value = useMemo(() => ({ state, toggle }), [state, toggle]);
+  const value = useMemo(() => ({state, toggle}), [state, toggle]);
 
   const isOpen = (friend && !user) || !!state || !!gameover;
 
@@ -60,7 +60,7 @@ export default function Dialogues({ user, friend, load, reset, chats, gameover, 
 
   return (
     <DialogContext.Provider value={value}>
-      <dialog ref={dialogRef} onCancel={() => toggle(false)} open={isOpen} onPointerUp={event => event.stopPropagation()}>
+      <dialog ref={dialogRef} onCancel={() => toggle(false)} open={isOpen} onPointerUp={(event) => event.stopPropagation()}>
         {user ? (
           state === 'friends' ? (
             <Friends user={user} load={load} reset={reset} friend={friend} />

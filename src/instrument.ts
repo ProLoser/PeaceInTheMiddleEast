@@ -1,14 +1,14 @@
-import * as Sentry from "@sentry/react";
+import * as Sentry from '@sentry/react';
 
 // Extend Window interface to include dataLayer
 declare global {
   interface Window {
-    dataLayer: any[];
+    dataLayer: unknown[];
   }
 }
 
 Sentry.init({
-  dsn: "https://b80f9fdaa62b4c4bc1481bc069202917@o4508232176304128.ingest.us.sentry.io/4509570123038720",
+  dsn: 'https://b80f9fdaa62b4c4bc1481bc069202917@o4508232176304128.ingest.us.sentry.io/4509570123038720',
   release: VITE_VERSION,
   environment: import.meta.env.MODE,
   integrations: [
@@ -28,7 +28,9 @@ Sentry.init({
 
 
 window.dataLayer = window.dataLayer || [];
-function gtag(_name: string, _data: any) { window.dataLayer.push(arguments); }
+function gtag(...args: unknown[]) {
+  window.dataLayer.push(args);
+}
 gtag('js', new Date());
 
 gtag('config', 'G-NKGPNTLDF1');

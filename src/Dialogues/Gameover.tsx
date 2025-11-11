@@ -1,5 +1,5 @@
-import { useTranslation } from 'react-i18next';
-import { type User } from '../Types';
+import {useTranslation} from 'react-i18next';
+import {type User} from '../Types';
 import Avatar from '../Avatar';
 
 interface GameoverProps {
@@ -7,14 +7,14 @@ interface GameoverProps {
   reset: () => void;
 }
 
-export default function Gameover({ user, reset }: GameoverProps) {
-  const { t } = useTranslation();
+export default function Gameover({user, reset}: GameoverProps) {
+  const {t} = useTranslation();
 
   return (
     <div className="gameover">
       <h1>{t('gameover')}</h1>
       <Avatar user={user} />
-      <p>{t('winner', { name: user.name })}</p>
+      <p>{t('winner', {name: user.name})}</p>
       <button onClick={reset}>{t('reset')}</button>
     </div>
   );
