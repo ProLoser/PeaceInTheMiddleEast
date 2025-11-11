@@ -49,28 +49,22 @@ export function App() {
   const load = useCallback(async (friendId?: string | false, authUserUid?: string) => {
     if (friendId === 'PeaceInTheMiddleEast' || friendId === '__') return;
     console.log('Loading', friendId, 'with authUserUid:', authUserUid);
+    
     setSelected(null)
     setUsedDice([])
-    setGame(newGame());
-
-    if (friendId) {
-      if (window.location.pathname !== `/${friendId}`) {
-        window.history.pushState(null, '', `/${friendId}`);
-      }
-    } else {
-      if (window.location.pathname !== `/`) {
-        console.log('disable unfound user redirect while trying to fix login with google popup')
-        // window.history.pushState(null, '', `/`);
-      }
-    }
-
+    
     if (!friendId) {
+      // Offline match - preserve current game state
       setFriend(null);
       setMatch(null);
       setChats(null);
+      if (window.location.pathname !== `/`) {
+        window.history.pushState(null, '', `/`);
+      }
       return;
     }
 
+    // Online match - load friend and match data
     const database = firebase.database();
 
     const friendSnapshot = await database.ref(`users/${friendId}`).get();
@@ -79,13 +73,18 @@ export function App() {
       setFriend(null);
       setMatch(null);
       setChats(null);
-      if (window.location.pathname !== `/`) { // Redirect to root if friend not found
-                console.log('disable unfound user redirect while trying to fix login with google popup')
-        // window.history.pushState(null, '', `/`);
+      if (window.location.pathname !== `/`) {
+        window.history.pushState(null, '', `/`);
       }
       return;
     }
+    
+    // Friend exists - now update URL and state
     setFriend(friendSnapshot);
+    setGame(newGame());
+    if (window.location.pathname !== `/${friendId}`) {
+      window.history.pushState(null, '', `/${friendId}`);
+    }
 
     if (!authUserUid) {
       setMatch(null);
