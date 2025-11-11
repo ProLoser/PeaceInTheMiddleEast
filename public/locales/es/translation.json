@@ -20,5 +20,9 @@
   "resetConfirm": "¿Estás seguro de que quieres reiniciar la partida?",
   "local": "Juego sin conexión",
   "fullscreen": "Pantalla completa",
-  "exitFullscreen": "Salir de pantalla completa"
+  "exitFullscreen": "Salir de pantalla completa",
+  "notificationsUnsupported": "Las notificaciones no son compatibles con este navegador.\n Por favor, usa un navegador moderno como Chrome, Firefox, Safari o Edge.",
+  "notificationsDenied": "Las notificaciones están bloqueadas. Para habilitarlas:\n\n1. Haz clic en el icono del candado en la barra de direcciones de tu navegador\n2. Busca \"Notificaciones\" en la lista de permisos\n3. Cambia la configuración a \"Permitir\"\n4. Actualiza la página",
+  "disableNotificationsConfirm": "¿Desactivar notificaciones?\nDejarás de recibir notificaciones cuando tus amigos hagan un movimiento",
+  "notificationsDisabled": "Notificaciones desactivadas"
 }

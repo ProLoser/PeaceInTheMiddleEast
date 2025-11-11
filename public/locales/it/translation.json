@@ -20,5 +20,9 @@
   "resetConfirm": "Sei sicuro di voler resettare la partita?",
   "local": "Gioco offline",
   "fullscreen": "Schermo intero",
-  "exitFullscreen": "Esci da schermo intero"
+  "exitFullscreen": "Esci da schermo intero",
+  "notificationsUnsupported": "Le notifiche non sono supportate in questo browser.\n Utilizza un browser moderno come Chrome, Firefox, Safari o Edge.",
+  "notificationsDenied": "Le notifiche sono bloccate. Per abilitarle:\n\n1. Fai clic sull'icona del lucchetto nella barra degli indirizzi del browser\n2. Trova \"Notifiche\" nell'elenco delle autorizzazioni\n3. Cambia l'impostazione su \"Consenti\"\n4. Aggiorna la pagina",
+  "disableNotificationsConfirm": "Disabilitare le notifiche?\nNon riceverai più notifiche quando gli amici fanno una mossa",
+  "notificationsDisabled": "Notifiche disabilitate"
 }

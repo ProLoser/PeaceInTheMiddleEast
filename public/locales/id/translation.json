@@ -20,5 +20,9 @@
   "resetConfirm": "Apakah Anda yakin ingin mengatur ulang pertandingan?",
   "local": "Permainan Offline",
   "fullscreen": "Layar penuh",
-  "exitFullscreen": "Keluar dari layar penuh"
+  "exitFullscreen": "Keluar dari layar penuh",
+  "notificationsUnsupported": "Notifikasi tidak didukung di browser ini.\n Silakan gunakan browser modern seperti Chrome, Firefox, Safari, atau Edge.",
+  "notificationsDenied": "Notifikasi diblokir. Untuk mengaktifkannya:\n\n1. Klik ikon gembok di bilah alamat browser Anda\n2. Temukan \"Notifikasi\" dalam daftar izin\n3. Ubah pengaturan menjadi \"Izinkan\"\n4. Segarkan halaman",
+  "disableNotificationsConfirm": "Nonaktifkan Notifikasi?\nAnda tidak akan lagi menerima notifikasi saat teman membuat gerakan",
+  "notificationsDisabled": "Notifikasi Dinonaktifkan"
 }
