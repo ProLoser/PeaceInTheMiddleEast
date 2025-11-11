@@ -43,11 +43,9 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
     const [isExpanded, setIsExpanded] = useState(false);
     const [matches, setMatches] = useState<firebase.database.DataSnapshot | null>(null);
     const [searchResults, setSearchResults] = useState<firebase.database.DataSnapshot | null>(null);
-    const [notificationStatus, setNotificationStatus] = useState<NotificationPermission | 'unsupported'>('default');
-
-    useEffect(() => {
-        setNotificationStatus(('Notification' in window) ? Notification.permission : 'unsupported');
-    }, []);
+    const [notificationStatus, setNotificationStatus] = useState<NotificationPermission | 'unsupported'>(
+        ('Notification' in window) ? Notification.permission : 'unsupported'
+    );
 
     // Synchronize Matches
     useEffect(() => {
