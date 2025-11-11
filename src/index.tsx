@@ -57,40 +57,33 @@ export function App() {
     if (friendId === 'PeaceInTheMiddleEast') return;
     console.log('Loading', friendId, 'with authUserUid:', authUserUid);
     
-    // Capture current offline game state before we modify anything
-    const currentGame = currentGameRef.current;
-    
     setSelected(null)
     setUsedDice([])
     
-    // Determine if we should preserve the game:
-    // - We're going online (authUserUid is provided)
-    // - We were offline before (no match)
-    // - We're signing in from base URL, not an invite/match URL (no friendId)
-    // - Game has actually been played (status is Moving/GameOver OR board has changed)
-    const shouldPreserveGame = authUserUid && !match && !friendId && currentGame && 
-      (currentGame.status === Status.Moving || 
-       currentGame.status === Status.GameOver ||
-       JSON.stringify(currentGame.board) !== JSON.stringify(newGame().board));
-    
-    if (!shouldPreserveGame) {
-      setGame(newGame());
-    }
-
     if (friendId) {
+      // Online match - always reset game
+      setGame(newGame());
       if (window.location.pathname !== `/${friendId}`) {
         window.history.pushState(null, '', `/${friendId}`);
       }
     } else {
-      if (window.location.pathname !== `/`) {
-        window.history.pushState(null, '', `/`);
+      // Offline match - preserve game if it has progressed
+      const currentGame = currentGameRef.current;
+      const shouldPreserveGame = authUserUid && currentGame && 
+        (currentGame.status === Status.Moving || 
+         currentGame.status === Status.GameOver ||
+         JSON.stringify(currentGame.board) !== JSON.stringify(newGame().board));
+      
+      if (!shouldPreserveGame) {
+        setGame(newGame());
       }
-    }
-
-    if (!friendId) {
+      
       setFriend(null);
       setMatch(null);
       setChats(null);
+      if (window.location.pathname !== `/`) {
+        window.history.pushState(null, '', `/`);
+      }
       return;
     }
 
