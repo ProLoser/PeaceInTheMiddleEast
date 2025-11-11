@@ -151,14 +151,14 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
         event.preventDefault();
         
         if (notificationStatus === 'unsupported') {
-            alert(t('notificationsUnsupported', 'Notifications are not supported in this browser. Please use a modern browser like Chrome, Firefox, Safari, or Edge.'));
+            alert(t('notificationsUnsupported', 'Notifications not supported in this browser.\n Please use a modern browser like Chrome, Firefox, Safari, or Edge.'));
         } else if (notificationStatus === 'denied') {
             alert(t('notificationsDenied', 'Notifications are blocked. To enable them:\n\n1. Click the lock icon in your browser\'s address bar\n2. Find "Notifications" in the permissions list\n3. Change the setting to "Allow"\n4. Refresh the page'));
         } else if (notificationStatus === 'granted') {
-            const confirmMessage = t('disableNotificationsConfirm', 'Are you sure you want to disable notifications? You will no longer receive notifications for new messages or game updates.');
+            const confirmMessage = t('disableNotificationsConfirm', 'Disable Notifications?\nYou will stop receiving notifications when friends make a move');
             if (confirm(confirmMessage)) {
                 await clearFcmToken();
-                alert(t('notificationsDisabled', 'Notifications have been disabled. Your notification tokens have been removed. Note: To fully reset notification permissions, you may need to clear them in your browser settings.'));
+                alert(t('notificationsDisabled', 'Notifications Disabled'));
                 setNotificationStatus(window.Notification?.permission ?? 'unsupported');
             }
         } else if (notificationStatus === 'default') {
