@@ -11,7 +11,7 @@ import { User, Match, SnapshotOrNullType, Modal } from '../Types';
 import Avatar from '../Avatar';
 import './Friends.css'
 import ToggleFullscreen from './ToggleFullscreen';
-import { saveFcmToken, clearFcmTokens } from '../firebase.config';
+import { saveFcmToken, clearFcmToken } from '../firebase.config';
 import Version from './Version';
 import SettingsIcon from '@material-design-icons/svg/filled/settings.svg?react';
 import PersonAddIcon from '@material-design-icons/svg/filled/person_add_alt_1.svg?react';
@@ -157,7 +157,7 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
         } else if (notificationStatus === 'granted') {
             const confirmMessage = t('disableNotificationsConfirm', 'Are you sure you want to disable notifications? You will no longer receive notifications for new messages or game updates.');
             if (confirm(confirmMessage)) {
-                await clearFcmTokens();
+                await clearFcmToken();
                 alert(t('notificationsDisabled', 'Notifications have been disabled. Your notification tokens have been removed. Note: To fully reset notification permissions, you may need to clear them in your browser settings.'));
                 setNotificationStatus(window.Notification?.permission ?? 'unsupported');
             }
