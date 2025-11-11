@@ -48,9 +48,6 @@ jobs:
       - name: Build
         run: yarn build
 
-      - name: Install functions dependencies
-        run: cd functions && yarn install
-
       - name: Setup Firebase Service Account
         run: |
           echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT_PEACEINTHEMIDDLEEAST }}' > $HOME/gcloud-key.json
