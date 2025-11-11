@@ -1,7 +1,7 @@
 // Sentry initialization should be imported first!
 import "./instrument";
 import './i18n';
-import { StrictMode, useEffect, useState, useCallback, useMemo, useRef, type DragEventHandler } from "react";
+import { StrictMode, useEffect, useState, useCallback, useMemo, type DragEventHandler } from "react";
 import ReactDOM from 'react-dom/client'
 // TODO: Upgrade to modular after firebaseui upgrades
 // import { initializeApp } from 'firebase/app';
@@ -45,13 +45,6 @@ export function App() {
   const [friend, setFriend] = useState<SnapshotOrNullType>(null);
   const [selected, setSelected] = useState<number | null>(null);
   const [usedDice, setUsedDice] = useState<UsedDie[]>([]);
-  
-  // Use ref to track current game state without causing callback recreations
-  const currentGameRef = useRef<Game>(game);
-  
-  useEffect(() => {
-    currentGameRef.current = game;
-  }, [game]);
 
   const load = useCallback(async (friendId?: string | false, authUserUid?: string) => {
     if (friendId === 'PeaceInTheMiddleEast') return;
@@ -60,19 +53,12 @@ export function App() {
     setSelected(null)
     setUsedDice([])
     
-    if (friendId) {
-      // Online match - always reset game
-      setGame(newGame());
-      if (window.location.pathname !== `/${friendId}`) {
-        window.history.pushState(null, '', `/${friendId}`);
-      }
-    } else {
+    if (!friendId) {
       // Offline match - preserve game if it has progressed
-      const currentGame = currentGameRef.current;
-      const shouldPreserveGame = authUserUid && currentGame && 
-        (currentGame.status === Status.Moving || 
-         currentGame.status === Status.GameOver ||
-         JSON.stringify(currentGame.board) !== JSON.stringify(newGame().board));
+      const shouldPreserveGame = authUserUid && game && 
+        (game.status === Status.Moving || 
+         game.status === Status.GameOver ||
+         JSON.stringify(game.board) !== JSON.stringify(newGame().board));
       
       if (!shouldPreserveGame) {
         setGame(newGame());
@@ -87,6 +73,7 @@ export function App() {
       return;
     }
 
+    // Online match - load friend and match data
     const database = firebase.database();
 
     const friendSnapshot = await database.ref(`users/${friendId}`).get();
@@ -95,12 +82,18 @@ export function App() {
       setFriend(null);
       setMatch(null);
       setChats(null);
-      if (window.location.pathname !== `/`) { // Redirect to root if friend not found
+      if (window.location.pathname !== `/`) {
         window.history.pushState(null, '', `/`);
       }
       return;
     }
+    
+    // Friend exists - now update URL and state
     setFriend(friendSnapshot);
+    setGame(newGame());
+    if (window.location.pathname !== `/${friendId}`) {
+      window.history.pushState(null, '', `/${friendId}`);
+    }
 
     if (!authUserUid) {
       setMatch(null);
@@ -124,7 +117,7 @@ export function App() {
       database.ref(`matches/${friendId}/${authUserUid}`).set(data);
       setMatch(data);
     }
-  }, [match]);
+  }, [game]);
 
   const reset = useCallback(() => {
     if (confirm(t('resetConfirm'))) {
