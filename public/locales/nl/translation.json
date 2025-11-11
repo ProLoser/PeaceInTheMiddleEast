@@ -20,5 +20,6 @@
   "resetConfirm": "Weet je zeker dat je de wedstrijd wilt resetten?",
   "local": "Offline spel",
   "fullscreen": "Volledig scherm",
-  "exitFullscreen": "Volledig scherm afsluiten"
+  "exitFullscreen": "Volledig scherm afsluiten",
+  "moveNotification": "{{name}} heeft een zet gedaan"
 }
