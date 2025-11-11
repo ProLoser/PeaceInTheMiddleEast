@@ -46,12 +46,7 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
     const [notificationStatus, setNotificationStatus] = useState<NotificationPermission | 'unsupported'>('default');
 
     useEffect(() => {
-        const updateStatus = () => {
-            setNotificationStatus(('Notification' in window) ? Notification.permission : 'unsupported');
-        };
-        updateStatus();
-        const interval = setInterval(updateStatus, 1000);
-        return () => clearInterval(interval);
+        setNotificationStatus(('Notification' in window) ? Notification.permission : 'unsupported');
     }, []);
 
     // Synchronize Matches
