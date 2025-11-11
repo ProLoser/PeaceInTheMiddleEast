@@ -19,13 +19,6 @@ const vapidKey = 'BM1H9qfv1e_XcIB31ZeLCn8IpGOdMIwMShRej6wld8QAMkV4YqJ-eMQa1rSnwh
 
 export default firebase.initializeApp(config);
 
-export function getNotificationStatus() {
-    if (!('Notification' in window)) {
-        return 'unsupported';
-    }
-    return Notification.permission;
-}
-
 export async function saveFcmToken(requestPermission = false) {
     const userId = firebase.auth().currentUser?.uid;
     if (!userId) return;

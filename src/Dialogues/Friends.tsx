@@ -11,7 +11,7 @@ import { User, Match, SnapshotOrNullType, Modal } from '../Types';
 import Avatar from '../Avatar';
 import './Friends.css'
 import ToggleFullscreen from './ToggleFullscreen';
-import { saveFcmToken, getNotificationStatus } from '../firebase.config';
+import { saveFcmToken } from '../firebase.config';
 import Version from './Version';
 import SettingsIcon from '@material-design-icons/svg/filled/settings.svg?react';
 import PersonAddIcon from '@material-design-icons/svg/filled/person_add_alt_1.svg?react';
@@ -47,7 +47,7 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
 
     useEffect(() => {
         const updateStatus = () => {
-            setNotificationStatus(getNotificationStatus());
+            setNotificationStatus(('Notification' in window) ? Notification.permission : 'unsupported');
         };
         updateStatus();
         const interval = setInterval(updateStatus, 1000);
@@ -163,7 +163,7 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
             alert(t('notificationsDenied', 'Notifications are blocked. To enable them:\n\n1. Click the lock icon in your browser\'s address bar\n2. Find "Notifications" in the permissions list\n3. Change the setting to "Allow"\n4. Refresh the page'));
         } else if (notificationStatus === 'default') {
             await saveFcmToken(true);
-            setNotificationStatus(getNotificationStatus());
+            setNotificationStatus(('Notification' in window) ? Notification.permission : 'unsupported');
         }
     }
 
