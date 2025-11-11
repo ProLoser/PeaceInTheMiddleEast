@@ -54,16 +54,7 @@ export function App() {
     setUsedDice([])
     
     if (!friendId) {
-      // Offline match - preserve game if it has progressed
-      const shouldPreserveGame = authUserUid && game && 
-        (game.status === Status.Moving || 
-         game.status === Status.GameOver ||
-         JSON.stringify(game.board) !== JSON.stringify(newGame().board));
-      
-      if (!shouldPreserveGame) {
-        setGame(newGame());
-      }
-      
+      // Offline match - preserve current game state
       setFriend(null);
       setMatch(null);
       setChats(null);
@@ -117,7 +108,7 @@ export function App() {
       database.ref(`matches/${friendId}/${authUserUid}`).set(data);
       setMatch(data);
     }
-  }, [game]);
+  }, []);
 
   const reset = useCallback(() => {
     if (confirm(t('resetConfirm'))) {
