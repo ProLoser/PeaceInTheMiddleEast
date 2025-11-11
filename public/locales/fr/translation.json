@@ -20,5 +20,9 @@
   "resetConfirm": "Êtes-vous sûr de vouloir réinitialiser la partie ?",
   "local": "Jeu hors ligne",
   "fullscreen": "Plein écran",
-  "exitFullscreen": "Quitter le mode plein écran"
+  "exitFullscreen": "Quitter le mode plein écran",
+  "notificationsUnsupported": "Les notifications ne sont pas prises en charge par ce navigateur.\n Veuillez utiliser un navigateur moderne comme Chrome, Firefox, Safari ou Edge.",
+  "notificationsDenied": "Les notifications sont bloquées. Pour les activer :\n\n1. Cliquez sur l'icône de cadenas dans la barre d'adresse de votre navigateur\n2. Trouvez \"Notifications\" dans la liste des permissions\n3. Changez le paramètre à \"Autoriser\"\n4. Actualisez la page",
+  "disableNotificationsConfirm": "Désactiver les notifications ?\nVous ne recevrez plus de notifications lorsque vos amis font un mouvement",
+  "notificationsDisabled": "Notifications désactivées"
 }

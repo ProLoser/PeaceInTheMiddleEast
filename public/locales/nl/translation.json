@@ -20,5 +20,9 @@
   "resetConfirm": "Weet je zeker dat je de wedstrijd wilt resetten?",
   "local": "Offline spel",
   "fullscreen": "Volledig scherm",
-  "exitFullscreen": "Volledig scherm afsluiten"
+  "exitFullscreen": "Volledig scherm afsluiten",
+  "notificationsUnsupported": "Notificaties worden niet ondersteund in deze browser.\n Gebruik een moderne browser zoals Chrome, Firefox, Safari of Edge.",
+  "notificationsDenied": "Notificaties zijn geblokkeerd. Om ze in te schakelen:\n\n1. Klik op het slotpictogram in de adresbalk van uw browser\n2. Zoek \"Notificaties\" in de lijst met machtigingen\n3. Wijzig de instelling naar \"Toestaan\"\n4. Ververs de pagina",
+  "disableNotificationsConfirm": "Notificaties uitschakelen?\nJe ontvangt geen notificaties meer wanneer vrienden een zet doen",
+  "notificationsDisabled": "Notificaties uitgeschakeld"
 }

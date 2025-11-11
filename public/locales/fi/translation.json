@@ -20,5 +20,9 @@
   "resetConfirm": "Haluatko varmasti nollata ottelun?",
   "local": "Offline-peli",
   "fullscreen": "Koko näyttö",
-  "exitFullscreen": "Poistu koko näytön tilasta"
+  "exitFullscreen": "Poistu koko näytön tilasta",
+  "notificationsUnsupported": "Ilmoituksia ei tueta tässä selaimessa.\n Käytä modernia selainta, kuten Chrome, Firefox, Safari tai Edge.",
+  "notificationsDenied": "Ilmoitukset on estetty. Ottaaksesi ne käyttöön:\n\n1. Napsauta lukkokuvaketta selaimesi osoitepalkissa\n2. Etsi \"Ilmoitukset\" käyttöoikeusluettelosta\n3. Vaihda asetus \"Salli\"\n4. Päivitä sivu",
+  "disableNotificationsConfirm": "Poistetaanko ilmoitukset käytöstä?\nEt enää saa ilmoituksia, kun ystävät tekevät siirron",
+  "notificationsDisabled": "Ilmoitukset poistettu käytöstä"
 }

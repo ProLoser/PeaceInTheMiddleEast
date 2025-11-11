@@ -20,5 +20,9 @@
   "resetConfirm": "本当に試合をリセットしますか？",
   "local": "オフラインゲーム",
   "fullscreen": "全画面表示",
-  "exitFullscreen": "全画面表示を終了"
+  "exitFullscreen": "全画面表示を終了",
+  "notificationsUnsupported": "このブラウザでは通知がサポートされていません。\n Chrome、Firefox、Safari、Edgeなどの最新ブラウザを使用してください。",
+  "notificationsDenied": "通知がブロックされています。有効にするには:\n\n1. ブラウザのアドレスバーにある錠前アイコンをクリックします\n2. 権限リストで「通知」を見つけます\n3. 設定を「許可」に変更します\n4. ページを更新します",
+  "disableNotificationsConfirm": "通知を無効にしますか？\n友達が動いたときに通知を受け取らなくなります",
+  "notificationsDisabled": "通知が無効になりました"
 }

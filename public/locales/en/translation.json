@@ -20,5 +20,9 @@
   "resetConfirm": "Are you sure you want to reset the match?",
   "local": "Offline Game",
   "fullscreen": "Fullscreen",
-  "exitFullscreen": "Exit Fullscreen"
+  "exitFullscreen": "Exit Fullscreen",
+  "notificationsUnsupported": "Notifications not supported in this browser.\n Please use a modern browser like Chrome, Firefox, Safari, or Edge.",
+  "notificationsDenied": "Notifications are blocked. To enable them:\n\n1. Click the lock icon in your browser's address bar\n2. Find \"Notifications\" in the permissions list\n3. Change the setting to \"Allow\"\n4. Refresh the page",
+  "disableNotificationsConfirm": "Disable Notifications?\nYou will stop receiving notifications when friends make a move",
+  "notificationsDisabled": "Notifications Disabled"
 }
