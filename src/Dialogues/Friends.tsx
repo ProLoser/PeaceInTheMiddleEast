@@ -44,7 +44,7 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
     const [matches, setMatches] = useState<firebase.database.DataSnapshot | null>(null);
     const [searchResults, setSearchResults] = useState<firebase.database.DataSnapshot | null>(null);
     const [notificationStatus, setNotificationStatus] = useState<NotificationPermission | 'unsupported'>(
-        ('Notification' in window) ? Notification.permission : 'unsupported'
+        window.Notification?.permission ?? 'unsupported'
     );
 
     // Synchronize Matches
@@ -156,7 +156,7 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
             alert(t('notificationsDenied', 'Notifications are blocked. To enable them:\n\n1. Click the lock icon in your browser\'s address bar\n2. Find "Notifications" in the permissions list\n3. Change the setting to "Allow"\n4. Refresh the page'));
         } else if (notificationStatus === 'default') {
             await saveFcmToken(true);
-            setNotificationStatus(('Notification' in window) ? Notification.permission : 'unsupported');
+            setNotificationStatus(window.Notification?.permission ?? 'unsupported');
         }
     }
 
