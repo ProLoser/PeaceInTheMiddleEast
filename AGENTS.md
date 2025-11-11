@@ -7,6 +7,7 @@ Architecture: react client-side webapp with firebase functions, firebase realtim
 setup: `yarn install`
 test: `yarn tsc; yarn lint;`
 startwebserver: `yarn start` or `yarn preview` if that doesn't work
+scope commands to functions: `yarn workspace functions ...`
 
 # Rules
 Don't add new comments
