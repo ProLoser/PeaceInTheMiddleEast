@@ -47,7 +47,7 @@ export function App() {
   const [usedDice, setUsedDice] = useState<UsedDie[]>([]);
 
   const load = useCallback(async (friendId?: string | false, authUserUid?: string) => {
-    if (friendId === 'PeaceInTheMiddleEast') return;
+    if (friendId === 'PeaceInTheMiddleEast' || friendId === '__') return;
     console.log('Loading', friendId, 'with authUserUid:', authUserUid);
     
     setSelected(null)
@@ -225,6 +225,8 @@ export function App() {
   const friendData: User | undefined = useMemo(() => friend?.val(), [friend])
 
   useEffect(() => { // PopState observer (browser history navigation)
+    // https://backgammon.family/__/auth/handler?apiKey=
+    if (location.href.includes('__/auth/handler')) return;
     const onPopState = () => {
       load(
         location.pathname.split('/')[1],

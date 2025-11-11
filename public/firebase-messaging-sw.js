@@ -5,11 +5,11 @@ importScripts('https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js
 importScripts('https://www.gstatic.com/firebasejs/10.12.4/firebase-messaging-compat.js');
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDSTc5VVNNT32jRE4m8qr7hVbI8ahaIsRc",
+  apiKey: "AIzaSyAJ-hHh7fs0aOMR6Zqe0Wu_z_y1j9Ivgos",
   authDomain: "peaceinthemiddleeast.firebaseapp.com",
   databaseURL: "https://peaceinthemiddleeast-default-rtdb.firebaseio.com",
   projectId: "peaceinthemiddleeast",
-  storageBucket: "peaceinthemiddleeast.appspot.com",
+  storageBucket: "peaceinthemiddleeast.firebasestorage.app",
   messagingSenderId: "529824094542",
   appId: "1:529824094542:web:eadc5cf0dc140a2b0de61f",
   measurementId: "G-NKGPNTLDF1"
