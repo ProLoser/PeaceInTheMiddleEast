@@ -187,7 +187,6 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
             }
         } else if (notificationStatus === 'granted' && !hasFcmToken) {
             await saveFcmToken(false);
-            setHasFcmToken(true);
             alert(t('notificationsEnabled'));
         } else if (notificationStatus === 'default') {
             await saveFcmToken(true);
