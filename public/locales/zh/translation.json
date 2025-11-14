@@ -24,5 +24,6 @@
   "notificationsUnsupported": "此浏览器不支持通知。\n 请使用现代浏览器，如Chrome、Firefox、Safari或Edge。",
   "notificationsDenied": "通知已被阻止。要启用它们：\n\n1. 点击浏览器地址栏中的锁形图标\n2. 在权限列表中找到\"通知\"\n3. 将设置更改为\"允许\"\n4. 刷新页面",
   "disableNotificationsConfirm": "禁用通知？\n当朋友移动时，您将不再收到通知",
-  "notificationsDisabled": "通知已禁用"
+  "notificationsDisabled": "通知已禁用",
+  "notificationsEnabled": "通知已启用"
 }

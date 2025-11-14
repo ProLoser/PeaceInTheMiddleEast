@@ -25,5 +25,6 @@
   "notificationsUnsupported": "Bildirimler bu tarayıcıda desteklenmiyor.\n Lütfen Chrome, Firefox, Safari veya Edge gibi modern bir tarayıcı kullanın.",
   "notificationsDenied": "Bildirimler engellendi. Etkinleştirmek için:\n\n1. Tarayıcınızın adres çubuğundaki kilit simgesine tıklayın\n2. İzinler listesinde \"Bildirimler\"i bulun\n3. Ayarı \"İzin Ver\" olarak değiştirin\n4. Sayfayı yenileyin",
   "disableNotificationsConfirm": "Bildirimler devre dışı bırakılsın mı?\nArkadaşlar hamle yaptığında artık bildirim almayacaksınız",
-  "notificationsDisabled": "Bildirimler devre dışı bırakıldı"
+  "notificationsDisabled": "Bildirimler devre dışı bırakıldı",
+  "notificationsEnabled": "Bildirimler etkinleştirildi"
 }

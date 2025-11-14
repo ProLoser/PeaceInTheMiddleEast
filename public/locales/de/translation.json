@@ -24,5 +24,6 @@
   "notificationsUnsupported": "Benachrichtigungen werden in diesem Browser nicht unterstützt.\n Bitte verwenden Sie einen modernen Browser wie Chrome, Firefox, Safari oder Edge.",
   "notificationsDenied": "Benachrichtigungen sind blockiert. Um sie zu aktivieren:\n\n1. Klicken Sie auf das Schlosssymbol in der Adressleiste Ihres Browsers\n2. Suchen Sie \"Benachrichtigungen\" in der Berechtigungsliste\n3. Ändern Sie die Einstellung auf \"Zulassen\"\n4. Aktualisieren Sie die Seite",
   "disableNotificationsConfirm": "Benachrichtigungen deaktivieren?\nSie erhalten keine Benachrichtigungen mehr, wenn Freunde einen Zug machen",
-  "notificationsDisabled": "Benachrichtigungen deaktiviert"
+  "notificationsDisabled": "Benachrichtigungen deaktiviert",
+  "notificationsEnabled": "Benachrichtigungen aktiviert"
 }

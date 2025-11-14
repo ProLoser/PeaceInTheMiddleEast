@@ -25,5 +25,6 @@
   "notificationsUnsupported": "התראות אינן נתמכות בדפדפן זה.\n אנא השתמש בדפדפן מודרני כמו Chrome, Firefox, Safari או Edge.",
   "notificationsDenied": "ההתראות חסומות. כדי להפעיל אותן:\n\n1. לחץ על סמל המנעול בשורת הכתובת של הדפדפן שלך\n2. מצא \"התראות\" ברשימת ההרשאות\n3. שנה את ההגדרה ל\"אפשר\"\n4. רענן את הדף",
   "disableNotificationsConfirm": "להשבית התראות?\nלא תקבל עוד התראות כאשר חברים מבצעים מהלך",
-  "notificationsDisabled": "ההתראות הושבתו"
+  "notificationsDisabled": "ההתראות הושבתו",
+  "notificationsEnabled": "ההתראות הופעלו"
 }
