@@ -18,3 +18,4 @@ jobs:
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_PEACEINTHEMIDDLEEAST }}
           projectId: peaceinthemiddleeast
           target: production
+          channelId: live
