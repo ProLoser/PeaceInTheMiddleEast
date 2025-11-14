@@ -16,7 +16,7 @@ import Version from './Version';
 import SettingsIcon from '@material-design-icons/svg/filled/settings.svg?react';
 import PersonAddIcon from '@material-design-icons/svg/filled/person_add_alt_1.svg?react';
 import ManageAccountsIcon from '@material-design-icons/svg/filled/manage_accounts.svg?react';
-import NotificationsIcon from '@material-design-icons/svg/filled/notifications.svg?react';
+import NotificationsIcon from '@material-design-icons/svg/outlined/notifications.svg?react';
 import NotificationsOffIcon from '@material-design-icons/svg/filled/notifications_off.svg?react';
 import NotificationsActiveIcon from '@material-design-icons/svg/filled/notifications_active.svg?react';
 import RestartAltIcon from '@material-design-icons/svg/filled/restart_alt.svg?react';
