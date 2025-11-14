@@ -88,8 +88,6 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
                 }
                 if (currentToken && snapshot.child(currentToken).exists()) {
                     setHasFcmToken(true);
-                } else if (snapshot.exists() && snapshot.numChildren() > 0) {
-                    setHasFcmToken(true);
                 } else {
                     setHasFcmToken(false);
                 }
