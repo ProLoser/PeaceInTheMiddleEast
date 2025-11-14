@@ -79,8 +79,14 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
         queryMatches.on('value', subscriber);
         // Synchronize FCM token status
         const tokensRef = firebase.database().ref(`users/${user.key}/fcmTokens`);
-        const tokensSubscriber = (snapshot: firebase.database.DataSnapshot) => {
-            if (fcmTokenRef.current && snapshot.child(fcmTokenRef.current).exists()) {
+        const tokensSubscriber = async (snapshot: firebase.database.DataSnapshot) => {
+            const currentToken = await getFcmToken().catch(() => null);
+            if (currentToken) {
+                fcmTokenRef.current = currentToken;
+            }
+            if (currentToken && snapshot.child(currentToken).exists()) {
+                setHasFcmToken(true);
+            } else if (snapshot.exists() && snapshot.numChildren() > 0) {
                 setHasFcmToken(true);
             } else {
                 setHasFcmToken(false);
@@ -182,8 +188,6 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
             const confirmMessage = t('disableNotificationsConfirm');
             if (confirm(confirmMessage)) {
                 await clearFcmToken();
-                setNotificationStatus(window.Notification?.permission ?? 'unsupported');
-                setHasFcmToken(false);
                 alert(t('notificationsDisabled'));
             }
         } else if (notificationStatus === 'granted' && !hasFcmToken) {
@@ -193,7 +197,6 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
             await saveFcmToken(true);
             setNotificationStatus(window.Notification?.permission ?? 'unsupported');
             if (window.Notification?.permission === 'granted') {
-                setHasFcmToken(true);
                 alert(t('notificationsEnabled'));
             }
         }
