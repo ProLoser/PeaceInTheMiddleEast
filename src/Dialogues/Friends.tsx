@@ -46,6 +46,22 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
     const [notificationStatus, setNotificationStatus] = useState<NotificationPermission | 'unsupported'>(
         window.Notification?.permission ?? 'unsupported'
     );
+    const [hasFcmToken, setHasFcmToken] = useState(false);
+
+    // Synchronize FCM token status
+    useEffect(() => {
+        if (!user?.key) return;
+
+        const tokensRef = firebase.database().ref(`users/${user.key}/fcmTokens`);
+        const subscriber = (snapshot: firebase.database.DataSnapshot) => {
+            const hasTokens = snapshot.exists() && snapshot.numChildren() > 0;
+            setHasFcmToken(hasTokens);
+        };
+        tokensRef.on('value', subscriber);
+        return () => {
+            tokensRef.off('value', subscriber);
+        };
+    }, [user?.key]);
 
     // Synchronize Matches
     useEffect(() => {
@@ -154,13 +170,15 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
             alert(t('notificationsUnsupported'));
         } else if (notificationStatus === 'denied') {
             alert(t('notificationsDenied'));
-        } else if (notificationStatus === 'granted') {
+        } else if (notificationStatus === 'granted' && hasFcmToken) {
             const confirmMessage = t('disableNotificationsConfirm');
             if (confirm(confirmMessage)) {
                 await clearFcmToken();
                 alert(t('notificationsDisabled'));
                 setNotificationStatus(window.Notification?.permission ?? 'unsupported');
             }
+        } else if (notificationStatus === 'granted' && !hasFcmToken) {
+            await saveFcmToken(false);
         } else if (notificationStatus === 'default') {
             await saveFcmToken(true);
             setNotificationStatus(window.Notification?.permission ?? 'unsupported');
@@ -200,7 +218,7 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
                         href="#"
                         style={{ color: (notificationStatus === 'denied' || notificationStatus === 'unsupported') ? '#d32f2f' : undefined }}
                     >
-                        {notificationStatus === 'granted' ? (
+                        {notificationStatus === 'granted' && hasFcmToken ? (
                             <NotificationsActiveIcon className="material-icons-svg notranslate" />
                         ) : notificationStatus === 'denied' || notificationStatus === 'unsupported' ? (
                             <NotificationsOffIcon className="material-icons-svg notranslate" />
