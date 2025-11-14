@@ -53,7 +53,6 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
         getFcmToken().then(token => {
             if (token) {
                 fcmTokenRef.current = token;
-                setHasFcmToken(true);
             }
         }).catch(error => {
             console.error('Error getting FCM token:', error);
