@@ -1,5 +1,17 @@
 {
   "projects": {
     "default": "peaceinthemiddleeast"
+  },
+  "targets": {
+    "peaceinthemiddleeast": {
+      "hosting": {
+        "production": [
+          "peaceinthemiddleeast"
+        ],
+        "preview": [
+          "preview-peaceinthemiddleeast"
+        ]
+      }
+    }
   }
 }
