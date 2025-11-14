@@ -79,16 +79,20 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
         // Synchronize FCM token status
         const tokensRef = firebase.database().ref(`users/${user.key}/fcmTokens`);
         const tokensSubscriber = async (snapshot: firebase.database.DataSnapshot) => {
-            const currentToken = await getFcmToken().catch(() => null);
-            if (currentToken) {
-                fcmTokenRef.current = currentToken;
-            }
-            if (currentToken && snapshot.child(currentToken).exists()) {
-                setHasFcmToken(true);
-            } else if (snapshot.exists() && snapshot.numChildren() > 0) {
+            if (fcmTokenRef.current && snapshot.child(fcmTokenRef.current).exists()) {
                 setHasFcmToken(true);
             } else {
-                setHasFcmToken(false);
+                const currentToken = await getFcmToken().catch(() => null);
+                if (currentToken) {
+                    fcmTokenRef.current = currentToken;
+                }
+                if (currentToken && snapshot.child(currentToken).exists()) {
+                    setHasFcmToken(true);
+                } else if (snapshot.exists() && snapshot.numChildren() > 0) {
+                    setHasFcmToken(true);
+                } else {
+                    setHasFcmToken(false);
+                }
             }
         };
         tokensRef.on('value', tokensSubscriber);
