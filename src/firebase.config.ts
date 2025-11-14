@@ -43,6 +43,10 @@ export async function saveFcmToken(requestPermission = false) {
     }
 }
 
+export function getFcmToken() {
+    return firebase.messaging().getToken({ vapidKey })
+}
+
 export async function clearFcmToken() {
     const userId = firebase.auth().currentUser?.uid;
     if (!userId) return;
@@ -52,7 +56,7 @@ export async function clearFcmToken() {
     }
 
     try {
-        const token = await firebase.messaging().getToken({ vapidKey });
+        const token = await getFcmToken();
         if (token) {
             await firebase.messaging().deleteToken();
             await firebase.database().ref(`/users/${userId}/fcmTokens/${token}`).remove();

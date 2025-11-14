@@ -11,7 +11,7 @@ import { User, Match, SnapshotOrNullType, Modal } from '../Types';
 import Avatar from '../Avatar';
 import './Friends.css'
 import ToggleFullscreen from './ToggleFullscreen';
-import { saveFcmToken, clearFcmToken } from '../firebase.config';
+import { saveFcmToken, clearFcmToken, getFcmToken } from '../firebase.config';
 import Version from './Version';
 import SettingsIcon from '@material-design-icons/svg/filled/settings.svg?react';
 import PersonAddIcon from '@material-design-icons/svg/filled/person_add_alt_1.svg?react';
@@ -39,6 +39,7 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
     const { toggle } = useContext(DialogContext)!;
 
     const searchRef = useRef<HTMLInputElement>(null);
+    const fcmTokenRef = useRef<string | null>(null);
     const [users, setUsers] = useState<Users>({});
     const [isExpanded, setIsExpanded] = useState(false);
     const [matches, setMatches] = useState<firebase.database.DataSnapshot | null>(null);
@@ -48,22 +49,16 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
     );
     const [hasFcmToken, setHasFcmToken] = useState(false);
 
-    // Synchronize FCM token status
     useEffect(() => {
-        if (!user?.key) return;
+        getFcmToken().then(token => {
+            if (token) {
+                fcmTokenRef.current = token;
+            }
+        }).catch(error => {
+            console.error('Error getting FCM token:', error);
+        });
+    }, []);
 
-        const tokensRef = firebase.database().ref(`users/${user.key}/fcmTokens`);
-        const subscriber = (snapshot: firebase.database.DataSnapshot) => {
-            const hasTokens = snapshot.exists() && snapshot.numChildren() > 0;
-            setHasFcmToken(hasTokens);
-        };
-        tokensRef.on('value', subscriber);
-        return () => {
-            tokensRef.off('value', subscriber);
-        };
-    }, [user?.key]);
-
-    // Synchronize Matches
     useEffect(() => {
         if (!user) return;
 
@@ -81,7 +76,19 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
             })
         }
         queryMatches.on('value', subscriber);
+        // Synchronize FCM token status
+        const tokensRef = firebase.database().ref(`users/${user.key}/fcmTokens`);
+        const tokensSubscriber = (snapshot: firebase.database.DataSnapshot) => {
+            if (fcmTokenRef.current && snapshot.child(fcmTokenRef.current).exists()) {
+                setHasFcmToken(true);
+            } else {
+                setHasFcmToken(false);
+            }
+        };
+        tokensRef.on('value', tokensSubscriber);
+        
         return () => {
+            tokensRef.off('value', tokensSubscriber);
             queryMatches.off('value', subscriber);
         }
     }, [user]);
@@ -174,8 +181,9 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
             const confirmMessage = t('disableNotificationsConfirm');
             if (confirm(confirmMessage)) {
                 await clearFcmToken();
-                alert(t('notificationsDisabled'));
                 setNotificationStatus(window.Notification?.permission ?? 'unsupported');
+                setHasFcmToken(false);
+                alert(t('notificationsDisabled'));
             }
         } else if (notificationStatus === 'granted' && !hasFcmToken) {
             await saveFcmToken(false);
