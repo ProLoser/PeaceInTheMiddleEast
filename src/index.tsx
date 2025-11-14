@@ -243,6 +243,7 @@ export function App() {
     const friendId = location.pathname.split('/')[1]
 
     let unsubscribeUser: (() => void) | null;
+    let previousUserKey: string | null = null;
 
     const unregisterAuthObserver = firebase.auth().onAuthStateChanged(async authUser => {
       if (authUser) { // User is signed in
@@ -266,7 +267,11 @@ export function App() {
         // Subscribe to user data changes
         const onUserValue = (userSnapshot: SnapshotOrNullType) => {
           setUser(userSnapshot);
-          load(friendId, authUser.uid);
+          const currentUserKey = userSnapshot?.key;
+          if (previousUserKey !== currentUserKey) {
+            previousUserKey = currentUserKey || null;
+            load(friendId, authUser.uid);
+          }
         }
         userRef.on('value', onUserValue);
         unsubscribeUser = () => {
