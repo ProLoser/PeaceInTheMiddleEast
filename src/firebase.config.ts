@@ -40,6 +40,7 @@ export async function saveFcmToken(requestPermission = false) {
             ts: firebase.database.ServerValue.TIMESTAMP,
             ua: navigator.userAgent || 'unknown'
         });
+        return token;
     }
 }
 

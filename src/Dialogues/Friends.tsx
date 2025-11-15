@@ -42,7 +42,7 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
     const { toggle } = useContext(DialogContext)!;
 
     const searchRef = useRef<HTMLInputElement>(null);
-    const fcmTokenRef = useRef<string | null>(null);
+    const fcmTokenRef = useRef<string | undefined>(undefined);
     const [users, setUsers] = useState<Users>({});
     const [isExpanded, setIsExpanded] = useState(false);
     const [matches, setMatches] = useState<firebase.database.DataSnapshot | null>(null);
@@ -195,13 +195,13 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
                     }
                 } else {
                     setNotificationStatus('processing');
-                    await saveFcmToken(false);
+                    fcmTokenRef.current = await saveFcmToken(false);
                     alert(t('notificationsEnabled'));
                 }
                 break;
             case 'default':
                 setNotificationStatus('processing');
-                await saveFcmToken(true);
+                fcmTokenRef.current = await saveFcmToken(true);
                 if (window.Notification?.permission === 'granted') {
                     alert(t('notificationsEnabled'));
                 }
