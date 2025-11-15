@@ -12,4 +12,4 @@ scope commands to functions: `yarn workspace functions ...`
 # Rules
 Avoid adding description comments
 Avoid removing my comments unless surrounding code is removed
-Use screenshots when possible
+Use screenshots when possible, in both dark and light themes if relevant
