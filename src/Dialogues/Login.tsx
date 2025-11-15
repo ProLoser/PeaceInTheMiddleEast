@@ -117,10 +117,13 @@ export default function Login({ reset, friend, load }: LoginProps) {
             </header>
             <div ref={elementRef} />
             {friend ?
-                <button className="local" onPointerUp={decline}>
-                    <CancelIcon className="material-icons-svg notranslate" />
-                    {t('decline')}
-                </button>
+                <>
+                    <hr />
+                    <button className="local" onPointerUp={decline}>
+                        <CancelIcon className="material-icons-svg notranslate" />
+                        <span>{t('decline')}</span>
+                    </button>
+                </>
             :null}
         </section>
     );
