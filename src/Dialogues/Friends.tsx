@@ -19,6 +19,7 @@ import ManageAccountsIcon from '@material-design-icons/svg/filled/manage_account
 import NotificationsIcon from '@material-design-icons/svg/outlined/notifications.svg?react';
 import NotificationsOffIcon from '@material-design-icons/svg/filled/notifications_off.svg?react';
 import NotificationsActiveIcon from '@material-design-icons/svg/filled/notifications_active.svg?react';
+import ProgressActivityIcon from '@material-design-icons/svg/filled/progress_activity.svg?react';
 import RestartAltIcon from '@material-design-icons/svg/filled/restart_alt.svg?react';
 import BugReportIcon from '@material-design-icons/svg/filled/bug_report.svg?react';
 import InfoIcon from '@material-design-icons/svg/filled/info.svg?react';
@@ -34,6 +35,8 @@ type FriendsProps = {
     reset: () => void;
 }
 
+type NotificationStatus = NotificationPermission | 'unsupported' | 'processing';
+
 export default function Friends({ user, load, reset, friend }: FriendsProps) {
     const { t } = useTranslation();
     const { toggle } = useContext(DialogContext)!;
@@ -44,7 +47,7 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
     const [isExpanded, setIsExpanded] = useState(false);
     const [matches, setMatches] = useState<firebase.database.DataSnapshot | null>(null);
     const [searchResults, setSearchResults] = useState<firebase.database.DataSnapshot | null>(null);
-    const [notificationStatus, setNotificationStatus] = useState<NotificationPermission | 'unsupported'>(
+    const [notificationStatus, setNotificationStatus] = useState<NotificationStatus>(
         window.Notification?.permission ?? 'unsupported'
     );
     const [hasFcmToken, setHasFcmToken] = useState(false);
@@ -77,6 +80,7 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
         const tokensSubscriber = (snapshot: firebase.database.DataSnapshot) => {
             const exists = fcmTokenRef.current && snapshot.child(fcmTokenRef.current).exists()
             setHasFcmToken(!!exists)
+            setNotificationStatus(window.Notification?.permission ?? 'unsupported');
         };
         tokensRef.on('value', tokensSubscriber);
         
@@ -166,28 +170,39 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
     const handleNotificationClick = async (event: PointerEvent<HTMLAnchorElement>) => {
         event.preventDefault();
         
-        if (notificationStatus === 'unsupported') {
-            alert(t('notificationsUnsupported'));
-        } else if (notificationStatus === 'denied') {
-            alert(t('notificationsDenied'));
-        } else if (notificationStatus === 'granted' && hasFcmToken) {
-            const confirmMessage = t('disableNotificationsConfirm');
-            if (confirm(confirmMessage)) {
-                await clearFcmToken();
-                setNotificationStatus(window.Notification?.permission ?? 'unsupported');
-                setHasFcmToken(false);
-                alert(t('notificationsDisabled'));
-            }
-        } else if (notificationStatus === 'granted' && !hasFcmToken) {
-            await saveFcmToken(false);
-            alert(t('notificationsEnabled'));
-        } else if (notificationStatus === 'default') {
-            await saveFcmToken(true);
-            setNotificationStatus(window.Notification?.permission ?? 'unsupported');
-            if (window.Notification?.permission === 'granted') {
-                setHasFcmToken(true);
-                alert(t('notificationsEnabled'));
-            }
+        switch (notificationStatus) {
+            case 'processing':
+                return;
+            case 'unsupported':
+                alert(t('notificationsUnsupported'));
+                break;
+            case 'denied':
+                alert(t('notificationsDenied'));
+                break;
+            case 'granted':
+                if (hasFcmToken) {
+                    const confirmMessage = t('disableNotificationsConfirm');
+                    if (confirm(confirmMessage)) {
+                        setNotificationStatus('processing');
+                        await clearFcmToken();
+                        alert(t('notificationsDisabled'));
+                    }
+                } else {
+                    setNotificationStatus('processing');
+                    await saveFcmToken(false);
+                    alert(t('notificationsEnabled'));
+                }
+                break;
+            case 'default':
+                setNotificationStatus('processing');
+                await saveFcmToken(true);
+                if (window.Notification?.permission === 'granted') {
+                    alert(t('notificationsEnabled'));
+                }
+                break;
+            default:
+                console.error('Unknown notification status:', notificationStatus);
+                break;
         }
     }
 
@@ -222,9 +237,11 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
                     <a 
                         onPointerUp={handleNotificationClick} 
                         href="#"
-                        style={{ color: (notificationStatus === 'denied' || notificationStatus === 'unsupported') ? '#d32f2f' : undefined }}
+                        className={notificationStatus}
                     >
-                        {notificationStatus === 'granted' && hasFcmToken ? (
+                        {notificationStatus === 'processing' ? (
+                            <ProgressActivityIcon className="material-icons-svg notranslate" />
+                        ) : notificationStatus === 'granted' && hasFcmToken ? (
                             <NotificationsActiveIcon className="material-icons-svg notranslate" />
                         ) : notificationStatus === 'denied' || notificationStatus === 'unsupported' ? (
                             <NotificationsOffIcon className="material-icons-svg notranslate" />

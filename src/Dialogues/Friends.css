@@ -16,6 +16,29 @@
     }  
     menu {
         right: 30px;
+
+        a.denied,
+        a.unsupported {
+            color: #d32f2f;
+        }
+
+        a.processing {
+            opacity: 0.5;
+            pointer-events: none;
+
+            svg {
+                animation: spin 1s linear infinite;
+            }
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
     } 
 
     input {
