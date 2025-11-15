@@ -19,7 +19,7 @@ import ManageAccountsIcon from '@material-design-icons/svg/filled/manage_account
 import NotificationsIcon from '@material-design-icons/svg/outlined/notifications.svg?react';
 import NotificationsOffIcon from '@material-design-icons/svg/filled/notifications_off.svg?react';
 import NotificationsActiveIcon from '@material-design-icons/svg/filled/notifications_active.svg?react';
-import ProgressActivityIcon from '@material-design-icons/svg/filled/progress_activity.svg?react';
+import CircleNotificationsIcon from '@material-design-icons/svg/filled/circle_notifications.svg?react';
 import RestartAltIcon from '@material-design-icons/svg/filled/restart_alt.svg?react';
 import BugReportIcon from '@material-design-icons/svg/filled/bug_report.svg?react';
 import InfoIcon from '@material-design-icons/svg/filled/info.svg?react';
@@ -240,7 +240,7 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
                         className={notificationStatus}
                     >
                         {notificationStatus === 'processing' ? (
-                            <ProgressActivityIcon className="material-icons-svg notranslate" />
+                            <CircleNotificationsIcon className="material-icons-svg notranslate" />
                         ) : notificationStatus === 'granted' && hasFcmToken ? (
                             <NotificationsActiveIcon className="material-icons-svg notranslate" />
                         ) : notificationStatus === 'denied' || notificationStatus === 'unsupported' ? (
