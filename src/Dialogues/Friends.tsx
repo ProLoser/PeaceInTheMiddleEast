@@ -55,7 +55,6 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
     useEffect(() => {
         if (!user?.key) return;
 
-
         const queryMatches = firebase.database().ref(`matches/${user.key}`).orderByChild('sort').limitToLast(100);
         const matchesSubscriber = (snapshot: firebase.database.DataSnapshot) => {
             setMatches(snapshot);
@@ -82,6 +81,10 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
             .then(token => {
                 fcmTokenRef.current = token;
                 tokensRef.on('value', tokensSubscriber);
+                
+                // TODO: Disable? After 3 failed attempts, permission = 'blocked'
+                if (window.Notification?.permission === 'default')
+                    tokensRef.once('value', snapshot => snapshot.child(token).exists() || saveFcmToken(true))
             })
             .catch(error => {
                 console.error('Error getting FCM token:', error);

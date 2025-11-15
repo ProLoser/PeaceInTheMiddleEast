@@ -16,7 +16,7 @@ import './index.css'
 import './Board/Board.css';
 import './Board/Toolbar.css'
 import { calculate, newGame, nextMoves, rollDie, Vibrations, playAudio, classes } from './Utils';
-import firebase, { saveFcmToken } from "./firebase.config";
+import firebase from "./firebase.config";
 import { playCheckerSound } from './Utils';
 import type firebaseType from 'firebase/compat/app';
 import * as Sentry from "@sentry/react";
@@ -259,9 +259,6 @@ export function App() {
           };
           console.log('Creating user', data);
           userRef.set(data);
-          saveFcmToken(true);
-        } else {
-          saveFcmToken();
         }
 
         // Subscribe to user data changes
