@@ -4,7 +4,7 @@
     ".read": "auth.uid !== null",
     ".write": false,
     "users": {
-      ".read": "auth.uid !== null",
+      ".read": "true",
       ".indexOn": "search",
       "$uid": {
         // Allow write access to owner
