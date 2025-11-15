@@ -16,6 +16,7 @@ import SettingsIcon from '@material-design-icons/svg/filled/settings.svg?react';
 import RestartAltIcon from '@material-design-icons/svg/filled/restart_alt.svg?react';
 import BugReportIcon from '@material-design-icons/svg/filled/bug_report.svg?react';
 import InfoIcon from '@material-design-icons/svg/filled/info.svg?react';
+import CancelIcon from '@material-design-icons/svg/filled/cancel.svg?react';
 
 // Configure FirebaseUI.
 const uiConfig = {
@@ -116,7 +117,10 @@ export default function Login({ reset, friend, load }: LoginProps) {
             </header>
             <div ref={elementRef} />
             {friend ?
-                <button className="local" onPointerUp={decline}>{t('decline')}</button>
+                <button className="local" onPointerUp={decline}>
+                    <CancelIcon className="material-icons-svg notranslate" />
+                    {t('decline')}
+                </button>
             :null}
         </section>
     );
