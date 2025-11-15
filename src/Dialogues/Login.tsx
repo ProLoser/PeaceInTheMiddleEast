@@ -121,7 +121,7 @@ export default function Login({ reset, friend, load }: LoginProps) {
                     <hr />
                     <button className="local" onPointerUp={decline}>
                         <CancelIcon className="material-icons-svg notranslate" />
-                        <span>{t('decline')}</span>
+                        {t('decline')}
                     </button>
                 </>
             :null}
