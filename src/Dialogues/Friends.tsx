@@ -50,49 +50,41 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
     const [hasFcmToken, setHasFcmToken] = useState(false);
 
     useEffect(() => {
-        getFcmToken().then(token => {
-            if (token) {
-                fcmTokenRef.current = token;
-                setHasFcmToken(true);
-            }
-        }).catch(error => {
-            console.error('Error getting FCM token:', error);
-        });
-    }, []);
+        if (!user?.key) return;
 
-    useEffect(() => {
-        if (!user) return;
 
         const queryMatches = firebase.database().ref(`matches/${user.key}`).orderByChild('sort').limitToLast(100);
-        const subscriber = (snapshot: firebase.database.DataSnapshot) => {
+        const matchesSubscriber = (snapshot: firebase.database.DataSnapshot) => {
             setMatches(snapshot);
             snapshot.forEach(match => {
                 const userId = match.key;
-                firebase.database().ref(`users/${userId}`).get().then((user: firebase.database.DataSnapshot) => {
+                firebase.database().ref(`users/${userId}`).get().then((friend: firebase.database.DataSnapshot) => {
                     setUsers(users => ({
                         ...users,
-                        [userId]: user.val()
+                        [userId]: friend.val()
                     }));
                 });
             })
         }
-        queryMatches.on('value', subscriber);
-        // Synchronize FCM token status
+        queryMatches.on('value', matchesSubscriber);
+        
+        getFcmToken()
+            .then(token => fcmTokenRef.current = token)
+            .catch(error => {
+                console.error('Error getting FCM token:', error);
+            });
         const tokensRef = firebase.database().ref(`users/${user.key}/fcmTokens`);
         const tokensSubscriber = (snapshot: firebase.database.DataSnapshot) => {
-            if (fcmTokenRef.current && snapshot.child(fcmTokenRef.current).exists()) {
-                setHasFcmToken(true);
-            } else {
-                setHasFcmToken(false);
-            }
+            const exists = fcmTokenRef.current && snapshot.child(fcmTokenRef.current).exists()
+            setHasFcmToken(!!exists)
         };
         tokensRef.on('value', tokensSubscriber);
         
         return () => {
             tokensRef.off('value', tokensSubscriber);
-            queryMatches.off('value', subscriber);
+            queryMatches.off('value', matchesSubscriber);
         }
-    }, [user]);
+    }, [user?.key]);
 
     const onSearch: ChangeEventHandler<HTMLInputElement> = useCallback(async () => {
         if (searchRef.current?.value) {
