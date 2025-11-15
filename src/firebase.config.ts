@@ -19,7 +19,7 @@ const vapidKey = 'BM1H9qfv1e_XcIB31ZeLCn8IpGOdMIwMShRej6wld8QAMkV4YqJ-eMQa1rSnwh
 
 export default firebase.initializeApp(config);
 
-export async function saveFcmToken(requestPermission = false) {
+export async function saveFcmToken() {
     const userId = firebase.auth().currentUser?.uid;
     if (!userId) return;
 
@@ -28,7 +28,7 @@ export async function saveFcmToken(requestPermission = false) {
         return;
     }
 
-    if (Notification.permission === 'default' && requestPermission) {
+    if (Notification.permission === 'default') {
         await Notification.requestPermission();
     }
 

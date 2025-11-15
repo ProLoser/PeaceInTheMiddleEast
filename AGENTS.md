@@ -10,6 +10,6 @@ startwebserver: `yarn start` or `yarn preview` if that doesn't work
 scope commands to functions: `yarn workspace functions ...`
 
 # Rules
-Don't add new comments
-don't remove my comments unless surrounding code is removed
+Avoid adding description comments
+Avoid removing my comments unless surrounding code is removed
 Use screenshots when possible

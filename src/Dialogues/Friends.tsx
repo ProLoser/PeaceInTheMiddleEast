@@ -84,7 +84,7 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
                 
                 // TODO: Disable? After 3 failed attempts, permission = 'blocked'
                 if (window.Notification?.permission === 'default')
-                    tokensRef.once('value', snapshot => snapshot.child(token).exists() || saveFcmToken(true))
+                    tokensRef.once('value', snapshot => snapshot.child(token).exists() || saveFcmToken())
             })
             .catch(error => {
                 console.error('Error getting FCM token:', error);
@@ -193,17 +193,19 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
                         await clearFcmToken();
                         alert(t('notificationsDisabled'));
                     }
-                } else {
-                    setNotificationStatus('processing');
-                    fcmTokenRef.current = await saveFcmToken(false);
-                    alert(t('notificationsEnabled'));
+                    break;
                 }
-                break;
+                // fall-through
             case 'default':
+
                 setNotificationStatus('processing');
-                fcmTokenRef.current = await saveFcmToken(true);
-                if (window.Notification?.permission === 'granted') {
+                fcmTokenRef.current = await saveFcmToken();
+                if (fcmTokenRef.current) {
+                    setHasFcmToken(!!fcmTokenRef.current);
+                    setNotificationStatus(window.Notification?.permission ?? 'unsupported');
                     alert(t('notificationsEnabled'));
+                } else {
+                    alert(t('notificationsFailed'));
                 }
                 break;
             default:
