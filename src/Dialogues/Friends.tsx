@@ -71,18 +71,21 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
         }
         queryMatches.on('value', matchesSubscriber);
         
-        getFcmToken()
-            .then(token => fcmTokenRef.current = token)
-            .catch(error => {
-                console.error('Error getting FCM token:', error);
-            });
         const tokensRef = firebase.database().ref(`users/${user.key}/fcmTokens`);
         const tokensSubscriber = (snapshot: firebase.database.DataSnapshot) => {
             const exists = fcmTokenRef.current && snapshot.child(fcmTokenRef.current).exists()
             setHasFcmToken(!!exists)
             setNotificationStatus(window.Notification?.permission ?? 'unsupported');
         };
-        tokensRef.on('value', tokensSubscriber);
+        
+        getFcmToken()
+            .then(token => {
+                fcmTokenRef.current = token;
+                tokensRef.on('value', tokensSubscriber);
+            })
+            .catch(error => {
+                console.error('Error getting FCM token:', error);
+            });
         
         return () => {
             tokensRef.off('value', tokensSubscriber);
