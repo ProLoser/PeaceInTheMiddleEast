@@ -1,7 +1,7 @@
 // Sentry initialization should be imported first!
 import "./instrument";
 import './i18n';
-import { StrictMode, useEffect, useState, useCallback, useMemo, type DragEventHandler } from "react";
+import { StrictMode, useEffect, useState, useCallback, useMemo, type DragEventHandler, useRef } from "react";
 import ReactDOM from 'react-dom/client'
 // TODO: Upgrade to modular after firebaseui upgrades
 // import { initializeApp } from 'firebase/app';
@@ -45,6 +45,7 @@ export function App() {
   const [friend, setFriend] = useState<SnapshotOrNullType>(null);
   const [selected, setSelected] = useState<number | null>(null);
   const [usedDice, setUsedDice] = useState<UsedDie[]>([]);
+  const hadMatchRef = useRef(false);
 
   const load = useCallback(async (friendId?: string | false, authUserUid?: string) => {
     if (friendId === 'PeaceInTheMiddleEast' || friendId === '__') return;
@@ -289,6 +290,7 @@ export function App() {
 
   useEffect(() => { // match observer
     if (match) {
+      hadMatchRef.current = true;
       const gameRef = firebase.database().ref(`games/${match.game}`);
       const onValue = (snapshot: firebaseType.database.DataSnapshot) => {
         const nextGame = snapshot.val();
@@ -322,9 +324,12 @@ export function App() {
         gameRef.off("value", onValue);
       };
     } else {
-      setGame(newGame());
-      setUsedDice([]);
       setSelected(null);
+      if (hadMatchRef.current) {
+        setGame(newGame());
+        setUsedDice([]);
+        hadMatchRef.current = false;
+      }
     }
   }, [match, user]);
 
