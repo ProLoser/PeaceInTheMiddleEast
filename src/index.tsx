@@ -367,7 +367,7 @@ export function App() {
       database.ref(`matches/${friend?.key}/${user?.key}`).update(update);
       setUsedDice([])
     }
-  }, [usedDice, game, match, friend, user]);
+  }, [usedDice, game, match, friend, user, moves, selected, isMyTurn]);
 
   const winner = useMemo(() => {
     if (game.status !== Status.GameOver) return undefined;
