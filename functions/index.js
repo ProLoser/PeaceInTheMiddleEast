@@ -3,7 +3,6 @@ const admin = require('firebase-admin');
 
 admin.initializeApp();
 const db = admin.database();
-const tokenCache = new Map();
 
 exports.sendMoveNotification = onValueCreated('/moves/{moveId}', async event => {
   const move = event.data.val();
@@ -13,25 +12,12 @@ exports.sendMoveNotification = onValueCreated('/moves/{moveId}', async event => 
     return null;
   }
 
-  let recipientTokens = tokenCache.get(move.friend);
-
-  if (!recipientTokens) {
-    const fcmTokensSnapshot = await db.ref(`/users/${move.friend}/fcmTokens`).once('value');
-    const fcmTokensObject = fcmTokensSnapshot.val();
-    
-    if (fcmTokensObject && typeof fcmTokensObject === 'object') {
-      recipientTokens = Object.keys(fcmTokensObject);
-    } else {
-      const recipientTokenSnapshot = await db.ref(`/users/${move.friend}/fcmToken`).once('value');
-      const legacyToken = recipientTokenSnapshot.val();
-      if (legacyToken) {
-        recipientTokens = [legacyToken];
-      }
-    }
-
-    if (recipientTokens && recipientTokens.length > 0) {
-      tokenCache.set(move.friend, recipientTokens);
-    }
+  const fcmTokensSnapshot = await db.ref(`/users/${move.friend}/fcmTokens`).once('value');
+  const fcmTokensObject = fcmTokensSnapshot.val();
+  
+  let recipientTokens;
+  if (fcmTokensObject && typeof fcmTokensObject === 'object') {
+    recipientTokens = Object.keys(fcmTokensObject);
   }
 
   if (!recipientTokens || recipientTokens.length === 0) {
@@ -72,7 +58,6 @@ exports.sendMoveNotification = onValueCreated('/moves/{moveId}', async event => 
       if (!resp.success && 
           (resp.error.code === 'messaging/invalid-registration-token' ||
            resp.error.code === 'messaging/registration-token-not-registered')) {
-        tokenCache.delete(move.friend);
         db.ref(`/users/${move.friend}/fcmTokens/${recipientTokens[idx]}`).remove();
       } else if (!resp.success) {
         console.log('Error sending notification:', resp.error)
