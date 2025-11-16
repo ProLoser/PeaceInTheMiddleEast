@@ -433,9 +433,10 @@ export function App() {
             <Piece key={index} color={Color.White} />
           )}
         </div>
-        {game.board.map((pieces: number, index: number) =>
-          <Point
-            enabled={isMyTurn && !!pieces || moves.has(index)}
+        {game.board.map((pieces: number, index: number) => {
+          const pieceColor = pieces > 0 ? Color.White : Color.Black;
+          return <Point
+            enabled={isMyTurn && !!pieces && (!game.color || game.color === pieceColor)}
             valid={moves.has(index)}
             key={index}
             pieces={pieces}
@@ -444,7 +445,7 @@ export function App() {
             selected={selected}
             onSelect={onSelect}
           />
-        )}
+        })}
       </div>
     </Dialogues>
   );
