@@ -65,6 +65,7 @@ exports.sendMoveNotification = onValueCreated('/moves/{moveId}', async event => 
   };
 
   try {
+    console.log('Multicasting move', message)
     const response = await admin.messaging().sendEachForMulticast(message);
     
     response.responses.forEach((resp, idx) => {
