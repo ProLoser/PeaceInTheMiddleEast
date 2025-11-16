@@ -24,7 +24,8 @@
         "firebase-debug.log",
         "firebase-debug.*.log",
         "*.local"
-      ]
+      ],
+      "serviceAccount": "backgammon-deployer@peaceinthemiddleeast.iam.gserviceaccount.com"
     }
   ],
   "database": {
