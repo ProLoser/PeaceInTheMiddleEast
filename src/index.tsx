@@ -435,8 +435,9 @@ export function App() {
         </div>
         {game.board.map((pieces: number, index: number) => {
           const pieceColor = pieces > 0 ? Color.White : Color.Black;
+          const canDragFrom = isMyTurn && !!pieces && (!game.color || game.color === pieceColor);
           return <Point
-            enabled={isMyTurn && !!pieces && (!game.color || game.color === pieceColor)}
+            enabled={canDragFrom || moves.has(index)}
             valid={moves.has(index)}
             key={index}
             pieces={pieces}
