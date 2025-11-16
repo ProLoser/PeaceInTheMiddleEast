@@ -58,22 +58,24 @@ exports.sendMoveNotification = onValueCreated('/moves/{moveId}', async event => 
     },
     webpush: {
       notification: {
-        tag: move.player
+        tag: move.player,
+        renotify: true,
       }
     },
     tokens: recipientTokens
   };
 
   try {
-    console.log('Multicasting move', message)
     const response = await admin.messaging().sendEachForMulticast(message);
-    
+
     response.responses.forEach((resp, idx) => {
       if (!resp.success && 
           (resp.error.code === 'messaging/invalid-registration-token' ||
            resp.error.code === 'messaging/registration-token-not-registered')) {
         tokenCache.delete(move.friend);
         db.ref(`/users/${move.friend}/fcmTokens/${recipientTokens[idx]}`).remove();
+      } else if (!resp.success) {
+        console.log('Error sending notification:', resp.error)
       }
     });
     
