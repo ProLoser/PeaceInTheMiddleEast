@@ -437,7 +437,7 @@ export function App() {
           const pieceColor = pieces > 0 ? Color.White : Color.Black;
           const canDragFrom = isMyTurn && !!pieces && (!game.color || game.color === pieceColor);
           return <Point
-            enabled={canDragFrom || moves.has(index)}
+            enabled={canDragFrom && (moves.has(index) || !game.color)}
             valid={moves.has(index)}
             key={index}
             pieces={pieces}
