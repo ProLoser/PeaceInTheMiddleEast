@@ -25,12 +25,21 @@ exports.sendMoveNotification = onValueCreated('/moves/{moveId}', async event => 
     return null;
   }
 
-  // Query the player's name from the database
+  // Query the player's name and avatar from the database
   let playerName = move.player;
+  let avatarUrl = null;
   if (move.player) {
-    const playerNameSnapshot = await db.ref(`/users/${move.player}/name`).once('value');
-    if (playerNameSnapshot.exists()) {
-      playerName = playerNameSnapshot.val();
+    const playerSnapshot = await db.ref(`/users/${move.player}`).once('value');
+    if (playerSnapshot.exists()) {
+      const playerData = playerSnapshot.val();
+      if (playerData.name) {
+        playerName = playerData.name;
+      }
+      avatarUrl = playerData.photoURL || null;
+    }
+    // Fallback to pravatar if photoURL is null or doesn't exist
+    if (!avatarUrl) {
+      avatarUrl = `https://i.pravatar.cc/100?u=${move.player}`;
     }
   }
 
@@ -46,6 +55,7 @@ exports.sendMoveNotification = onValueCreated('/moves/{moveId}', async event => 
       notification: {
         tag: move.player,
         renotify: true,
+        image: avatarUrl
       }
     },
     tokens: recipientTokens

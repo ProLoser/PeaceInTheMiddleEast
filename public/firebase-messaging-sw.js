@@ -24,7 +24,7 @@ const messaging = firebase.messaging();
 messaging.onBackgroundMessage(payload => {
   console.log('Received background message', payload);
 
-  const { title, body } = payload.notification;
+  const { title, body, image } = payload.notification;
   const { player } = payload.data;
 
   const notificationOptions = {
@@ -36,6 +36,10 @@ messaging.onBackgroundMessage(payload => {
       url: `${self.location.origin}/${player || ''}`
     }
   };
+
+  if (image) {
+    notificationOptions.image = image;
+  }
 
   if ('Notification' in self && 'showNotification' in self.registration) {
     self.registration.showNotification(title, notificationOptions);
