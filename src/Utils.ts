@@ -80,7 +80,7 @@ export const allHome = (player: Color, state: Game) =>
     15 === state.board
         .slice(HOME_INDEXES[player][0], HOME_INDEXES[player][1] + 1)
         .reduce(
-            (total, value) => total + Math.abs(value), 
+            (total, value) => total + (populated(player, value) ? Math.abs(value) : 0), 
             state.home[player]
         )
 
