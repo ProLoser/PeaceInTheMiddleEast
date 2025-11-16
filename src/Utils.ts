@@ -124,8 +124,16 @@ export const destination = (player: Color, point: number, die: number) => {
 
 export function nextMoves(state: Game, usedDice: UsedDie[] = [], from?: number) {
     const availableMoves = new Set<number>();
-    if (!state.color) return availableMoves;
-    const player = state.color;
+    let player = state.color;
+    
+    // In offline mode, infer player color from selected piece
+    if (!player && typeof from === 'number' && from >= 0 && from < state.board.length) {
+        const piece = state.board[from];
+        if (piece > 0) player = Color.White;
+        else if (piece < 0) player = Color.Black;
+    }
+    
+    if (!player) return availableMoves;
     const [, homeEnd] = HOME_INDEXES[player]
     const availableDice = [...state.dice]
     // Filter used 

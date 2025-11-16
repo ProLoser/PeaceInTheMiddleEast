@@ -334,16 +334,20 @@ export function App() {
   }, [match, user]);
 
   useEffect(() => { // usedDice observer to publish moves
-    if (
-      match
-      && isMyTurn
+    const shouldEndTurn = (
+      isMyTurn
       && game.status === Status.Moving
       && game.dice?.length 
       && (
         usedDice.length === game.dice.length
-        || (!moves.size && (selected === null || selected === -1))
+        || !moves.size
       )
-    ) {
+    );
+
+    if (!shouldEndTurn) return;
+
+    if (match) {
+      // Online match - publish moves and switch turns
       const time = new Date().toISOString();
       const moveLabels = usedDice.map(die => die.label).join(' ');
       const nextMove: Move = {
@@ -366,8 +370,16 @@ export function App() {
       database.ref(`matches/${user?.key}/${friend?.key}`).update(update);
       database.ref(`matches/${friend?.key}/${user?.key}`).update(update);
       setUsedDice([])
+    } else {
+      // Offline match - just reset to rolling status
+      setGame({
+        ...game,
+        status: Status.Rolling
+      });
+      setUsedDice([]);
+      setSelected(null);
     }
-  }, [usedDice, game, match, friend, user]);
+  }, [usedDice, game, match, friend, user, moves, isMyTurn]);
 
   const winner = useMemo(() => {
     if (game.status !== Status.GameOver) return undefined;
