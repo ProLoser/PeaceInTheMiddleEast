@@ -12,15 +12,25 @@ exports.sendMoveNotification = onValueCreated('/moves/{moveId}', async event => 
     return null;
   }
 
-  const fcmTokensSnapshot = await db.ref(`/users/${move.friend}/fcmTokens`).once('value');
-  const fcmTokensObject = fcmTokensSnapshot.val();
+  const friendSnapshot = await db.ref(`/users/${move.friend}`).once('value');
+  const friendData = friendSnapshot.val();
   
-  let recipientTokens;
-  if (fcmTokensObject && typeof fcmTokensObject === 'object') {
-    recipientTokens = Object.keys(fcmTokensObject);
+  if (!friendData) {
+    console.log(`User ${move.friend} not found.`);
+    return null;
   }
 
-  if (!recipientTokens || recipientTokens.length === 0) {
+  let recipientTokens = [];
+  
+  if (friendData.fcmTokens && typeof friendData.fcmTokens === 'object') {
+    recipientTokens = Object.keys(friendData.fcmTokens);
+  }
+  
+  if (friendData.fcmToken && typeof friendData.fcmToken === 'string') {
+    recipientTokens.push(friendData.fcmToken);
+  }
+
+  if (recipientTokens.length === 0) {
     console.log(`No FCM token found for user ${move.friend}.`);
     return null;
   }
@@ -68,7 +78,12 @@ exports.sendMoveNotification = onValueCreated('/moves/{moveId}', async event => 
       if (!resp.success && 
           (resp.error.code === 'messaging/invalid-registration-token' ||
            resp.error.code === 'messaging/registration-token-not-registered')) {
-        db.ref(`/users/${move.friend}/fcmTokens/${recipientTokens[idx]}`).remove();
+        const invalidToken = recipientTokens[idx];
+        if (friendData.fcmTokens && friendData.fcmTokens[invalidToken]) {
+          db.ref(`/users/${move.friend}/fcmTokens/${invalidToken}`).remove();
+        } else if (friendData.fcmToken === invalidToken) {
+          db.ref(`/users/${move.friend}/fcmToken`).remove();
+        }
       } else if (!resp.success) {
         console.log('Error sending notification:', resp.error)
       }
