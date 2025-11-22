@@ -32,5 +32,21 @@ This wasn't originally a goal but ended up being a great way to test AI
 - [x] Amazon q
 - [x] ChatGPT 
 ## Setup
-1. `yarn`
+1. `yarn install`
 2. `yarn start`
+
+## Testing
+This project includes comprehensive testing with Firebase authentication mocking. See [TESTING.md](./TESTING.md) for details.
+
+```bash
+# Run tests
+yarn test
+
+# Run tests in watch mode
+yarn test:watch
+
+# Run tests with coverage
+yarn test:coverage
+```
+
+The testing infrastructure allows you to bypass Firebase authentication, making it easy to write tests without needing Firebase credentials or network access.
