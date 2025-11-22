@@ -205,7 +205,7 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
                         await clearFcmToken();
                         alert(t('notificationsDisabled'));
                     }
-                    return;
+                    break;
                 }
                 await enableNotifications();
                 break;

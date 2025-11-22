@@ -172,7 +172,7 @@ export function App() {
     setGame(nextState)
     setUsedDice(prev => {
       const newUsedDice = [...prev, { value: usedDie!, label: moveLabel }];
-      // If the move ended the game, publish the game state immediately
+      // If the game ended, publish the game state immediately
       if (
         match &&
         nextState.status === Status.GameOver &&
