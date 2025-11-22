@@ -176,7 +176,7 @@ export function App() {
       if (
         match &&
         nextState.status === Status.GameOver &&
-        nextState.dice
+        nextState.dice?.length
       ) {
         const time = new Date().toISOString();
         const moveLabels = newUsedDice.map(die => die.label).join(' ');
