@@ -70,7 +70,7 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
             navigator.vibrate?.(Vibrations.Up)
             onSelect(position)
         }
-    }, [position, onSelect, dragging, enabled])
+    }, [position, onSelect, dragging, enabled, selected, move])
 
     return <div className={classes('point', { valid, selected: selected === position, dragOver })} 
         draggable={enabled}
