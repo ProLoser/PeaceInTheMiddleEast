@@ -172,12 +172,10 @@ export function App() {
     setGame(nextState)
     setUsedDice(prev => {
       const newUsedDice = [...prev, { value: usedDie!, label: moveLabel }];
-      // If the move ended the game and not all dice were used, publish the game state
+      // If the move ended the game, publish the game state immediately
       if (
         match &&
-        nextState.status === Status.GameOver &&
-        nextState.dice?.length &&
-        newUsedDice.length < nextState.dice.length
+        nextState.status === Status.GameOver
       ) {
         const time = new Date().toISOString();
         const moveLabels = newUsedDice.map(die => die.label).join(' ');
