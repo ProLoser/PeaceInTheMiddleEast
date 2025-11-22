@@ -163,6 +163,12 @@ export function App() {
     return nextMoves(game, usedDice, selected!)
   }, [game, isMyTurn, usedDice, selected])
 
+  const sources = useMemo(() => {
+    if (!isMyTurn || game.status !== Status.Moving)
+      return new Set();
+    return nextMoves(game, usedDice, null)
+  }, [game, isMyTurn, usedDice])
+
   const move = useCallback((from: number | Color, to: number) => {
     if (match && (!moves.has(to) || game.status !== Status.Moving)) return;
     const { state: nextState, moveLabel, usedDie } = calculate(game, from, to, usedDice)
@@ -435,7 +441,7 @@ export function App() {
         </div>
         {game.board.map((pieces: number, index: number) =>
           <Point
-            enabled={!match || moves.has(index)}
+            enabled={!match || sources.has(index)}
             valid={moves.has(index)}
             key={index}
             pieces={pieces}
