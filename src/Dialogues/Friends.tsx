@@ -173,6 +173,18 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
         }
     }
 
+    const enableNotifications = async () => {
+        setNotificationStatus('processing');
+        fcmTokenRef.current = await saveFcmToken();
+        if (fcmTokenRef.current) {
+            setHasFcmToken(!!fcmTokenRef.current);
+            setNotificationStatus(window.Notification?.permission ?? 'unsupported');
+            alert(t('notificationsEnabled'));
+        } else {
+            alert(t('notificationsFailed'));
+        }
+    };
+
     const handleNotificationClick = async (event: PointerEvent<HTMLAnchorElement>) => {
         event.preventDefault();
         
@@ -195,28 +207,10 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
                     }
                     return;
                 }
-                // If no token, treat as default and enable notifications
-                setNotificationStatus('processing');
-                fcmTokenRef.current = await saveFcmToken();
-                if (fcmTokenRef.current) {
-                    setHasFcmToken(!!fcmTokenRef.current);
-                    setNotificationStatus(window.Notification?.permission ?? 'unsupported');
-                    alert(t('notificationsEnabled'));
-                } else {
-                    alert(t('notificationsFailed'));
-                }
+                await enableNotifications();
                 break;
             case 'default':
-
-                setNotificationStatus('processing');
-                fcmTokenRef.current = await saveFcmToken();
-                if (fcmTokenRef.current) {
-                    setHasFcmToken(!!fcmTokenRef.current);
-                    setNotificationStatus(window.Notification?.permission ?? 'unsupported');
-                    alert(t('notificationsEnabled'));
-                } else {
-                    alert(t('notificationsFailed'));
-                }
+                await enableNotifications();
                 break;
             default:
                 console.error('Unknown notification status:', notificationStatus);
