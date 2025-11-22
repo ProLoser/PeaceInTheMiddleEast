@@ -175,7 +175,8 @@ export function App() {
       // If the move ended the game, publish the game state immediately
       if (
         match &&
-        nextState.status === Status.GameOver
+        nextState.status === Status.GameOver &&
+        nextState.dice
       ) {
         const time = new Date().toISOString();
         const moveLabels = newUsedDice.map(die => die.label).join(' ');
