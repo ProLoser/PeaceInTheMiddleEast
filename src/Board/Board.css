@@ -45,7 +45,7 @@
 
 .bar {
     background: #aaa;
-    transition: background 1s;
+    transition: background-color 1s;
     justify-content: center;
     flex-direction: column;
 }
