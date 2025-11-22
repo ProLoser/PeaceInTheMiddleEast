@@ -15,7 +15,7 @@ export default function Gameover({ user, reset }: GameoverProps) {
       <h1>{t('gameover')}</h1>
       <Avatar user={user} />
       <p>{t('winner', { name: user.name })}</p>
-      <button onClick={reset}>{t('reset')}</button>
+      <button className="dialog-button" onClick={reset}>{t('reset')}</button>
     </div>
   );
 }
