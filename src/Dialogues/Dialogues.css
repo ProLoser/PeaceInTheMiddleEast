@@ -4,6 +4,7 @@ dialog {
   color: var(--primary-color);
   backdrop-filter: blur(10px);
   width: auto;
+  text-align: center;
 
   header {
     > h1:first-of-type {
