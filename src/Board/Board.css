@@ -27,9 +27,15 @@
     }
     &.black {
         border-color: #777;
+        .bar {
+            background: #777;
+        }
     }
     &.white {
         border-color: #ddd;
+        .bar {
+            background: #ddd;
+        }
     }
 }
 
@@ -38,7 +44,8 @@
 }
 
 .bar {
-    background: var(--background-color-secondary);
+    background: #aaa;
+    transition: background-color 1s;
     justify-content: center;
     flex-direction: column;
 }
