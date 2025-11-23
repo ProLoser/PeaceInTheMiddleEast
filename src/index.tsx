@@ -155,7 +155,7 @@ export function App() {
     navigator.vibrate?.(Vibrations.Dice);
     setUsedDice([]);
     setSelected(match && game.prison[game.color] ? -1 : null);
-  }, [match, game, isMyTurn]);
+  }, [match, game, isMyTurn, user]);
 
   const moves = useMemo(() => {
     if (!isMyTurn || game.status !== Status.Moving)
@@ -216,7 +216,7 @@ export function App() {
       move(from, -1)
       setSelected(null)
     }
-  }, [move, moves])
+  }, [move])
 
   const onHomeClick = useCallback(() => {
     if (selected !== null) {
@@ -227,7 +227,7 @@ export function App() {
 
   const onSelect = useCallback((position: number | null) => {
     setSelected(position)
-  }, [selected]) // this dependency is necessary for some reason
+  }, [])
 
   const friendData: User | undefined = useMemo(() => friend?.val(), [friend])
 
