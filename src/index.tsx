@@ -146,9 +146,11 @@ export function App() {
         status: Status.Moving
       });
     } else { // local
+      const nextColor = !game.color ? Color.White : (game.color === Color.White ? Color.Black : Color.White);
       setGame({
         ...game,
         dice,
+        color: nextColor,
         status: Status.Moving
       });
     }
@@ -170,7 +172,7 @@ export function App() {
     if (!isMyTurn || game.status !== Status.Rolling || !lastMove) {
       return Array.from({ length: 24 }, () => ({ white: 0, black: 0 }));
     }
-    // For offline games, we don't have game.color, so we use White as default
+    // Use current color, default to White if not set (shouldn't happen with new logic)
     const currentColor = game.color || Color.White;
     return parseGhostPositions(lastMove.move, currentColor);
   }, [isMyTurn, game.status, game.color, lastMove])
@@ -348,10 +350,15 @@ export function App() {
   useEffect(() => { // last move observer
     if (match && user?.key && friend?.key) {
       const movesRef = firebase.database().ref('moves');
-      // Query the last move involving these two players
+      // Query the last 50 moves and filter client-side
+      // Note: This approach is acceptable because:
+      // 1. We only need the most recent move between two players
+      // 2. Firebase doesn't support compound queries on 'player' and 'friend' fields without creating a custom index
+      // 3. The data volume is small (50 moves) and filtered quickly
+      // 4. Client-side filtering is simpler and doesn't require database schema changes
       const query = movesRef
         .orderByChild('time')
-        .limitToLast(50); // Get last 50 moves to find the most recent one between these players
+        .limitToLast(50);
       
       const onValue = (snapshot: firebaseType.database.DataSnapshot) => {
         if (!snapshot.exists()) {
@@ -420,6 +427,8 @@ export function App() {
         database.ref(`matches/${friend?.key}/${user?.key}`).update(update);
       } else if (!match) {
         // Offline game - just update local state and store move
+        // Alternate color for offline games (White starts)
+        const nextColor = game.color === Color.White ? Color.Black : (game.color === Color.Black ? Color.White : Color.White);
         setLastMove({
           player: 'local',
           move: moveNotation,
@@ -429,6 +438,7 @@ export function App() {
         setGame({
           ...game,
           status: Status.Rolling,
+          color: nextColor,
         });
       }
       setUsedDice([])

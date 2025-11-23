@@ -332,6 +332,8 @@ export const playCheckerSound = () => {
  * @param currentPlayer The current player color whose turn it is to roll
  * @returns An array of 24 elements where each element is { white: number, black: number } representing ghost counts at each position
  */
+const GAME_OVER_MARKER = '(game over)';
+
 export function parseGhostPositions(moveNotation: string, currentPlayer: Color) {
     const ghosts: Array<{ white: number, black: number }> = Array.from({ length: 24 }, () => ({ white: 0, black: 0 }));
     
@@ -351,7 +353,7 @@ export function parseGhostPositions(moveNotation: string, currentPlayer: Color) 
         if (!move) continue;
         
         const isHit = move.endsWith('*');
-        const cleanMove = move.replace('*', '').replace('(game over)', '').trim();
+        const cleanMove = move.replace('*', '').replace(GAME_OVER_MARKER, '').trim();
         
         if (!cleanMove) continue;
         
@@ -372,10 +374,12 @@ export function parseGhostPositions(moveNotation: string, currentPlayer: Color) 
             const pointNum = parseInt(fromStr);
             if (!isNaN(pointNum) && pointNum >= 1 && pointNum <= 24) {
                 const index = pointToIndex(opponent, pointNum);
-                if (opponent === Color.White) {
-                    ghosts[index].white++;
-                } else {
-                    ghosts[index].black++;
+                if (index >= 0 && index < 24) {
+                    if (opponent === Color.White) {
+                        ghosts[index].white++;
+                    } else {
+                        ghosts[index].black++;
+                    }
                 }
             }
             continue;
@@ -387,20 +391,24 @@ export function parseGhostPositions(moveNotation: string, currentPlayer: Color) 
         
         if (!isNaN(fromPoint) && fromPoint >= 1 && fromPoint <= 24) {
             const fromIndex = pointToIndex(opponent, fromPoint);
-            if (opponent === Color.White) {
-                ghosts[fromIndex].white++;
-            } else {
-                ghosts[fromIndex].black++;
+            if (fromIndex >= 0 && fromIndex < 24) {
+                if (opponent === Color.White) {
+                    ghosts[fromIndex].white++;
+                } else {
+                    ghosts[fromIndex].black++;
+                }
             }
         }
         
         // If hit, add ghost for the current player at the hit location
         if (isHit && !isNaN(toPoint) && toPoint >= 1 && toPoint <= 24) {
             const toIndex = pointToIndex(currentPlayer, toPoint);
-            if (currentPlayer === Color.White) {
-                ghosts[toIndex].white++;
-            } else {
-                ghosts[toIndex].black++;
+            if (toIndex >= 0 && toIndex < 24) {
+                if (currentPlayer === Color.White) {
+                    ghosts[toIndex].white++;
+                } else {
+                    ghosts[toIndex].black++;
+                }
             }
         }
     }
@@ -412,9 +420,15 @@ export function parseGhostPositions(moveNotation: string, currentPlayer: Color) 
  * Convert a point number (1-24) to a board index (0-23) based on player perspective
  * @param color The player color
  * @param point The point number (1-24)
- * @returns The board index (0-23)
+ * @returns The board index (0-23), or -1 if invalid
  */
 export function pointToIndex(color: Color, point: number): number {
+    // Validate input
+    if (!Number.isInteger(point) || point < 1 || point > 24) {
+        console.warn(`Invalid point number: ${point}. Expected integer between 1 and 24.`);
+        return -1;
+    }
+    
     if (color === Color.White) {
         if (point <= 12) {
             return 12 - point;
