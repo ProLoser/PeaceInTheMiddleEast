@@ -106,13 +106,6 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
         }
     }, []);
 
-    if (!user) return null;
-
-    const renderFriends: ReactNode[] = []
-    const friends: string[] = []
-
-    const NOW = new Date()
-
     const handleLoad = useCallback((userId: string | false) => {
         if (!user?.key) return;
         load(userId, user.key);
@@ -124,6 +117,13 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
         reset();
         toggle(false);
     }, [reset, toggle]);
+
+    if (!user) return null;
+
+    const renderFriends: ReactNode[] = []
+    const friends: string[] = []
+
+    const NOW = new Date()
 
     const row = (user: User, match?: Match) => 
         <li key={user.uid} onPointerUp={() => handleLoad(user.uid)}>

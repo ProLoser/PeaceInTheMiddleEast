@@ -42,7 +42,7 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
         onSelect(null)
         let from = event.dataTransfer?.getData("text")! as number|Color
         return move(from, position)
-    }, [move])
+    }, [move, onSelect, position])
 
     const color = pieces > 0 ? Color.White : Color.Black;
 
@@ -59,7 +59,7 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
         setDragging(false);
         setDragOver(false);
         onSelect(null);
-    }, []);
+    }, [onSelect]);
 
     const onPointerUp = useCallback(() => {
         if (dragging) return;
