@@ -173,18 +173,6 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
         }
     }
 
-    const enableNotifications = async () => {
-        setNotificationStatus('processing');
-        fcmTokenRef.current = await saveFcmToken();
-        if (fcmTokenRef.current) {
-            setHasFcmToken(!!fcmTokenRef.current);
-            setNotificationStatus(window.Notification?.permission ?? 'unsupported');
-            alert(t('notificationsEnabled'));
-        } else {
-            alert(t('notificationsFailed'));
-        }
-    };
-
     const handleNotificationClick = async (event: PointerEvent<HTMLAnchorElement>) => {
         event.preventDefault();
         
@@ -207,10 +195,18 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
                     }
                     break;
                 }
-                await enableNotifications();
-                break;
+                // fall-through
             case 'default':
-                await enableNotifications();
+
+                setNotificationStatus('processing');
+                fcmTokenRef.current = await saveFcmToken();
+                if (fcmTokenRef.current) {
+                    setHasFcmToken(!!fcmTokenRef.current);
+                    setNotificationStatus(window.Notification?.permission ?? 'unsupported');
+                    alert(t('notificationsEnabled'));
+                } else {
+                    alert(t('notificationsFailed'));
+                }
                 break;
             default:
                 console.error('Unknown notification status:', notificationStatus);
