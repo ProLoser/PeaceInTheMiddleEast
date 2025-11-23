@@ -70,12 +70,12 @@ export default function Login({ reset, friend, load }: LoginProps) {
             unregisterAuthObserver();
             firebaseUiWidget.reset();
         };
-    }, [firebaseui, uiConfig]);
+    }, [userSignedIn]);
 
     const decline = useCallback(() => {
         load()
         toggle(false)
-    }, [load]);
+    }, [load, toggle]);
 
     return (
         <section id="login">

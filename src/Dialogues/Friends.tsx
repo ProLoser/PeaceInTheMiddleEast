@@ -10,6 +10,7 @@ import 'firebase/compat/database';
 import { User, Match, SnapshotOrNullType, Modal } from '../Types';
 import Avatar from '../Avatar';
 import './Friends.css'
+import { classes } from '../Utils';
 import ToggleFullscreen from './ToggleFullscreen';
 import { saveFcmToken, clearFcmToken, getFcmToken } from '../firebase.config';
 import Version from './Version';
@@ -65,6 +66,8 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
                         ...users,
                         [userId]: friend.val()
                     }));
+                }).catch(error => {
+                    console.error('Error fetching user data:', error);
                 });
             })
         }
@@ -106,13 +109,6 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
         }
     }, []);
 
-    if (!user) return null;
-
-    const renderFriends: ReactNode[] = []
-    const friends: string[] = []
-
-    const NOW = new Date()
-
     const handleLoad = useCallback((userId: string | false) => {
         if (!user?.key) return;
         load(userId, user.key);
@@ -125,15 +121,23 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
         toggle(false);
     }, [reset, toggle]);
 
-    const row = (user: User, match?: Match) => 
-        <li key={user.uid} onPointerUp={() => handleLoad(user.uid)}>
-            <Avatar user={user} />
+    if (!user) return null;
+
+    const renderFriends: ReactNode[] = []
+    const friends: string[] = []
+
+    const NOW = new Date()
+
+    const row = (friend: User, match?: Match) => {
+        return <li key={friend.uid} className={classes({ pulsate: match?.turn === user?.key })} onPointerUp={() => handleLoad(friend.uid)}>
+            <Avatar user={friend} />
             <div>
-                <h3>{user.name}</h3>
+                <h3>{friend.name}</h3>
                 <time>{match?.sort && formatDistance(new Date(match.sort), NOW, { addSuffix: true })}</time>
                 {match?.lastMessage}
             </div>
         </li>
+    }
 
     const searchReject = (user: User) =>
         searchRef.current?.value

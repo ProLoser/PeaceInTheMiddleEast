@@ -139,12 +139,16 @@ export function App() {
       if (!isMyTurn || game.status !== Status.Rolling)
         return console.log("You cannot roll the dice twice in a row.");
 
-      firebase.database().ref(`games/${match.game}`).update({
+      const database = firebase.database();
+      database.ref(`games/${match.game}`).update({
         dice,
         color: game.color === Color.White ? Color.Black : Color.White,
         turn: user?.key,
         status: Status.Moving
       });
+      // Update turn in both matches
+      database.ref(`matches/${user?.key}/${friend?.key}`).update({ turn: user?.key });
+      database.ref(`matches/${friend?.key}/${user?.key}`).update({ turn: user?.key });
     } else { // local
       const nextColor = game.color === Color.White ? Color.Black : Color.White;
       setGame({
@@ -159,13 +163,19 @@ export function App() {
     navigator.vibrate?.(Vibrations.Dice);
     setUsedDice([]);
     setSelected(match && game.prison[game.color] ? -1 : null);
-  }, [match, game, isMyTurn]);
+  }, [match, game, isMyTurn, user, friend]);
 
   const moves = useMemo(() => {
     if (!isMyTurn || game.status !== Status.Moving)
       return new Set();
     return nextMoves(game, usedDice, selected!)
   }, [game, isMyTurn, usedDice, selected])
+
+  const sources = useMemo(() => {
+    if (!isMyTurn || game.status !== Status.Moving)
+      return new Set();
+    return nextMoves(game, usedDice)
+  }, [game, isMyTurn, usedDice])
 
   const ghostPositions = useMemo(() => {
     // Only show ghosts when it's my turn to roll the dice
@@ -187,14 +197,13 @@ export function App() {
     playCheckerSound()
     navigator.vibrate?.(Vibrations.Down)
     setGame(nextState)
+    setSelected(null)
     setUsedDice(prev => {
       const newUsedDice = [...prev, { value: usedDie!, label: moveLabel }];
-      // If the move ended the game and not all dice were used, publish the game state
+      // If the game ended, publish the game state immediately
       if (
         match &&
-        nextState.status === Status.GameOver &&
-        nextState.dice?.length &&
-        newUsedDice.length < nextState.dice.length
+        nextState.status === Status.GameOver
       ) {
         const time = new Date().toISOString();
         const moveLabels = newUsedDice.map(die => die.label).join(' ');
@@ -206,6 +215,7 @@ export function App() {
         };
         const update = {
           sort: time,
+          turn: true as const, // Game is over
         };
         const database = firebase.database();
         database.ref('moves').push(nextMove);
@@ -225,20 +235,18 @@ export function App() {
     if (event.dataTransfer) {
       let from = parseInt(event.dataTransfer.getData("text"))
       move(from, -1)
-      setSelected(null)
     }
-  }, [move, moves])
+  }, [move])
 
   const onHomeClick = useCallback(() => {
     if (selected !== null) {
       move(selected, -1);
-      setSelected(null);
     }
   }, [selected, move]);
 
   const onSelect = useCallback((position: number | null) => {
     setSelected(position)
-  }, [selected]) // this dependency is necessary for some reason
+  }, [])
 
   const friendData: User | undefined = useMemo(() => friend?.val(), [friend])
 
@@ -514,7 +522,7 @@ export function App() {
         </div>
         {game.board.map((pieces: number, index: number) =>
           <Point
-            enabled={!match || moves.has(index)}
+            enabled={!match || sources.has(index)}
             valid={moves.has(index)}
             key={index}
             pieces={pieces}

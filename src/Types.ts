@@ -44,6 +44,7 @@ export type Match = {
     lastChat?: number;
     lastMessage?: string;
     lastMove?: number;
+    turn?: User['uid'] | true; // User ID whose turn it is, or true if game is over
 }
 
 export type Move = {
