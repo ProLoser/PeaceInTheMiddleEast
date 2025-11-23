@@ -69,6 +69,8 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
                         ...users,
                         [userId]: friend.val()
                     }));
+                }).catch(error => {
+                    console.error('Error fetching user data:', error);
                 });
                 if (matchData?.game) {
                     firebase.database().ref(`games/${matchData.game}`).get().then((gameSnapshot: firebase.database.DataSnapshot) => {
@@ -78,6 +80,8 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
                                 [matchData.game]: gameSnapshot.val()
                             }));
                         }
+                    }).catch(error => {
+                        console.error('Error fetching game data:', error);
                     });
                 }
             })
