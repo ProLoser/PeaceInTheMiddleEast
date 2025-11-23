@@ -58,6 +58,9 @@
             align-items: center;
             margin-bottom: 1em;
             gap: 10px;
+            &.pulsate {
+                animation: pulsate 1s infinite ease-out alternate-reverse;
+            }
             div {
                 overflow: hidden;
             }

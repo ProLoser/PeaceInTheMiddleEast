@@ -81,3 +81,12 @@ body,
     background-color: #1a1a1a;
   }
 }
+
+@keyframes pulsate {
+  0% {
+    background-color: transparent;
+  }
+  100% {
+    background-color: lightgreen;
+  }
+}

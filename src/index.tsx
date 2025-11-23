@@ -137,12 +137,16 @@ export function App() {
       if (!isMyTurn || game.status !== Status.Rolling)
         return console.log("You cannot roll the dice twice in a row.");
 
-      firebase.database().ref(`games/${match.game}`).update({
+      const database = firebase.database();
+      database.ref(`games/${match.game}`).update({
         dice,
         color: game.color === Color.White ? Color.Black : Color.White,
         turn: user?.key,
         status: Status.Moving
       });
+      // Update turn in both matches
+      database.ref(`matches/${user?.key}/${friend?.key}`).update({ turn: user?.key });
+      database.ref(`matches/${friend?.key}/${user?.key}`).update({ turn: user?.key });
     } else { // local
       setGame({
         ...game,
@@ -155,7 +159,7 @@ export function App() {
     navigator.vibrate?.(Vibrations.Dice);
     setUsedDice([]);
     setSelected(match && game.prison[game.color] ? -1 : null);
-  }, [match, game, isMyTurn, user]);
+  }, [match, game, isMyTurn, user, friend]);
 
   const moves = useMemo(() => {
     if (!isMyTurn || game.status !== Status.Moving)
@@ -166,7 +170,7 @@ export function App() {
   const sources = useMemo(() => {
     if (!isMyTurn || game.status !== Status.Moving)
       return new Set();
-    return nextMoves(game, usedDice, null)
+    return nextMoves(game, usedDice)
   }, [game, isMyTurn, usedDice])
 
   const move = useCallback((from: number | Color, to: number) => {
@@ -194,6 +198,7 @@ export function App() {
         };
         const update = {
           sort: time,
+          turn: true as const, // Game is over
         };
         const database = firebase.database();
         database.ref('moves').push(nextMove);
@@ -357,6 +362,7 @@ export function App() {
       }
       const update = {
         sort: time,
+        turn: friend?.key, // Update whose turn it is
       };
       const database = firebase.database();
       const nextGame = {
