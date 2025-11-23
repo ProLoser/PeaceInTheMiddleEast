@@ -129,8 +129,7 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
     }, [reset, toggle]);
 
     const row = (friend: User, match?: Match) => {
-        const isMyTurn = match?.turn === user?.key;
-        return <li key={friend.uid} className={classes({ pulsate: isMyTurn })} onPointerUp={() => handleLoad(friend.uid)}>
+        return <li key={friend.uid} className={classes({ pulsate: match?.turn === user?.key })} onPointerUp={() => handleLoad(friend.uid)}>
             <Avatar user={friend} />
             <div>
                 <h3>{friend.name}</h3>
