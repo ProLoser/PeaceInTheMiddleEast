@@ -170,7 +170,10 @@ export function App() {
   const ghostPositions = useMemo(() => {
     // Only show ghosts when it's my turn to roll the dice
     if (!isMyTurn || game.status !== Status.Rolling || !lastMove) {
-      return Array.from({ length: 24 }, () => 0);
+      return { 
+        ghosts: Array.from({ length: 24 }, () => 0),
+        ghostHits: Array.from({ length: 24 }, () => 0)
+      };
     }
     // Use current color, default to White if not set (shouldn't happen with new logic)
     const currentColor = game.color || Color.White;
@@ -519,7 +522,8 @@ export function App() {
             position={index}
             selected={selected}
             onSelect={onSelect}
-            ghosts={ghostPositions[index]}
+            ghosts={ghostPositions.ghosts[index]}
+            ghostHit={ghostPositions.ghostHits[index]}
           />
         )}
       </div>

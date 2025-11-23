@@ -330,21 +330,24 @@ export const playCheckerSound = () => {
  * Example move: "6-6: 24/18 8/2*" means pieces moved from 24 to 18, and from 8 to 2 with a hit
  * @param moveNotation The move notation string (e.g., "6-6: 24/18 8/2*")
  * @param currentPlayer The current player color whose turn it is to roll
- * @returns An array of 24 elements where each element is a signed integer (positive for white ghost, negative for black ghost, 0 for no ghost)
+ * @returns An object with two arrays:
+ *   - ghosts: signed integers for regular ghost pieces (positive for white, negative for black, can have multiple)
+ *   - ghostHits: signed integers for hit ghost pieces (max one per point)
  */
 const GAME_OVER_MARKER = '(game over)';
 
 export function parseGhostPositions(moveNotation: string, currentPlayer: Color) {
     const ghosts: number[] = Array.from({ length: 24 }, () => 0);
+    const ghostHits: number[] = Array.from({ length: 24 }, () => 0);
     
-    if (!moveNotation) return ghosts;
+    if (!moveNotation) return { ghosts, ghostHits };
     
     // The opponent is the one who made the last move
     const opponent = currentPlayer === Color.White ? Color.Black : Color.White;
     
     // Extract the moves part after the colon (e.g., "24/18 8/2*")
     const colonIndex = moveNotation.indexOf(':');
-    if (colonIndex === -1) return ghosts;
+    if (colonIndex === -1) return { ghosts, ghostHits };
     
     const movesString = moveNotation.substring(colonIndex + 1).trim();
     const moves = movesString.split(' ');
@@ -375,10 +378,8 @@ export function parseGhostPositions(moveNotation: string, currentPlayer: Color) 
             if (!isNaN(pointNum) && pointNum >= 1 && pointNum <= 24) {
                 const index = pointToIndex(opponent, pointNum);
                 if (index >= 0 && index < 24) {
-                    // Only set if not already set (max one ghost per point)
-                    if (ghosts[index] === 0) {
-                        ghosts[index] = opponent === Color.White ? 1 : -1;
-                    }
+                    // Add to regular ghosts (can be multiple)
+                    ghosts[index] += opponent === Color.White ? 1 : -1;
                 }
             }
             continue;
@@ -391,10 +392,8 @@ export function parseGhostPositions(moveNotation: string, currentPlayer: Color) 
         if (!isNaN(fromPoint) && fromPoint >= 1 && fromPoint <= 24) {
             const fromIndex = pointToIndex(opponent, fromPoint);
             if (fromIndex >= 0 && fromIndex < 24) {
-                // Only set if not already set (max one ghost per point)
-                if (ghosts[fromIndex] === 0) {
-                    ghosts[fromIndex] = opponent === Color.White ? 1 : -1;
-                }
+                // Add to regular ghosts (can be multiple)
+                ghosts[fromIndex] += opponent === Color.White ? 1 : -1;
             }
         }
         
@@ -402,15 +401,15 @@ export function parseGhostPositions(moveNotation: string, currentPlayer: Color) 
         if (isHit && !isNaN(toPoint) && toPoint >= 1 && toPoint <= 24) {
             const toIndex = pointToIndex(currentPlayer, toPoint);
             if (toIndex >= 0 && toIndex < 24) {
-                // Only set if not already set (max one ghost per point)
-                if (ghosts[toIndex] === 0) {
-                    ghosts[toIndex] = currentPlayer === Color.White ? 1 : -1;
+                // Only set if not already set (max one hit ghost per point)
+                if (ghostHits[toIndex] === 0) {
+                    ghostHits[toIndex] = currentPlayer === Color.White ? 1 : -1;
                 }
             }
         }
     }
     
-    return ghosts;
+    return { ghosts, ghostHits };
 }
 
 /**
