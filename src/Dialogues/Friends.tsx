@@ -128,12 +128,12 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
         toggle(false);
     }, [reset, toggle]);
 
-    const row = (friendUser: User, match?: Match) => {
+    const row = (friend: User, match?: Match) => {
         const isMyTurn = match?.turn === user?.key;
-        return <li key={friendUser.uid} className={classes({ pulsate: isMyTurn })} onPointerUp={() => handleLoad(friendUser.uid)}>
-            <Avatar user={friendUser} />
+        return <li key={friend.uid} className={classes({ pulsate: isMyTurn })} onPointerUp={() => handleLoad(friend.uid)}>
+            <Avatar user={friend} />
             <div>
-                <h3>{friendUser.name}</h3>
+                <h3>{friend.name}</h3>
                 <time>{match?.sort && formatDistance(new Date(match.sort), NOW, { addSuffix: true })}</time>
                 {match?.lastMessage}
             </div>
