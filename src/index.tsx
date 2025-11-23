@@ -167,6 +167,12 @@ export function App() {
     return nextMoves(game, usedDice, selected!)
   }, [game, isMyTurn, usedDice, selected])
 
+  const sources = useMemo(() => {
+    if (!isMyTurn || game.status !== Status.Moving)
+      return new Set();
+    return nextMoves(game, usedDice)
+  }, [game, isMyTurn, usedDice])
+
   const move = useCallback((from: number | Color, to: number) => {
     if (match && (!moves.has(to) || game.status !== Status.Moving)) return;
     const { state: nextState, moveLabel, usedDie } = calculate(game, from, to, usedDice)
@@ -174,14 +180,13 @@ export function App() {
     playCheckerSound()
     navigator.vibrate?.(Vibrations.Down)
     setGame(nextState)
+    setSelected(null)
     setUsedDice(prev => {
       const newUsedDice = [...prev, { value: usedDie!, label: moveLabel }];
-      // If the move ended the game and not all dice were used, publish the game state
+      // If the game ended, publish the game state immediately
       if (
         match &&
-        nextState.status === Status.GameOver &&
-        nextState.dice?.length &&
-        newUsedDice.length < nextState.dice.length
+        nextState.status === Status.GameOver
       ) {
         const time = new Date().toISOString();
         const moveLabels = newUsedDice.map(die => die.label).join(' ');
@@ -213,20 +218,18 @@ export function App() {
     if (event.dataTransfer) {
       let from = parseInt(event.dataTransfer.getData("text"))
       move(from, -1)
-      setSelected(null)
     }
-  }, [move, moves])
+  }, [move])
 
   const onHomeClick = useCallback(() => {
     if (selected !== null) {
       move(selected, -1);
-      setSelected(null);
     }
   }, [selected, move]);
 
   const onSelect = useCallback((position: number | null) => {
     setSelected(position)
-  }, [selected]) // this dependency is necessary for some reason
+  }, [])
 
   const friendData: User | undefined = useMemo(() => friend?.val(), [friend])
 
@@ -441,7 +444,7 @@ export function App() {
         </div>
         {game.board.map((pieces: number, index: number) =>
           <Point
-            enabled={!match || moves.has(index)}
+            enabled={!match || sources.has(index)}
             valid={moves.has(index)}
             key={index}
             pieces={pieces}

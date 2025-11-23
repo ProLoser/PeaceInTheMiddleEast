@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { type User } from '../Types';
 import Avatar from '../Avatar';
+import RestartAltIcon from '@material-design-icons/svg/filled/restart_alt.svg?react';
 
 interface GameoverProps {
   user: User;
@@ -15,7 +16,10 @@ export default function Gameover({ user, reset }: GameoverProps) {
       <h1>{t('gameover')}</h1>
       <Avatar user={user} />
       <p>{t('winner', { name: user.name })}</p>
-      <button onClick={reset}>{t('reset')}</button>
+      <button className="dialog-button" onClick={reset}>
+        <RestartAltIcon className="material-icons-svg notranslate" />
+        {t('reset')}
+      </button>
     </div>
   );
 }

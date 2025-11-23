@@ -70,12 +70,12 @@ export default function Login({ reset, friend, load }: LoginProps) {
             unregisterAuthObserver();
             firebaseUiWidget.reset();
         };
-    }, [firebaseui, uiConfig]);
+    }, [userSignedIn]);
 
     const decline = useCallback(() => {
         load()
         toggle(false)
-    }, [load]);
+    }, [load, toggle]);
 
     return (
         <section id="login">
@@ -119,7 +119,7 @@ export default function Login({ reset, friend, load }: LoginProps) {
             {friend ?
                 <>
                     <hr />
-                    <button className="local" onPointerUp={decline}>
+                    <button className="dialog-button" onPointerUp={decline}>
                         <CancelIcon className="material-icons-svg notranslate" />
                         {t('decline')}
                     </button>
