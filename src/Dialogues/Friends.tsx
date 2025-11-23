@@ -7,9 +7,10 @@ import { DialogContext } from '.';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/database';
-import { User, Match, SnapshotOrNullType, Modal } from '../Types';
+import { User, Match, SnapshotOrNullType, Modal, Game } from '../Types';
 import Avatar from '../Avatar';
 import './Friends.css'
+import { classes } from '../Utils';
 import ToggleFullscreen from './ToggleFullscreen';
 import { saveFcmToken, clearFcmToken, getFcmToken } from '../firebase.config';
 import Version from './Version';
@@ -27,6 +28,7 @@ import LogoutIcon from '@material-design-icons/svg/filled/logout.svg?react';
 import LocalIcon from '@material-design-icons/svg/filled/location_on.svg?react';
 
 type Users = { [key: string]: User }
+type Games = { [gameId: string]: Game }
 
 type FriendsProps = {
     user: SnapshotOrNullType;
@@ -44,6 +46,7 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
     const searchRef = useRef<HTMLInputElement>(null);
     const fcmTokenRef = useRef<string | undefined>(undefined);
     const [users, setUsers] = useState<Users>({});
+    const [games, setGames] = useState<Games>({});
     const [isExpanded, setIsExpanded] = useState(false);
     const [matches, setMatches] = useState<firebase.database.DataSnapshot | null>(null);
     const [searchResults, setSearchResults] = useState<firebase.database.DataSnapshot | null>(null);
@@ -60,12 +63,23 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
             setMatches(snapshot);
             snapshot.forEach(match => {
                 const userId = match.key;
+                const matchData: Match = match.val();
                 firebase.database().ref(`users/${userId}`).get().then((friend: firebase.database.DataSnapshot) => {
                     setUsers(users => ({
                         ...users,
                         [userId]: friend.val()
                     }));
                 });
+                if (matchData?.game) {
+                    firebase.database().ref(`games/${matchData.game}`).get().then((gameSnapshot: firebase.database.DataSnapshot) => {
+                        if (gameSnapshot.exists()) {
+                            setGames(games => ({
+                                ...games,
+                                [matchData.game]: gameSnapshot.val()
+                            }));
+                        }
+                    });
+                }
             })
         }
         queryMatches.on('value', matchesSubscriber);
@@ -125,15 +139,18 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
         toggle(false);
     }, [reset, toggle]);
 
-    const row = (user: User, match?: Match) => 
-        <li key={user.uid} onPointerUp={() => handleLoad(user.uid)}>
-            <Avatar user={user} />
+    const row = (friendUser: User, match?: Match) => {
+        const game = match?.game ? games[match.game] : undefined;
+        const isMyTurn = game?.turn === user?.key;
+        return <li key={friendUser.uid} className={classes({ pulsate: isMyTurn })} onPointerUp={() => handleLoad(friendUser.uid)}>
+            <Avatar user={friendUser} />
             <div>
-                <h3>{user.name}</h3>
+                <h3>{friendUser.name}</h3>
                 <time>{match?.sort && formatDistance(new Date(match.sort), NOW, { addSuffix: true })}</time>
                 {match?.lastMessage}
             </div>
         </li>
+    }
 
     const searchReject = (user: User) =>
         searchRef.current?.value
