@@ -15,7 +15,7 @@ import Toolbar from './Board/Toolbar';
 import './index.css'
 import './Board/Board.css';
 import './Board/Toolbar.css'
-import { calculate, newGame, nextMoves, rollDie, Vibrations, playAudio, classes } from './Utils';
+import { calculate, newGame, nextMoves, rollDie, Vibrations, playAudio, classes, parseGhostsFromMove } from './Utils';
 import firebase from "./firebase.config";
 import { playCheckerSound } from './Utils';
 import type firebaseType from 'firebase/compat/app';
@@ -45,6 +45,7 @@ export function App() {
   const [friend, setFriend] = useState<SnapshotOrNullType>(null);
   const [selected, setSelected] = useState<number | null>(null);
   const [usedDice, setUsedDice] = useState<UsedDie[]>([]);
+  const [lastOpponentMove, setLastOpponentMove] = useState<string>('');
   const hadMatchRef = useRef(false);
 
   const load = useCallback(async (friendId?: string | false, authUserUid?: string) => {
@@ -341,6 +342,34 @@ export function App() {
     }
   }, [match, user]);
 
+  useEffect(() => {
+    if (match && user?.key && friend?.key) {
+      const movesRef = firebase.database().ref('moves')
+        .orderByChild('friend')
+        .equalTo(user.key)
+        .limitToLast(1);
+      
+      const onValue = (snapshot: firebaseType.database.DataSnapshot) => {
+        if (snapshot.exists()) {
+          snapshot.forEach((childSnapshot) => {
+            const move = childSnapshot.val() as Move;
+            if (move.player === friend.key) {
+              setLastOpponentMove(move.move || '');
+            }
+            return false;
+          });
+        }
+      };
+      
+      movesRef.on('value', onValue);
+      return () => {
+        movesRef.off('value', onValue);
+      };
+    } else {
+      setLastOpponentMove('');
+    }
+  }, [match, user, friend]);
+
   useEffect(() => { // usedDice observer to publish moves
     if (
       match
@@ -384,6 +413,14 @@ export function App() {
     if (game.turn === friend?.key) return friend?.val();
     return undefined
   }, [game.status, game.turn, user, friend])
+
+  const ghostData = useMemo(() => {
+    if (!match || !isMyTurn || game.status !== Status.Rolling || !lastOpponentMove || !game.color) {
+      return { ghosts: [], ghostHit: null };
+    }
+    const opponentColor = game.color === Color.White ? Color.Black : Color.White;
+    return parseGhostsFromMove(lastOpponentMove, opponentColor);
+  }, [match, isMyTurn, game.status, game.color, lastOpponentMove]);
 
   return (
     <Dialogues
@@ -442,18 +479,25 @@ export function App() {
             <Piece key={index} color={Color.White} />
           )}
         </div>
-        {game.board.map((pieces: number, index: number) =>
-          <Point
-            enabled={!match || sources.has(index)}
-            valid={moves.has(index)}
-            key={index}
-            pieces={pieces}
-            move={move}
-            position={index}
-            selected={selected}
-            onSelect={onSelect}
-          />
-        )}
+        {game.board.map((pieces: number, index: number) => {
+          const ghostCount = ghostData.ghosts.filter(g => g === index).length;
+          const ghostSign = game.color === Color.White ? -1 : 1;
+          const isGhostHit = ghostData.ghostHit === index;
+          return (
+            <Point
+              enabled={!match || sources.has(index)}
+              valid={moves.has(index)}
+              key={index}
+              pieces={pieces}
+              move={move}
+              position={index}
+              selected={selected}
+              onSelect={onSelect}
+              ghosts={ghostCount > 0 ? ghostCount * ghostSign : 0}
+              ghostHit={isGhostHit ? ghostSign : 0}
+            />
+          );
+        })}
       </div>
     </Dialogues>
   );

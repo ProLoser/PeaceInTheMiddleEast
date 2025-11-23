@@ -74,6 +74,22 @@ export const indexToPoint = (color: Color, index: number) =>
             index < 12 ?
                 index + 13 : 24 - index
 
+export const pointToIndex = (color: Color, point: number) => {
+    if (color === Color.White) {
+        if (point <= 12) {
+            return 12 - point;
+        } else {
+            return point - 1;
+        }
+    } else {
+        if (point > 12) {
+            return 24 - point;
+        } else {
+            return point + 11;
+        }
+    }
+}
+
 export const populated = (player: Color, pieces: number) => PLAYER_SIGN[player] * pieces > 0
 export const unprotected = (player: Color, pieces: number) => PLAYER_SIGN[player] * pieces >= -1;
 export const allHome = (player: Color, state: Game) => 
@@ -323,4 +339,60 @@ export const playCheckerSound = () => {
   const randomMp3 = checkerSounds[randomIndex];
   const audio = audioCache[randomMp3];
   playAudio(audio);
+};
+
+export type GhostData = {
+  ghosts: number[];
+  ghostHit: number | null;
+};
+
+export const parseGhostsFromMove = (moveNotation: string, opponentColor: Color): GhostData => {
+  const ghosts: number[] = [];
+  let ghostHit: number | null = null;
+
+  if (!moveNotation) {
+    return { ghosts, ghostHit };
+  }
+
+  const parts = moveNotation.split(':');
+  if (parts.length < 2) {
+    return { ghosts, ghostHit };
+  }
+
+  const movePart = parts[1].trim();
+  const moves = movePart.split(/\s+/);
+
+  moves.forEach(move => {
+    const isHit = move.endsWith('*');
+    const cleanMove = move.replace(/\*$/, '');
+    const [from, to] = cleanMove.split('/');
+
+    if (from === 'bar') {
+      return;
+    }
+
+    if (to === 'off') {
+      const point = parseInt(from);
+      if (!isNaN(point)) {
+        const index = pointToIndex(opponentColor, point);
+        ghosts.push(index);
+      }
+      return;
+    }
+
+    const fromPoint = parseInt(from);
+    if (!isNaN(fromPoint)) {
+      const fromIndex = pointToIndex(opponentColor, fromPoint);
+      ghosts.push(fromIndex);
+
+      if (isHit) {
+        const toPoint = parseInt(to);
+        if (!isNaN(toPoint)) {
+          ghostHit = pointToIndex(opponentColor, toPoint);
+        }
+      }
+    }
+  });
+
+  return { ghosts, ghostHit };
 };

@@ -11,20 +11,29 @@ type PieceProps = {
     color: Color,
     position?: number,
     onSelect?: (position: number|null) => void,
-    enabled?: boolean
+    enabled?: boolean,
+    isGhost?: boolean,
+    isHit?: boolean
 }
 
-const Piece = forwardRef<HTMLImageElement, PieceProps>(({ color, position, onSelect, enabled = false }, ref) => {
+const Piece = forwardRef<HTMLImageElement, PieceProps>(({ color, position, onSelect, enabled = false, isGhost = false, isHit = false }, ref) => {
     const onDragStart: DragEventHandler = useCallback(event => {
+        if (isGhost) {
+            event.preventDefault();
+            return;
+        }
         if (position === -1) { // bar
             navigator.vibrate?.(Vibrations.Up)
             event.dataTransfer?.setData('text', color)
             onSelect!(-1)
         }
-    }, [position, color, onSelect]);
+    }, [position, color, onSelect, isGhost]);
     
-    return <div className={`piece ${color}`} onDragStart={onDragStart} draggable={enabled}>
-        <img ref={ref} src={IMAGES[color]} onContextMenu={event => event.preventDefault()} draggable={enabled} />
+    const className = isGhost ? `piece ${color} ghost${isHit ? ' hit' : ''}` : `piece ${color}`;
+    const isDraggable = enabled && !isGhost;
+    
+    return <div className={className} onDragStart={onDragStart} draggable={isDraggable}>
+        <img ref={ref} src={IMAGES[color]} onContextMenu={event => event.preventDefault()} draggable={isDraggable} />
     </div>
 })
 
