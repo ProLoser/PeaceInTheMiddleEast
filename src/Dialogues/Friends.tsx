@@ -198,10 +198,19 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
                         alert(t('notificationsDisabled'));
                     }
                     break;
+                } else {
+                    setNotificationStatus('processing');
+                    fcmTokenRef.current = await saveFcmToken();
+                    if (fcmTokenRef.current) {
+                        setHasFcmToken(!!fcmTokenRef.current);
+                        setNotificationStatus(window.Notification?.permission ?? 'unsupported');
+                        alert(t('notificationsEnabled'));
+                    } else {
+                        alert(t('notificationsFailed'));
+                    }
+                    break;
                 }
-                // fall-through
             case 'default':
-
                 setNotificationStatus('processing');
                 fcmTokenRef.current = await saveFcmToken();
                 if (fcmTokenRef.current) {
