@@ -11,7 +11,7 @@ type PointProps = {
     onSelect: (position: number | null) => void,
     enabled: boolean,
     valid: boolean,
-    ghosts?: { white: number, black: number }
+    ghosts?: number
 }
 
 export default function Point({ pieces, move, position, onSelect, selected, enabled, valid, ghosts }: PointProps) {
@@ -93,15 +93,13 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
                 enabled={enabled}
             />
         )}
-        {ghosts && [Color.White, Color.Black].map(ghostColor => 
-            ghosts[ghostColor] > 0 && Array.from({ length: ghosts[ghostColor] }, (_, index) => 
-                <Piece 
-                    key={`ghost-${ghostColor}-${index}`} 
-                    color={ghostColor} 
-                    position={position} 
-                    ghost={true}
-                />
-            )
+        {ghosts && ghosts !== 0 && (
+            <Piece 
+                key={`ghost-${ghosts > 0 ? 'white' : 'black'}`} 
+                color={ghosts > 0 ? Color.White : Color.Black} 
+                position={position} 
+                ghost={true}
+            />
         )}
     </div>
 }

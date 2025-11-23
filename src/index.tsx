@@ -170,7 +170,7 @@ export function App() {
   const ghostPositions = useMemo(() => {
     // Only show ghosts when it's my turn to roll the dice
     if (!isMyTurn || game.status !== Status.Rolling || !lastMove) {
-      return Array.from({ length: 24 }, () => ({ white: 0, black: 0 }));
+      return Array.from({ length: 24 }, () => 0);
     }
     // Use current color, default to White if not set (shouldn't happen with new logic)
     const currentColor = game.color || Color.White;

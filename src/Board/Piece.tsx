@@ -3,7 +3,7 @@ import black from './images/piece-black-2.png';
 import white from './images/piece-white-2.png';
 import './Piece.css'
 import { Color } from "../Types";
-import { Vibrations } from "../Utils";
+import { Vibrations, classes } from "../Utils";
 
 const IMAGES = { black, white }
 
@@ -24,7 +24,7 @@ const Piece = forwardRef<HTMLImageElement, PieceProps>(({ color, position, onSel
         }
     }, [position, color, onSelect]);
     
-    return <div className={`piece ${color}${ghost ? ' ghost' : ''}`} onDragStart={onDragStart} draggable={enabled && !ghost}>
+    return <div className={classes('piece', color, { ghost })} onDragStart={onDragStart} draggable={enabled && !ghost}>
         <img ref={ref} src={IMAGES[color]} onContextMenu={event => event.preventDefault()} draggable={enabled && !ghost} />
     </div>
 })
