@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #f0f0f0;
+    padding: 20px;
+}
+.demo-section {
+    background: white;
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.piece-container {
+    display: inline-block;
+    margin: 10px 20px;
+    text-align: center;
+}
+.piece {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    margin: 5px;
+    display: inline-block;
+    position: relative;
+}
+.piece.white {
+    background: radial-gradient(circle at 30% 30%, #ffffff, #e0e0e0);
+    border: 2px solid #333;
+}
+.piece.black {
+    background: radial-gradient(circle at 30% 30%, #4a4a4a, #000000);
+}
+.piece.ghost {
+    opacity: 0.5;
+}
+.point-demo {
+    display: inline-block;
+    background: #d4a574;
+    padding: 15px;
+    margin: 10px;
+    border-radius: 8px;
+    vertical-align: top;
+    min-width: 80px;
+}
+.stacked .piece {
+    margin-top: -40px;
+}
+.stacked .piece:first-child {
+    margin-top: 0;
+}
+h2 {
+    color: #333;
+}
+h3 {
+    color: #666;
+    font-size: 14px;
+    margin: 10px 0 5px 0;
+}
+</style>
+</head>
+<body>
+<h1>🎲 Backgammon Ghost Pieces Feature</h1>
+
+<div class="demo-section">
+    <h2>1. Regular vs Ghost Pieces</h2>
+    <div class="piece-container">
+        <div class="piece black"></div>
+        <h3>Regular Piece<br/>(100% opacity)</h3>
+    </div>
+    <div class="piece-container">
+        <div class="piece black ghost"></div>
+        <h3>Ghost Piece<br/>(50% opacity)</h3>
+    </div>
+    <div class="piece-container">
+        <div class="piece white"></div>
+        <h3>Regular White</h3>
+    </div>
+    <div class="piece-container">
+        <div class="piece white ghost"></div>
+        <h3>Ghost White</h3>
+    </div>
+</div>
+
+<div class="demo-section">
+    <h2>2. Ghost Pieces on Points</h2>
+    <div class="point-demo">
+        <h3>Point with 1 Ghost</h3>
+        <div class="piece black ghost"></div>
+    </div>
+    <div class="point-demo">
+        <h3>Regular + Ghost Stacked</h3>
+        <div class="stacked">
+            <div class="piece black"></div>
+            <div class="piece black"></div>
+            <div class="piece black ghost"></div>
+        </div>
+    </div>
+    <div class="point-demo">
+        <h3>Two Color Ghosts</h3>
+        <div class="stacked">
+            <div class="piece white ghost"></div>
+            <div class="piece black ghost"></div>
+        </div>
+    </div>
+</div>
+
+<div class="demo-section">
+    <h2>3. Hit Scenario</h2>
+    <p>When a piece is hit, both the attacker's source position and the defender's hit position show ghosts:</p>
+    <div class="point-demo">
+        <h3>Attacker's Source</h3>
+        <div class="piece white ghost"></div>
+    </div>
+    <div class="point-demo">
+        <h3>Hit Location</h3>
+        <div class="stacked">
+            <div class="piece white"></div>
+            <div class="piece black ghost"></div>
+        </div>
+    </div>
+</div>
+
+<div class="demo-section">
+    <h2>4. When Ghost Pieces Appear</h2>
+    <ul>
+        <li>✅ Only when it's your turn to <strong>roll the dice</strong></li>
+        <li>✅ After opponent completes their turn</li>
+        <li>✅ Shows where pieces moved <strong>from</strong> in the last turn</li>
+        <li>✅ Disappears when you roll the dice</li>
+        <li>❌ Not shown during piece movement</li>
+        <li>❌ Not shown when it's opponent's turn</li>
+    </ul>
+</div>
+
+<div class="demo-section">
+    <h2>5. Implementation Details</h2>
+    <pre style="background: #f5f5f5; padding: 15px; border-radius: 4px; overflow-x: auto;">
+CSS:
+.piece.ghost img {
+    opacity: 0.5;
+}
+
+React Props:
+&lt;Piece color={Color.Black} ghost={true} /&gt;
+
+Point Props:
+&lt;Point ghosts={{ white: 1, black: 0 }} /&gt;
+    </pre>
+</div>
+
+</body>
+</html>
