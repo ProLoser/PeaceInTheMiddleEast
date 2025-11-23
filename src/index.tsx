@@ -185,8 +185,8 @@ export function App() {
         ghostHits: Array.from({ length: 24 }, () => 0)
       };
     }
-    // Use current color, default to White if not set (shouldn't happen with new logic)
-    const currentColor = game.color || Color.White;
+    // Use the color of the player whose turn it is to roll (opposite of game.color)
+    const currentColor = game.color === Color.White ? Color.Black : Color.White;
     return parseGhostPositions(lastMove.move, currentColor);
   }, [isMyTurn, game.status, game.color, lastMove])
 
@@ -359,7 +359,7 @@ export function App() {
   }, [match, user]);
 
   useEffect(() => { // last move observer
-    if (match && user?.key && friend?.key) {
+    if (match && user?.key) {
       const movesRef = firebase.database().ref('moves');
       // Query the last 50 moves and filter client-side
       // Note: This approach is acceptable because:
@@ -381,8 +381,8 @@ export function App() {
         const movesArray = Object.entries(moves)
           .map(([_key, move]) => move)
           .filter(move => 
-            (move.player === user.key && move.friend === friend.key) ||
-            (move.player === friend.key && move.friend === user.key)
+            (move.player === user.key && move.friend === match.game) ||
+            (move.player === match.game && move.friend === user.key)
           )
           .sort((a, b) => b.time.localeCompare(a.time));
         
@@ -400,7 +400,7 @@ export function App() {
     } else {
       setLastMove(null);
     }
-  }, [match, user, friend]);
+  }, [match, user]);
 
   useEffect(() => { // usedDice observer to publish moves
     if (
@@ -438,8 +438,6 @@ export function App() {
         database.ref(`matches/${friend?.key}/${user?.key}`).update(update);
       } else if (!match) {
         // Offline game - just update local state and store move
-        // Alternate color for offline games
-        const nextColor = game.color === Color.White ? Color.Black : Color.White;
         setLastMove({
           player: 'local',
           move: moveNotation,
@@ -449,7 +447,6 @@ export function App() {
         setGame({
           ...game,
           status: Status.Rolling,
-          color: nextColor,
         });
       }
       setUsedDice([])

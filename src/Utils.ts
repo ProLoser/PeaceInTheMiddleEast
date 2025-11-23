@@ -432,9 +432,9 @@ export function pointToIndex(color: Color, point: number): number {
         }
     } else { // Black
         if (point <= 12) {
-            return point + 11;
-        } else {
             return 24 - point;
+        } else {
+            return point - 13;
         }
     }
 }
