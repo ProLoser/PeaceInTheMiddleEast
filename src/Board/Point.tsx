@@ -10,10 +10,11 @@ type PointProps = {
     selected: number | null,
     onSelect: (position: number | null) => void,
     enabled: boolean,
-    valid: boolean
+    valid: boolean,
+    ghosts?: { white: number, black: number }
 }
 
-export default function Point({ pieces, move, position, onSelect, selected, enabled, valid }: PointProps) {
+export default function Point({ pieces, move, position, onSelect, selected, enabled, valid, ghosts }: PointProps) {
     const [dragging, setDragging] = useState(false);
     const [dragOver, setDragOver] = useState(false);
     const pieceRef = useRef<HTMLImageElement>(null);
@@ -90,6 +91,22 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
                 position={position} 
                 onSelect={onSelect} 
                 enabled={enabled}
+            />
+        )}
+        {ghosts && ghosts.white > 0 && Array.from({ length: ghosts.white }, (_, index) => 
+            <Piece 
+                key={`ghost-white-${index}`} 
+                color={Color.White} 
+                position={position} 
+                ghost={true}
+            />
+        )}
+        {ghosts && ghosts.black > 0 && Array.from({ length: ghosts.black }, (_, index) => 
+            <Piece 
+                key={`ghost-black-${index}`} 
+                color={Color.Black} 
+                position={position} 
+                ghost={true}
             />
         )}
     </div>

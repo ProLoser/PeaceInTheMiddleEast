@@ -15,7 +15,7 @@ import Toolbar from './Board/Toolbar';
 import './index.css'
 import './Board/Board.css';
 import './Board/Toolbar.css'
-import { calculate, newGame, nextMoves, rollDie, Vibrations, playAudio, classes } from './Utils';
+import { calculate, newGame, nextMoves, rollDie, Vibrations, playAudio, classes, parseGhostPositions } from './Utils';
 import firebase from "./firebase.config";
 import { playCheckerSound } from './Utils';
 import type firebaseType from 'firebase/compat/app';
@@ -45,6 +45,7 @@ export function App() {
   const [friend, setFriend] = useState<SnapshotOrNullType>(null);
   const [selected, setSelected] = useState<number | null>(null);
   const [usedDice, setUsedDice] = useState<UsedDie[]>([]);
+  const [lastMove, setLastMove] = useState<Move | null>(null);
   const hadMatchRef = useRef(false);
 
   const load = useCallback(async (friendId?: string | false, authUserUid?: string) => {
@@ -120,6 +121,7 @@ export function App() {
       setGame(data);
       setUsedDice([]);
       setSelected(null);
+      setLastMove(null);
     }
   }, [match, t]);
 
@@ -162,6 +164,16 @@ export function App() {
       return new Set();
     return nextMoves(game, usedDice, selected!)
   }, [game, isMyTurn, usedDice, selected])
+
+  const ghostPositions = useMemo(() => {
+    // Only show ghosts when it's my turn to roll the dice
+    if (!isMyTurn || game.status !== Status.Rolling || !lastMove) {
+      return Array.from({ length: 24 }, () => ({ white: 0, black: 0 }));
+    }
+    // For offline games, we don't have game.color, so we use White as default
+    const currentColor = game.color || Color.White;
+    return parseGhostPositions(lastMove.move, currentColor);
+  }, [isMyTurn, game.status, game.color, lastMove])
 
   const move = useCallback((from: number | Color, to: number) => {
     if (match && (!moves.has(to) || game.status !== Status.Moving)) return;
@@ -333,11 +345,48 @@ export function App() {
     }
   }, [match, user]);
 
+  useEffect(() => { // last move observer
+    if (match && user?.key && friend?.key) {
+      const movesRef = firebase.database().ref('moves');
+      // Query the last move involving these two players
+      const query = movesRef
+        .orderByChild('time')
+        .limitToLast(50); // Get last 50 moves to find the most recent one between these players
+      
+      const onValue = (snapshot: firebaseType.database.DataSnapshot) => {
+        if (!snapshot.exists()) {
+          setLastMove(null);
+          return;
+        }
+        
+        const moves: { [key: string]: Move } = snapshot.val();
+        const movesArray = Object.entries(moves)
+          .map(([_key, move]) => move)
+          .filter(move => 
+            (move.player === user.key && move.friend === friend.key) ||
+            (move.player === friend.key && move.friend === user.key)
+          )
+          .sort((a, b) => b.time.localeCompare(a.time));
+        
+        if (movesArray.length > 0) {
+          setLastMove(movesArray[0]);
+        } else {
+          setLastMove(null);
+        }
+      };
+      
+      query.on('value', onValue);
+      return () => {
+        query.off('value', onValue);
+      };
+    } else {
+      setLastMove(null);
+    }
+  }, [match, user, friend]);
+
   useEffect(() => { // usedDice observer to publish moves
     if (
-      match
-      && isMyTurn
-      && game.status === Status.Moving
+      game.status === Status.Moving
       && game.dice?.length 
       && (
         usedDice.length === game.dice.length
@@ -346,25 +395,42 @@ export function App() {
     ) {
       const time = new Date().toISOString();
       const moveLabels = usedDice.map(die => die.label).join(' ');
-      const nextMove: Move = {
-        player: user?.key!,
-        move: `${game.dice.join("-")}: ${moveLabels}`,
-        time,
-        friend: friend?.key!,
+      const moveNotation = `${game.dice.join("-")}: ${moveLabels}`;
+      
+      if (match && isMyTurn) {
+        // Online game - publish to database
+        const nextMove: Move = {
+          player: user?.key!,
+          move: moveNotation,
+          time,
+          friend: friend?.key!,
+        }
+        const update = {
+          sort: time,
+        };
+        const database = firebase.database();
+        const nextGame = {
+          ...game,
+          status: Status.Rolling,
+          turn: friend?.key
+        }
+        database.ref('moves').push(nextMove)
+        database.ref(`games/${match.game}`).set(nextGame)
+        database.ref(`matches/${user?.key}/${friend?.key}`).update(update);
+        database.ref(`matches/${friend?.key}/${user?.key}`).update(update);
+      } else if (!match) {
+        // Offline game - just update local state and store move
+        setLastMove({
+          player: 'local',
+          move: moveNotation,
+          time,
+          friend: 'local',
+        });
+        setGame({
+          ...game,
+          status: Status.Rolling,
+        });
       }
-      const update = {
-        sort: time,
-      };
-      const database = firebase.database();
-      const nextGame = {
-        ...game,
-        status: Status.Rolling,
-        turn: friend?.key
-      }
-      database.ref('moves').push(nextMove)
-      database.ref(`games/${match.game}`).set(nextGame)
-      database.ref(`matches/${user?.key}/${friend?.key}`).update(update);
-      database.ref(`matches/${friend?.key}/${user?.key}`).update(update);
       setUsedDice([])
     }
   }, [usedDice, game, match, friend, user, moves, selected, isMyTurn]);
@@ -443,6 +509,7 @@ export function App() {
             position={index}
             selected={selected}
             onSelect={onSelect}
+            ghosts={ghostPositions[index]}
           />
         )}
       </div>
