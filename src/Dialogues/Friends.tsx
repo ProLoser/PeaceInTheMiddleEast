@@ -7,7 +7,7 @@ import { DialogContext } from '.';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/database';
-import { User, Match, SnapshotOrNullType, Modal, Game } from '../Types';
+import { User, Match, SnapshotOrNullType, Modal, Game, Status } from '../Types';
 import Avatar from '../Avatar';
 import './Friends.css'
 import { classes } from '../Utils';
@@ -141,7 +141,7 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
 
     const row = (friendUser: User, match?: Match) => {
         const game = match?.game ? games[match.game] : undefined;
-        const isMyTurn = game?.turn === user?.key;
+        const isMyTurn = game?.turn === user?.key && game?.status !== Status.GameOver;
         return <li key={friendUser.uid} className={classes({ pulsate: isMyTurn })} onPointerUp={() => handleLoad(friendUser.uid)}>
             <Avatar user={friendUser} />
             <div>
