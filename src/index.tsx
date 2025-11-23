@@ -176,6 +176,7 @@ export function App() {
     playCheckerSound()
     navigator.vibrate?.(Vibrations.Down)
     setGame(nextState)
+    setSelected(null)
     setUsedDice(prev => {
       const newUsedDice = [...prev, { value: usedDie!, label: moveLabel }];
       // If the game ended, publish the game state immediately
@@ -212,14 +213,12 @@ export function App() {
     if (event.dataTransfer) {
       let from = parseInt(event.dataTransfer.getData("text"))
       move(from, -1)
-      setSelected(null)
     }
   }, [move])
 
   const onHomeClick = useCallback(() => {
     if (selected !== null) {
       move(selected, -1);
-      setSelected(null);
     }
   }, [selected, move]);
 

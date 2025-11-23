@@ -39,7 +39,6 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
     const onDrop: DragEventHandler = useCallback((event) => {
         event.preventDefault();
         setDragOver(false);
-        onSelect(null)
         let from = event.dataTransfer?.getData("text")! as number|Color
         return move(from, position)
     }, [move, onSelect, position])
@@ -64,7 +63,6 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
     const onPointerUp = useCallback(() => {
         if (dragging) return;
         if (selected !== null) {
-            onSelect(null)
             move(selected, position)
         } else if (enabled) {
             navigator.vibrate?.(Vibrations.Up)
