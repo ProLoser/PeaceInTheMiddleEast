@@ -494,7 +494,7 @@ export function App() {
               selected={selected}
               onSelect={onSelect}
               ghosts={ghostCount > 0 ? ghostCount * ghostSign : 0}
-              ghostHit={isGhostHit ? ghostSign : 0}
+              ghostHit={isGhostHit ? -ghostSign : 0}
             />
           );
         })}
