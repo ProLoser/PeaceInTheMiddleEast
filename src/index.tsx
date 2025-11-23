@@ -359,7 +359,7 @@ export function App() {
   }, [match, user]);
 
   useEffect(() => { // last move observer
-    if (match && user?.key) {
+    if (match && user?.key && friend?.key) {
       const movesRef = firebase.database().ref('moves');
       // Query the last 50 moves and filter client-side
       // Note: This approach is acceptable because:
@@ -381,8 +381,8 @@ export function App() {
         const movesArray = Object.entries(moves)
           .map(([_key, move]) => move)
           .filter(move => 
-            (move.player === user.key && move.friend === match.game) ||
-            (move.player === match.game && move.friend === user.key)
+            (move.player === user.key && move.friend === friend.key) ||
+            (move.player === friend.key && move.friend === user.key)
           )
           .sort((a, b) => b.time.localeCompare(a.time));
         
@@ -400,7 +400,7 @@ export function App() {
     } else {
       setLastMove(null);
     }
-  }, [match, user]);
+  }, [match, user, friend]);
 
   useEffect(() => { // usedDice observer to publish moves
     if (
