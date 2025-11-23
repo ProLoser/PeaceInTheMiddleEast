@@ -351,13 +351,15 @@ export function App() {
       
       const onValue = (snapshot: firebaseType.database.DataSnapshot) => {
         if (snapshot.exists()) {
-          snapshot.forEach((childSnapshot) => {
-            const move = childSnapshot.val() as Move;
+          const lastMoveSnapshot = snapshot.val();
+          const moveKeys = Object.keys(lastMoveSnapshot);
+          if (moveKeys.length > 0) {
+            const lastKey = moveKeys[moveKeys.length - 1];
+            const move = lastMoveSnapshot[lastKey] as Move;
             if (move.player === friend.key) {
               setLastOpponentMove(move.move || '');
             }
-            return false;
-          });
+          }
         }
       };
       

@@ -189,6 +189,7 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
             case 'denied':
                 alert(t('notificationsDenied'));
                 break;
+            // @ts-ignore - intentional fallthrough when hasFcmToken is false
             case 'granted':
                 if (hasFcmToken) {
                     const confirmMessage = t('disableNotificationsConfirm');
@@ -196,17 +197,6 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
                         setNotificationStatus('processing');
                         await clearFcmToken();
                         alert(t('notificationsDisabled'));
-                    }
-                    break;
-                } else {
-                    setNotificationStatus('processing');
-                    fcmTokenRef.current = await saveFcmToken();
-                    if (fcmTokenRef.current) {
-                        setHasFcmToken(!!fcmTokenRef.current);
-                        setNotificationStatus(window.Notification?.permission ?? 'unsupported');
-                        alert(t('notificationsEnabled'));
-                    } else {
-                        alert(t('notificationsFailed'));
                     }
                     break;
                 }

@@ -359,8 +359,7 @@ export const parseGhostsFromMove = (moveNotation: string, opponentColor: Color):
     return { ghosts, ghostHit };
   }
 
-  let movePart = parts[1].trim();
-  movePart = movePart.replace(/\(game over\)$/, '').trim();
+  const movePart = parts[1].trim().replace(/\(game over\)$/, '').trim();
   const moves = movePart.split(/\s+/);
 
   moves.forEach(move => {
