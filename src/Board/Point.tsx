@@ -93,21 +93,15 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
                 enabled={enabled}
             />
         )}
-        {ghosts && ghosts.white > 0 && Array.from({ length: ghosts.white }, (_, index) => 
-            <Piece 
-                key={`ghost-white-${index}`} 
-                color={Color.White} 
-                position={position} 
-                ghost={true}
-            />
-        )}
-        {ghosts && ghosts.black > 0 && Array.from({ length: ghosts.black }, (_, index) => 
-            <Piece 
-                key={`ghost-black-${index}`} 
-                color={Color.Black} 
-                position={position} 
-                ghost={true}
-            />
+        {ghosts && [Color.White, Color.Black].map(ghostColor => 
+            ghosts[ghostColor] > 0 && Array.from({ length: ghosts[ghostColor] }, (_, index) => 
+                <Piece 
+                    key={`ghost-${ghostColor}-${index}`} 
+                    color={ghostColor} 
+                    position={position} 
+                    ghost={true}
+                />
+            )
         )}
     </div>
 }

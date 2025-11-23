@@ -146,7 +146,7 @@ export function App() {
         status: Status.Moving
       });
     } else { // local
-      const nextColor = !game.color ? Color.White : (game.color === Color.White ? Color.Black : Color.White);
+      const nextColor = game.color === Color.White ? Color.Black : Color.White;
       setGame({
         ...game,
         dice,
@@ -427,8 +427,8 @@ export function App() {
         database.ref(`matches/${friend?.key}/${user?.key}`).update(update);
       } else if (!match) {
         // Offline game - just update local state and store move
-        // Alternate color for offline games (White starts)
-        const nextColor = game.color === Color.White ? Color.Black : (game.color === Color.Black ? Color.White : Color.White);
+        // Alternate color for offline games
+        const nextColor = game.color === Color.White ? Color.Black : Color.White;
         setLastMove({
           player: 'local',
           move: moveNotation,

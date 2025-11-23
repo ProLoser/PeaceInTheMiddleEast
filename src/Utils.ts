@@ -423,9 +423,8 @@ export function parseGhostPositions(moveNotation: string, currentPlayer: Color) 
  * @returns The board index (0-23), or -1 if invalid
  */
 export function pointToIndex(color: Color, point: number): number {
-    // Validate input
+    // Validate input - return -1 for invalid points
     if (!Number.isInteger(point) || point < 1 || point > 24) {
-        console.warn(`Invalid point number: ${point}. Expected integer between 1 and 24.`);
         return -1;
     }
     
