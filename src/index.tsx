@@ -144,10 +144,9 @@ export function App() {
         turn: user?.key,
         status: Status.Moving
       });
-      // Update turn and sort in both matches
-      const time = new Date().toISOString();
-      database.ref(`matches/${user?.key}/${friend?.key}`).update({ turn: user?.key, sort: time });
-      database.ref(`matches/${friend?.key}/${user?.key}`).update({ turn: user?.key, sort: time });
+      // Update turn in both matches
+      database.ref(`matches/${user?.key}/${friend?.key}`).update({ turn: user?.key });
+      database.ref(`matches/${friend?.key}/${user?.key}`).update({ turn: user?.key });
     } else { // local
       setGame({
         ...game,
