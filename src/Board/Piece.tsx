@@ -3,7 +3,7 @@ import black from './images/piece-black-2.png';
 import white from './images/piece-white-2.png';
 import './Piece.css'
 import { Color } from "../Types";
-import { Vibrations } from "../Utils";
+import { Vibrations, classes } from "../Utils";
 
 const IMAGES = { black, white }
 
@@ -12,13 +12,12 @@ type PieceProps = {
     position?: number,
     onSelect?: (position: number|null) => void,
     enabled?: boolean,
-    isGhost?: boolean,
-    isHit?: boolean
+    ghost?: boolean
 }
 
-const Piece = forwardRef<HTMLImageElement, PieceProps>(({ color, position, onSelect, enabled = false, isGhost = false, isHit = false }, ref) => {
+const Piece = forwardRef<HTMLImageElement, PieceProps>(({ color, position, onSelect, enabled = false, ghost = false }, ref) => {
     const onDragStart: DragEventHandler = useCallback(event => {
-        if (isGhost) {
+        if (ghost) {
             event.preventDefault();
             return;
         }
@@ -27,12 +26,11 @@ const Piece = forwardRef<HTMLImageElement, PieceProps>(({ color, position, onSel
             event.dataTransfer?.setData('text', color)
             onSelect!(-1)
         }
-    }, [position, color, onSelect, isGhost]);
+    }, [position, color, onSelect, ghost]);
     
-    const className = isGhost ? `piece ${color} ghost${isHit ? ' hit' : ''}` : `piece ${color}`;
-    const isDraggable = enabled && !isGhost;
+    const isDraggable = enabled && !ghost;
     
-    return <div className={className} onDragStart={onDragStart} draggable={isDraggable}>
+    return <div className={classes('piece', color, { ghost })} onDragStart={onDragStart} draggable={isDraggable}>
         <img ref={ref} src={IMAGES[color]} onContextMenu={event => event.preventDefault()} draggable={isDraggable} />
     </div>
 })

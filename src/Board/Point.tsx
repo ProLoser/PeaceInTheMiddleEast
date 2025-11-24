@@ -100,7 +100,7 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
                     color={ghostColor}
                     position={position}
                     enabled={false}
-                    isGhost={true}
+                    ghost={true}
                 />
             );
         })}
@@ -110,8 +110,7 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
                 color={ghostHit > 0 ? Color.White : Color.Black}
                 position={position}
                 enabled={false}
-                isGhost={true}
-                isHit={true}
+                ghost={true}
             />
         )}
     </div>

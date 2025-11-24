@@ -21,9 +21,5 @@
     &.ghost {
         opacity: 0.5;
         pointer-events: none;
-
-        &.hit {
-            opacity: 0.3;
-        }
     }
 }
