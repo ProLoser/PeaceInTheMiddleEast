@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, jest } from '@jest/globals';
+import {describe, it, expect, beforeEach} from '@jest/globals';
 import {
   rollDie,
   classes,
@@ -14,7 +14,7 @@ import {
   PLAYER_SIGN,
   DEFAULT_BOARD,
 } from './Utils';
-import { Color, Status, type Game } from './Types';
+import {Color, Status, type Game} from './Types';
 
 describe('Utils', () => {
   describe('rollDie', () => {
@@ -51,19 +51,23 @@ describe('Utils', () => {
 
     it('should handle array arguments', () => {
       expect(classes(['foo', 'bar'])).toBe('  foo bar');
-      expect(classes('baz', ['foo', 'bar'])).toBe(' baz  foo bar');
+      expect(classes('baz', ['foo', 'bar']))
+          .toBe(' baz  foo bar');
     });
 
     it('should handle nested arrays', () => {
-      expect(classes(['foo', ['bar', 'baz']])).toBe('  foo  bar baz');
+      expect(classes(['foo', ['bar', 'baz']]))
+          .toBe('  foo  bar baz');
     });
 
     it('should handle object arguments with truthy values', () => {
-      expect(classes({ foo: true, bar: false, baz: true })).toBe(' foo baz');
+      expect(classes({foo: true, bar: false, baz: true}))
+          .toBe(' foo baz');
     });
 
     it('should handle mixed arguments', () => {
-      expect(classes('foo', { bar: true, baz: false }, ['qux', 'quux'], 42)).toBe(' foo bar  qux quux 42');
+      expect(classes('foo', {bar: true, baz: false}, ['qux', 'quux'], 42))
+          .toBe(' foo bar  qux quux 42');
     });
 
     it('should return empty string for no arguments', () => {
@@ -82,8 +86,8 @@ describe('Utils', () => {
       expect(game.dice).toEqual([6, 6]);
       expect(game.color).toBeNull();
       expect(game.turn).toBeNull();
-      expect(game.prison).toEqual({ black: 0, white: 0 });
-      expect(game.home).toEqual({ black: 0, white: 0 });
+      expect(game.prison).toEqual({black: 0, white: 0});
+      expect(game.home).toEqual({black: 0, white: 0});
       expect(game.status).toBe(Status.Rolling);
     });
 
@@ -93,8 +97,8 @@ describe('Utils', () => {
         dice: [3, 4] as [number, number],
         color: Color.White,
         turn: 'player1',
-        prison: { black: 2, white: 1 },
-        home: { black: 3, white: 4 },
+        prison: {black: 2, white: 1},
+        home: {black: 3, white: 4},
         status: Status.Moving,
       };
       const game = newGame(oldGame);
@@ -213,42 +217,42 @@ describe('Utils', () => {
     it('should return true when all white pieces are in home board', () => {
       const game = newGame();
       game.board = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 5, 3, 2, 0, 0] as Game['board'];
-      game.home = { white: 0, black: 0 };
+      game.home = {white: 0, black: 0};
       expect(allHome(Color.White, game)).toBe(true);
     });
 
     it('should return false when white pieces are outside home board', () => {
       const game = newGame();
       game.board = DEFAULT_BOARD;
-      game.home = { white: 0, black: 0 };
+      game.home = {white: 0, black: 0};
       expect(allHome(Color.White, game)).toBe(false);
     });
 
     it('should include pieces borne off in white home count', () => {
       const game = newGame();
       game.board = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 5, 0, 0, 0, 0] as Game['board'];
-      game.home = { white: 5, black: 0 };
+      game.home = {white: 5, black: 0};
       expect(allHome(Color.White, game)).toBe(true);
     });
 
     it('should return true when all black pieces are in home board', () => {
       const game = newGame();
       game.board = [0, 0, 0, 0, 0, 0, -5, -5, -3, -2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] as Game['board'];
-      game.home = { white: 0, black: 0 };
+      game.home = {white: 0, black: 0};
       expect(allHome(Color.Black, game)).toBe(true);
     });
 
     it('should return false when black pieces are outside home board', () => {
       const game = newGame();
       game.board = DEFAULT_BOARD;
-      game.home = { white: 0, black: 0 };
+      game.home = {white: 0, black: 0};
       expect(allHome(Color.Black, game)).toBe(false);
     });
 
     it('should include pieces borne off in black home count', () => {
       const game = newGame();
       game.board = [0, 0, 0, 0, 0, 0, -5, -5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] as Game['board'];
-      game.home = { white: 0, black: 5 };
+      game.home = {white: 0, black: 5};
       expect(allHome(Color.Black, game)).toBe(true);
     });
   });
@@ -349,14 +353,14 @@ describe('Utils', () => {
     });
 
     it('should return prison entry if pieces are in prison', () => {
-      game.prison = { white: 1, black: 0 };
+      game.prison = {white: 1, black: 0};
       game.board = [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] as Game['board'];
       const moves = nextMoves(game);
       expect(moves.has(-1)).toBe(true);
     });
 
     it('should not include prison entry if all entry points are blocked', () => {
-      game.prison = { white: 1, black: 0 };
+      game.prison = {white: 1, black: 0};
       // Block all possible entry points for white from bar (points 8, 9 for dice 3,4)
       game.board = [0, 0, 0, 0, 0, 0, 0, 0, -2, -2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] as Game['board'];
       const moves = nextMoves(game);
@@ -380,10 +384,50 @@ describe('Utils', () => {
 
     it('should exclude used dice from calculations', () => {
       game.board = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] as Game['board'];
-      const usedDice = [{ value: 3, label: '12/15' }];
+      const usedDice = [{value: 3, label: '12/15'}];
       const moves = nextMoves(game, usedDice, 12);
       expect(moves.has(15)).toBe(false);
       expect(moves.has(16)).toBe(true);
+    });
+
+    it('should return destinations for prison entry when from is -1', () => {
+      game.prison = {white: 1, black: 0};
+      game.board = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] as Game['board'];
+      const moves = nextMoves(game, [], -1);
+      expect(moves.has(8)).toBe(true);
+      expect(moves.has(9)).toBe(true);
+    });
+
+    it('should handle bear-off with exact die roll', () => {
+      game.board = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0] as Game['board'];
+      game.dice = [2, 3];
+      // nextMoves returns starting points, not -1 for bear-off destination
+      const moves = nextMoves(game);
+      expect(moves.has(21)).toBe(true); // can bear off from point 21 with die 3
+    });
+
+    it('should handle bear-off from farthest point with higher die', () => {
+      game.board = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0] as Game['board'];
+      game.dice = [6, 5];
+      // When die > needed distance, can bear off from farthest point
+      const moves = nextMoves(game);
+      expect(moves.has(18)).toBe(true);
+    });
+
+    it('should not allow bear-off from non-farthest point with higher die', () => {
+      game.board = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 2, 0, 0, 0] as Game['board'];
+      game.dice = [6, 5];
+      const moves = nextMoves(game, [], 20);
+      // Point 20 is not farthest (18 is), so can't bear off with die > needed
+      expect(moves.has(-1)).toBe(false);
+    });
+
+    it('should not return moves when pieces are in prison', () => {
+      game.prison = {white: 1, black: 0};
+      game.board = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] as Game['board'];
+      const moves = nextMoves(game, [], 12);
+      // When pieces are in prison, from destinations should not be calculated
+      expect(moves.size).toBe(0);
     });
   });
 
@@ -421,14 +465,14 @@ describe('Utils', () => {
 
     it('should handle white bearing off', () => {
       game.board = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0] as Game['board'];
-      const result = calculate(game, 20, undefined);
+      const result = calculate(game, 20, -1);
       expect(result.state?.board[20]).toBe(4);
       expect(result.state?.home.white).toBe(1);
       expect(result.moveLabel).toBe('21/off');
     });
 
     it('should handle white re-entering from bar', () => {
-      game.prison = { white: 1, black: 0 };
+      game.prison = {white: 1, black: 0};
       game.board = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] as Game['board'];
       const result = calculate(game, Color.White, 20);
       expect(result.state?.prison.white).toBe(0);
@@ -437,7 +481,7 @@ describe('Utils', () => {
     });
 
     it('should handle white re-entering from bar and hitting', () => {
-      game.prison = { white: 1, black: 0 };
+      game.prison = {white: 1, black: 0};
       game.board = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0] as Game['board'];
       const result = calculate(game, Color.White, 20);
       expect(result.state?.prison.white).toBe(0);
@@ -475,7 +519,7 @@ describe('Utils', () => {
     it('should handle black bearing off', () => {
       game.color = Color.Black;
       game.board = [0, 0, 0, 0, 0, 0, -5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] as Game['board'];
-      const result = calculate(game, 6, undefined);
+      const result = calculate(game, 6, -1);
       expect(result.state?.board[6]).toBe(-4);
       expect(result.state?.home.black).toBe(1);
       expect(result.moveLabel).toBe('19/off');
@@ -483,8 +527,8 @@ describe('Utils', () => {
 
     it('should set game status to GameOver when player bears off all pieces', () => {
       game.board = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0] as Game['board'];
-      game.home = { white: 14, black: 0 };
-      const result = calculate(game, 20, undefined);
+      game.home = {white: 14, black: 0};
+      const result = calculate(game, 20, -1);
       expect(result.state?.home.white).toBe(15);
       expect(result.state?.status).toBe(Status.GameOver);
     });
@@ -503,7 +547,7 @@ describe('Utils', () => {
     });
 
     it('should automatically use prison as from when pieces are in prison', () => {
-      game.prison = { white: 1, black: 0 };
+      game.prison = {white: 1, black: 0};
       game.board = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] as Game['board'];
       const result = calculate(game, null, 20);
       expect(result.state?.prison.white).toBe(0);
@@ -513,11 +557,41 @@ describe('Utils', () => {
 
     it('should respect used dice when calculating moves', () => {
       game.board = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] as Game['board'];
-      const usedDice = [{ value: 3, label: '12/15' }];
+      const usedDice = [{value: 3, label: '12/15'}];
       const result = calculate(game, 12, 16, usedDice);
       expect(result.state?.board[12]).toBe(4);
       expect(result.state?.board[16]).toBe(1);
       expect(result.usedDie).toBe(4);
+    });
+
+    it('should handle black re-entering from bar', () => {
+      game.color = Color.Black;
+      game.prison = {white: 0, black: 1};
+      game.board = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] as Game['board'];
+      const result = calculate(game, Color.Black, 9);
+      expect(result.state?.prison.black).toBe(0);
+      expect(result.state?.board[9]).toBe(-1);
+      expect(result.moveLabel).toBe('bar/22');
+    });
+
+    it('should handle black re-entering from bar and hitting', () => {
+      game.color = Color.Black;
+      game.prison = {white: 0, black: 1};
+      game.board = [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] as Game['board'];
+      const result = calculate(game, Color.Black, 9);
+      expect(result.state?.prison.black).toBe(0);
+      expect(result.state?.prison.white).toBe(1);
+      expect(result.state?.board[9]).toBe(-1);
+      expect(result.moveLabel).toBe('bar/22*');
+    });
+
+    it('should block black re-entering from bar to protected point', () => {
+      game.color = Color.Black;
+      game.prison = {white: 0, black: 1};
+      game.board = [0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] as Game['board'];
+      const result = calculate(game, Color.Black, 9);
+      expect(result.state).toEqual(game);
+      expect(result.moveLabel).toBeUndefined();
     });
   });
 
