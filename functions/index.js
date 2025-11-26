@@ -50,11 +50,13 @@ exports.sendMoveNotification = onValueCreated('/moves/{moveId}', async event => 
 
   const message = {
     notification: {
-      title: `${playerName} made a move`,
+      title: `{{name}} made a move`,
       body: move.move
     },
     data: {
-      player: move.player
+      player: move.player,
+      playerName: playerName,
+      translationKey: 'moveNotification'
     },
     webpush: {
       notification: {

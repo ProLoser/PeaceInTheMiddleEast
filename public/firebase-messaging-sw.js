@@ -105,13 +105,43 @@ async function loadTranslation(language) {
 }
 
 // Function to translate notification title
-function translateTitle(title, playerName, translation) {
-  // Check if this is the move notification (contains "made a move")
-  if (title && title.includes('made a move')) {
-    if (translation && translation.moveNotification) {
-      return translation.moveNotification.replace('{{name}}', playerName);
+function translateTitle(title, data, translation) {
+  if (!translation || !title) {
+    return title;
+  }
+  
+  // Try to find a matching translation key
+  const translationKey = data?.translationKey;
+  if (translationKey && translation[translationKey]) {
+    let translatedTitle = translation[translationKey];
+    // Replace {{name}} token with playerName from data
+    if (data?.playerName) {
+      translatedTitle = translatedTitle.replace('{{name}}', data.playerName);
+    }
+    return translatedTitle;
+  }
+  
+  // Fallback: try to match the title pattern against available translations
+  // Note: This is a fallback for notifications without translationKey
+  for (const [key, value] of Object.entries(translation)) {
+    if (typeof value === 'string' && value.includes('{{name}}')) {
+      // Escape special regex characters in the translation value
+      const escapedValue = value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      // Create a regex pattern from the escaped value, replacing the token placeholder
+      const pattern = escapedValue.replace('\\{\\{name\\}\\}', '(.+)');
+      try {
+        const regex = new RegExp(`^${pattern}$`);
+        const match = title.match(regex);
+        if (match) {
+          // Replace the token with the extracted name
+          return value.replace('{{name}}', match[1]);
+        }
+      } catch (e) {
+        console.error('Error creating regex for translation:', e);
+      }
     }
   }
+  
   return title;
 }
 
@@ -119,25 +149,22 @@ messaging.onBackgroundMessage(async payload => {
   console.log('Received background message', payload);
 
   const { title, body } = payload.notification;
-  const { player } = payload.data;
+  const data = payload.data;
 
   // Get user's language and translation
   const userLanguage = await getUserLanguage();
   const translation = await loadTranslation(userLanguage);
   
-  // Extract player name from the title (assuming format "PlayerName made a move")
-  const playerName = title ? title.replace(' made a move', '').trim() : player;
-  
-  // Translate the title
-  const translatedTitle = translateTitle(title, playerName, translation);
+  // Translate the title using data tokens
+  const translatedTitle = translateTitle(title, data, translation);
 
   const notificationOptions = {
     body: body,
     icon: '/android-chrome-512x512.png',
-    tag: player || 'new_message',
+    tag: data?.player || 'new_message',
     data: {
-      ...payload.data,
-      url: `${self.location.origin}/${player || ''}`
+      ...data,
+      url: `${self.location.origin}/${data?.player || ''}`
     }
   };
 
