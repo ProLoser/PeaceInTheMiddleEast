@@ -15,7 +15,7 @@ import Toolbar from './Board/Toolbar';
 import './index.css'
 import './Board/Board.css';
 import './Board/Toolbar.css'
-import { calculate, newGame, nextMoves, rollDie, Vibrations, playAudio, classes, parseGhostPositions } from './Utils';
+import { calculate, newGame, nextMoves, rollDie, Vibrations, playAudio, classes, parseMoveNotation, type ParsedMove } from './Utils';
 import firebase from "./firebase.config";
 import { playCheckerSound } from './Utils';
 import type firebaseType from 'firebase/compat/app';
@@ -177,17 +177,14 @@ export function App() {
     return nextMoves(game, usedDice)
   }, [game, isMyTurn, usedDice])
 
-  const ghostPositions = useMemo(() => {
+  const parsedMove = useMemo((): ParsedMove => {
     // Only show ghosts when it's my turn to roll the dice
     if (!isMyTurn || game.status !== Status.Rolling || !lastMove) {
-      return { 
-        ghosts: Array.from({ length: 24 }, () => 0),
-        ghostHits: Array.from({ length: 24 }, () => 0)
-      };
+      return { ghosts: {}, ghostHits: {}, destinations: {} };
     }
     // Use the color of the player whose turn it is to roll (opposite of game.color)
     const currentColor = game.color === Color.White ? Color.Black : Color.White;
-    return parseGhostPositions(lastMove.move, currentColor);
+    return parseMoveNotation(lastMove.move, currentColor);
   }, [isMyTurn, game.status, game.color, lastMove])
 
   const move = useCallback((from: number | Color, to: number) => {
@@ -527,8 +524,9 @@ export function App() {
             position={index}
             selected={selected}
             onSelect={onSelect}
-            ghosts={ghostPositions.ghosts[index]}
-            ghostHit={ghostPositions.ghostHits[index]}
+            ghosts={parsedMove.ghosts[index]}
+            ghostHit={parsedMove.ghostHits[index]}
+            destination={parsedMove.destinations[index]}
           />
         )}
       </div>

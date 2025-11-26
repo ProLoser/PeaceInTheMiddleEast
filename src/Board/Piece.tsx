@@ -12,10 +12,11 @@ type PieceProps = {
     position?: number,
     onSelect?: (position: number|null) => void,
     enabled?: boolean,
-    ghost?: boolean
+    ghost?: boolean,
+    glow?: boolean
 }
 
-const Piece = forwardRef<HTMLImageElement, PieceProps>(({ color, position, onSelect, enabled = false, ghost = false }, ref) => {
+const Piece = forwardRef<HTMLImageElement, PieceProps>(({ color, position, onSelect, enabled = false, ghost = false, glow = false }, ref) => {
     const onDragStart: DragEventHandler = useCallback(event => {
         if (position === -1) { // bar
             navigator.vibrate?.(Vibrations.Up)
@@ -24,7 +25,7 @@ const Piece = forwardRef<HTMLImageElement, PieceProps>(({ color, position, onSel
         }
     }, [position, color, onSelect]);
     
-    return <div className={classes('piece', color, { ghost })} onDragStart={onDragStart} draggable={enabled && !ghost}>
+    return <div className={classes('piece', color, { ghost, glow })} onDragStart={onDragStart} draggable={enabled && !ghost}>
         <img ref={ref} src={IMAGES[color]} onContextMenu={event => event.preventDefault()} draggable={enabled && !ghost} />
     </div>
 })

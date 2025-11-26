@@ -12,10 +12,11 @@ type PointProps = {
     enabled: boolean,
     valid: boolean,
     ghosts?: number,
-    ghostHit?: number
+    ghostHit?: number,
+    destination?: number
 }
 
-export default function Point({ pieces, move, position, onSelect, selected, enabled, valid, ghosts, ghostHit }: PointProps) {
+export default function Point({ pieces, move, position, onSelect, selected, enabled, valid, ghosts, ghostHit, destination }: PointProps) {
     const [dragging, setDragging] = useState(false);
     const [dragOver, setDragOver] = useState(false);
     const pieceRef = useRef<HTMLImageElement>(null);
@@ -82,16 +83,23 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
         onDragStart={onDragStart}
         onDragEnd={onDragEnd}
     >
-        {Array.from({ length: Math.abs(pieces) }, (_, index) => 
-            <Piece 
-                ref={index == 0 ? pieceRef : null} 
-                key={index} 
-                color={color} 
-                position={position} 
-                onSelect={onSelect} 
-                enabled={enabled}
-            />
-        )}
+        {Array.from({ length: Math.abs(pieces) }, (_, index) => {
+            // Glow the top N pieces where N is the absolute value of destination
+            // The destination pieces are at the top of the stack (highest indices)
+            const glowCount = destination ? Math.abs(destination) : 0;
+            const shouldGlow = glowCount > 0 && index >= Math.abs(pieces) - glowCount;
+            return (
+                <Piece 
+                    ref={index == 0 ? pieceRef : null} 
+                    key={index} 
+                    color={color} 
+                    position={position} 
+                    onSelect={onSelect} 
+                    enabled={enabled}
+                    glow={shouldGlow}
+                />
+            );
+        })}
         {ghosts && ghosts !== 0 && Array.from({ length: Math.abs(ghosts) }, (_, index) => (
             <Piece 
                 key={`ghost-${index}`} 

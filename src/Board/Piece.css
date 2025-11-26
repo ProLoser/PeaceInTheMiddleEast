@@ -17,6 +17,10 @@
         opacity: 0.5;
     }
 
+    &.glow img {
+        filter: drop-shadow(0 0 8px gold) drop-shadow(0 0 12px gold);
+    }
+
     img {
         width: 100%;
         height: 100%;
