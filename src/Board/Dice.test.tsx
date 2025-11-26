@@ -19,7 +19,10 @@ describe('Dice', () => {
 
     it('should render with doubles (4 dice)', () => {
       const {container} = render(
-          <Dice {...defaultProps} values={[6, 6, 6, 6] as [number, number]} />
+          <Dice
+            {...defaultProps}
+            values={[6, 6, 6, 6] as unknown as [number, number]}
+          />
       );
       expect(container.firstChild).toMatchSnapshot();
     });
@@ -78,7 +81,7 @@ describe('Dice', () => {
       const {container} = render(
           <Dice
             {...defaultProps}
-            values={[5, 5, 5, 5] as [number, number]}
+            values={[5, 5, 5, 5] as unknown as [number, number]}
             used={[{value: 5, label: '1/6'}, {value: 5, label: '6/11'}]}
           />
       );
@@ -106,7 +109,10 @@ describe('Dice', () => {
 
     it('should render 4 dice images for doubles', () => {
       const {container} = render(
-          <Dice {...defaultProps} values={[3, 3, 3, 3] as [number, number]} />
+          <Dice
+            {...defaultProps}
+            values={[3, 3, 3, 3] as unknown as [number, number]}
+          />
       );
       const images = container.querySelectorAll('img');
       expect(images.length).toBe(4);
