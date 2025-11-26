@@ -15,7 +15,7 @@ import Toolbar from './Board/Toolbar';
 import './index.css'
 import './Board/Board.css';
 import './Board/Toolbar.css'
-import { calculate, newGame, nextMoves, rollDie, Vibrations, playAudio, classes, parseGhostsFromMove } from './Utils';
+import { calculate, newGame, nextMoves, rollDie, Vibrations, playAudio, classes, parseGhostsFromMove, type GhostData } from './Utils';
 import firebase from "./firebase.config";
 import { playCheckerSound } from './Utils';
 import type firebaseType from 'firebase/compat/app';
@@ -45,7 +45,7 @@ export function App() {
   const [friend, setFriend] = useState<SnapshotOrNullType>(null);
   const [selected, setSelected] = useState<number | null>(null);
   const [usedDice, setUsedDice] = useState<UsedDie[]>([]);
-  const [lastOpponentMove, setLastOpponentMove] = useState<string>('');
+  const [ghostData, setGhostData] = useState<GhostData>({ ghosts: [], ghostHit: null });
   const hadMatchRef = useRef(false);
 
   const load = useCallback(async (friendId?: string | false, authUserUid?: string) => {
@@ -343,7 +343,7 @@ export function App() {
   }, [match, user]);
 
   useEffect(() => {
-    if (match && user?.key && friend?.key) {
+    if (match && user?.key && friend?.key && game.color) {
       const movesRef = firebase.database().ref('moves')
         .orderByChild('friend')
         .equalTo(user.key)
@@ -356,8 +356,9 @@ export function App() {
           if (moveKeys.length > 0) {
             const lastKey = moveKeys[moveKeys.length - 1];
             const move = lastMoveSnapshot[lastKey] as Move;
-            if (move.player === friend.key) {
-              setLastOpponentMove(move.move || '');
+            if (move.player === friend.key && move.move) {
+              const opponentColor = game.color === Color.White ? Color.Black : Color.White;
+              setGhostData(parseGhostsFromMove(move.move, opponentColor));
             }
           }
         }
@@ -368,9 +369,9 @@ export function App() {
         movesRef.off('value', onValue);
       };
     } else {
-      setLastOpponentMove('');
+      setGhostData({ ghosts: [], ghostHit: null });
     }
-  }, [match, user, friend]);
+  }, [match, user, friend, game.color]);
 
   useEffect(() => { // usedDice observer to publish moves
     if (
@@ -416,13 +417,12 @@ export function App() {
     return undefined
   }, [game.status, game.turn, user, friend])
 
-  const ghostData = useMemo(() => {
-    if (!match || !isMyTurn || game.status !== Status.Rolling || !lastOpponentMove || !game.color) {
+  const visibleGhostData = useMemo(() => {
+    if (!match || !isMyTurn || game.status !== Status.Rolling) {
       return { ghosts: [], ghostHit: null };
     }
-    const opponentColor = game.color === Color.White ? Color.Black : Color.White;
-    return parseGhostsFromMove(lastOpponentMove, opponentColor);
-  }, [match, isMyTurn, game.status, game.color, lastOpponentMove]);
+    return ghostData;
+  }, [match, isMyTurn, game.status, ghostData]);
 
   return (
     <Dialogues
@@ -482,9 +482,9 @@ export function App() {
           )}
         </div>
         {game.board.map((pieces: number, index: number) => {
-          const ghostCount = ghostData.ghosts.filter(g => g === index).length;
+          const ghostCount = visibleGhostData.ghosts.filter(g => g === index).length;
           const ghostSign = game.color === Color.White ? -1 : 1;
-          const isGhostHit = ghostData.ghostHit === index;
+          const isGhostHit = visibleGhostData.ghostHit === index;
           return (
             <Point
               enabled={!match || sources.has(index)}
