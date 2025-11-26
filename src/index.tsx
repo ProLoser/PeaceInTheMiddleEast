@@ -349,14 +349,18 @@ export function App() {
             ) {
               playCheckerSound();
               // Initialize ghosts from the difference between prev and current board
-              const newGhosts: { [position: number]: number } = {};
-              for (let i = 0; i < 24; i++) {
-                const diff = prevGame.board[i] - nextGame.board[i];
-                if (diff !== 0) {
-                  newGhosts[i] = diff;
+              // Only calculate ghosts if prevGame.turn is set (not a fresh page load)
+              // Otherwise prevGame is just the default new game and the diff would be incorrect
+              if (prevGame.turn) {
+                const newGhosts: { [position: number]: number } = {};
+                for (let i = 0; i < 24; i++) {
+                  const diff = prevGame.board[i] - nextGame.board[i];
+                  if (diff !== 0) {
+                    newGhosts[i] = diff;
+                  }
                 }
+                setGhosts(newGhosts);
               }
-              setGhosts(newGhosts);
             }
             return nextGame;
           });
