@@ -62,13 +62,15 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
 
     const onPointerUp = useCallback(() => {
         if (dragging) return;
-        if (selected !== null) {
+        if (selected === position) {
+            onSelect(null)
+        } else if (selected !== null && valid) {
             move(selected, position)
         } else if (enabled) {
             navigator.vibrate?.(Vibrations.Up)
             onSelect(position)
         }
-    }, [position, onSelect, dragging, enabled, selected, move])
+    }, [position, onSelect, dragging, enabled, selected, move, valid])
 
     return <div className={classes('point', { valid, selected: selected === position, dragOver })} 
         draggable={enabled}
