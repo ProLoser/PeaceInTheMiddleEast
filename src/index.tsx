@@ -45,8 +45,9 @@ export function App() {
   const [friend, setFriend] = useState<SnapshotOrNullType>(null);
   const [selected, setSelected] = useState<number | null>(null);
   const [usedDice, setUsedDice] = useState<UsedDie[]>([]);
-  const [ghostData, setGhostData] = useState<GhostData>({ ghosts: {}, ghostHit: null });
+  const [ghostData, setGhostData] = useState<GhostData>({ ghosts: {}, ghostHit: {} });
   const hadMatchRef = useRef(false);
+  const lastMoveGhostsRef = useRef<GhostData>({ ghosts: {}, ghostHit: {} });
 
   const load = useCallback(async (friendId?: string | false, authUserUid?: string) => {
     if (friendId === 'PeaceInTheMiddleEast' || friendId === '__') return;
@@ -358,7 +359,7 @@ export function App() {
             const move = lastMoveSnapshot[lastKey] as Move;
             if (move.player === friend.key && move.move) {
               const opponentColor = game.color === Color.White ? Color.Black : Color.White;
-              setGhostData(parseGhostsFromMove(move.move, opponentColor));
+              lastMoveGhostsRef.current = parseGhostsFromMove(move.move, opponentColor);
             }
           }
         }
@@ -369,9 +370,17 @@ export function App() {
         movesRef.off('value', onValue);
       };
     } else {
-      setGhostData({ ghosts: {}, ghostHit: null });
+      lastMoveGhostsRef.current = { ghosts: {}, ghostHit: {} };
     }
   }, [match, user, friend, game.color]);
+
+  useEffect(() => {
+    if (match && isMyTurn && game.status === Status.Rolling) {
+      setGhostData(lastMoveGhostsRef.current);
+    } else {
+      setGhostData({ ghosts: {}, ghostHit: {} });
+    }
+  }, [match, isMyTurn, game.status]);
 
   useEffect(() => { // usedDice observer to publish moves
     if (
@@ -416,13 +425,6 @@ export function App() {
     if (game.turn === friend?.key) return friend?.val();
     return undefined
   }, [game.status, game.turn, user, friend])
-
-  const visibleGhostData = useMemo(() => {
-    if (!match || !isMyTurn || game.status !== Status.Rolling) {
-      return { ghosts: {}, ghostHit: null };
-    }
-    return ghostData;
-  }, [match, isMyTurn, game.status, ghostData]);
 
   return (
     <Dialogues
@@ -481,23 +483,20 @@ export function App() {
             <Piece key={index} color={Color.White} />
           )}
         </div>
-        {game.board.map((pieces: number, index: number) => {
-          const ghostSign = game.color === Color.White ? -1 : 1;
-          return (
-            <Point
-              enabled={!match || sources.has(index)}
-              valid={moves.has(index)}
-              key={index}
-              pieces={pieces}
-              move={move}
-              position={index}
-              selected={selected}
-              onSelect={onSelect}
-              ghosts={(visibleGhostData.ghosts[index] || 0) * ghostSign}
-              ghostHit={visibleGhostData.ghostHit === index ? -ghostSign : 0}
-            />
-          );
-        })}
+        {game.board.map((pieces: number, index: number) => (
+          <Point
+            enabled={!match || sources.has(index)}
+            valid={moves.has(index)}
+            key={index}
+            pieces={pieces}
+            move={move}
+            position={index}
+            selected={selected}
+            onSelect={onSelect}
+            ghosts={ghostData.ghosts[index] || 0}
+            ghostHit={ghostData.ghostHit[index] || 0}
+          />
+        ))}
       </div>
     </Dialogues>
   );

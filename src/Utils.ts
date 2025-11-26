@@ -343,12 +343,13 @@ export const playCheckerSound = () => {
 
 export type GhostData = {
   ghosts: { [index: number]: number };
-  ghostHit: number | null;
+  ghostHit: { [index: number]: number };
 };
 
 export const parseGhostsFromMove = (moveNotation: string, opponentColor: Color): GhostData => {
   const ghosts: { [index: number]: number } = {};
-  let ghostHit: number | null = null;
+  const ghostHit: { [index: number]: number } = {};
+  const sign = PLAYER_SIGN[opponentColor];
 
   if (!moveNotation) {
     return { ghosts, ghostHit };
@@ -377,7 +378,7 @@ export const parseGhostsFromMove = (moveNotation: string, opponentColor: Color):
       const point = parseInt(from);
       if (!isNaN(point)) {
         const index = pointToIndex(opponentColor, point);
-        ghosts[index] = (ghosts[index] || 0) + 1;
+        ghosts[index] = (ghosts[index] || 0) + sign;
       }
       return;
     }
@@ -385,12 +386,13 @@ export const parseGhostsFromMove = (moveNotation: string, opponentColor: Color):
     const fromPoint = parseInt(from);
     if (!isNaN(fromPoint)) {
       const fromIndex = pointToIndex(opponentColor, fromPoint);
-      ghosts[fromIndex] = (ghosts[fromIndex] || 0) + 1;
+      ghosts[fromIndex] = (ghosts[fromIndex] || 0) + sign;
 
       if (isHit) {
         const toPoint = parseInt(to);
         if (!isNaN(toPoint)) {
-          ghostHit = pointToIndex(opponentColor, toPoint);
+          const hitIndex = pointToIndex(opponentColor, toPoint);
+          ghostHit[hitIndex] = -sign;
         }
       }
     }
