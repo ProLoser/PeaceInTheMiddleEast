@@ -31,7 +31,7 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
     
     const onDragLeave: DragEventHandler = useCallback((event) => {
         event.preventDefault();
-        if (valid && dragOver && !event.currentTarget.contains(event.relatedTarget as Node | null)) {
+        if (valid && dragOver && (!event.relatedTarget || !event.currentTarget.contains(event.relatedTarget as Node))) {
             setDragOver(false);
         }
     }, [valid, dragOver]);
