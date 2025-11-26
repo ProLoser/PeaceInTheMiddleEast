@@ -15,7 +15,7 @@ import Toolbar from './Board/Toolbar';
 import './index.css'
 import './Board/Board.css';
 import './Board/Toolbar.css'
-import { calculate, newGame, nextMoves, rollDie, Vibrations, playAudio, classes, parseGhostsFromMove, type GhostData } from './Utils';
+import { calculate, newGame, nextMoves, rollDie, Vibrations, playAudio, classes, parseMove, type GhostData } from './Utils';
 import firebase from "./firebase.config";
 import { playCheckerSound } from './Utils';
 import type firebaseType from 'firebase/compat/app';
@@ -359,7 +359,7 @@ export function App() {
             const move = lastMoveSnapshot[lastKey] as Move;
             if (move.player === friend.key && move.move) {
               const opponentColor = game.color === Color.White ? Color.Black : Color.White;
-              lastMoveGhostsRef.current = parseGhostsFromMove(move.move, opponentColor);
+              lastMoveGhostsRef.current = parseMove(move.move, opponentColor);
             }
           }
         }

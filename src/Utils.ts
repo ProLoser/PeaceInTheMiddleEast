@@ -346,7 +346,7 @@ export type GhostData = {
   ghostHit: { [index: number]: number };
 };
 
-export const parseGhostsFromMove = (moveNotation: string, opponentColor: Color): GhostData => {
+export const parseMove = (moveNotation: string, opponentColor: Color): GhostData => {
   const ghosts: { [index: number]: number } = {};
   const ghostHit: { [index: number]: number } = {};
   const sign = PLAYER_SIGN[opponentColor];
@@ -360,7 +360,7 @@ export const parseGhostsFromMove = (moveNotation: string, opponentColor: Color):
     return { ghosts, ghostHit };
   }
 
-  const movePart = parts[1].trim().replace(/\(game over\)$/, '').trim();
+  const movePart = parts[1].trim();
   const moves = movePart.split(/\s+/);
 
   moves.forEach(move => {
