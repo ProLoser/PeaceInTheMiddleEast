@@ -45,7 +45,7 @@ export function App() {
   const [friend, setFriend] = useState<SnapshotOrNullType>(null);
   const [selected, setSelected] = useState<number | null>(null);
   const [usedDice, setUsedDice] = useState<UsedDie[]>([]);
-  const [ghostData, setGhostData] = useState<GhostData>({ ghosts: [], ghostHit: null });
+  const [ghostData, setGhostData] = useState<GhostData>({ ghosts: {}, ghostHit: null });
   const hadMatchRef = useRef(false);
 
   const load = useCallback(async (friendId?: string | false, authUserUid?: string) => {
@@ -369,7 +369,7 @@ export function App() {
         movesRef.off('value', onValue);
       };
     } else {
-      setGhostData({ ghosts: [], ghostHit: null });
+      setGhostData({ ghosts: {}, ghostHit: null });
     }
   }, [match, user, friend, game.color]);
 
@@ -419,7 +419,7 @@ export function App() {
 
   const visibleGhostData = useMemo(() => {
     if (!match || !isMyTurn || game.status !== Status.Rolling) {
-      return { ghosts: [], ghostHit: null };
+      return { ghosts: {}, ghostHit: null };
     }
     return ghostData;
   }, [match, isMyTurn, game.status, ghostData]);
@@ -482,9 +482,7 @@ export function App() {
           )}
         </div>
         {game.board.map((pieces: number, index: number) => {
-          const ghostCount = visibleGhostData.ghosts.filter(g => g === index).length;
           const ghostSign = game.color === Color.White ? -1 : 1;
-          const isGhostHit = visibleGhostData.ghostHit === index;
           return (
             <Point
               enabled={!match || sources.has(index)}
@@ -495,8 +493,8 @@ export function App() {
               position={index}
               selected={selected}
               onSelect={onSelect}
-              ghosts={ghostCount > 0 ? ghostCount * ghostSign : 0}
-              ghostHit={isGhostHit ? -ghostSign : 0}
+              ghosts={(visibleGhostData.ghosts[index] || 0) * ghostSign}
+              ghostHit={visibleGhostData.ghostHit === index ? -ghostSign : 0}
             />
           );
         })}

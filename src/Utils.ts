@@ -342,12 +342,12 @@ export const playCheckerSound = () => {
 };
 
 export type GhostData = {
-  ghosts: number[];
+  ghosts: { [index: number]: number };
   ghostHit: number | null;
 };
 
 export const parseGhostsFromMove = (moveNotation: string, opponentColor: Color): GhostData => {
-  const ghosts: number[] = [];
+  const ghosts: { [index: number]: number } = {};
   let ghostHit: number | null = null;
 
   if (!moveNotation) {
@@ -377,7 +377,7 @@ export const parseGhostsFromMove = (moveNotation: string, opponentColor: Color):
       const point = parseInt(from);
       if (!isNaN(point)) {
         const index = pointToIndex(opponentColor, point);
-        ghosts.push(index);
+        ghosts[index] = (ghosts[index] || 0) + 1;
       }
       return;
     }
@@ -385,7 +385,7 @@ export const parseGhostsFromMove = (moveNotation: string, opponentColor: Color):
     const fromPoint = parseInt(from);
     if (!isNaN(fromPoint)) {
       const fromIndex = pointToIndex(opponentColor, fromPoint);
-      ghosts.push(fromIndex);
+      ghosts[fromIndex] = (ghosts[fromIndex] || 0) + 1;
 
       if (isHit) {
         const toPoint = parseInt(to);
