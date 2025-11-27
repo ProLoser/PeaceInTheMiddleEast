@@ -45,7 +45,7 @@ export function App() {
   const [friend, setFriend] = useState<SnapshotOrNullType>(null);
   const [selected, setSelected] = useState<number | null>(null);
   const [usedDice, setUsedDice] = useState<UsedDie[]>([]);
-  const [ghosts, setGhosts] = useState<{ [position: number]: number } | null>(null);
+  const [ghosts, setGhosts] = useState<{ [position: number]: { white: number, black: number } } | null>(null);
   const [moved, setMoved] = useState<{ [position: number]: number } | null>(null);
 
   const load = useCallback(async (friendId?: string, authUserUid?: string) => {
@@ -182,9 +182,16 @@ export function App() {
       // Handle moves from board positions (not bar or bearing off)
       if (typeof from === 'number' && from >= 0 && from < 24) {
         const fromPieces = game.board[from];
-        const sign = Math.sign(fromPieces);
+        const isWhite = fromPieces > 0;
         // Add ghost for the piece that left this position
-        newGhosts[from] = (newGhosts[from] || 0) + sign;
+        if (!newGhosts[from]) {
+          newGhosts[from] = { white: 0, black: 0 };
+        }
+        if (isWhite) {
+          newGhosts[from].white += 1;
+        } else {
+          newGhosts[from].black += 1;
+        }
       }
       
       // Handle hits - add ghost for enemy piece that was hit
@@ -192,9 +199,16 @@ export function App() {
         const toPieces = game.board[to];
         // Check if this was a hit (moveLabel contains '*')
         if (moveLabel.includes('*') && Math.abs(toPieces) === 1) {
-          const hitSign = Math.sign(toPieces);
+          const isWhiteHit = toPieces > 0;
           // Add ghost for the piece that was hit
-          newGhosts[to] = (newGhosts[to] || 0) + hitSign;
+          if (!newGhosts[to]) {
+            newGhosts[to] = { white: 0, black: 0 };
+          }
+          if (isWhiteHit) {
+            newGhosts[to].white += 1;
+          } else {
+            newGhosts[to].black += 1;
+          }
         }
       }
       
@@ -352,11 +366,16 @@ export function App() {
               // Only calculate ghosts if prevGame.turn is set (not a fresh page load)
               // Otherwise prevGame is just the default new game and the diff would be incorrect
               if (prevGame.turn) {
-                const newGhosts: { [position: number]: number } = {};
+                const newGhosts: { [position: number]: { white: number, black: number } } = {};
                 for (let i = 0; i < 24; i++) {
                   const diff = prevGame.board[i] - nextGame.board[i];
                   if (diff !== 0) {
-                    newGhosts[i] = diff;
+                    // Positive diff means pieces left (white pieces if positive)
+                    // Negative diff means pieces left (black pieces if negative)
+                    newGhosts[i] = { 
+                      white: diff > 0 ? diff : 0,
+                      black: diff < 0 ? Math.abs(diff) : 0
+                    };
                   }
                 }
                 setGhosts(newGhosts);
@@ -499,7 +518,8 @@ export function App() {
             position={index}
             selected={selected}
             onSelect={onSelect}
-            ghostCount={ghosts?.[index] || 0}
+            ghostWhiteCount={ghosts?.[index]?.white || 0}
+            ghostBlackCount={ghosts?.[index]?.black || 0}
             movedCount={moved?.[index] || 0}
           />
         )}

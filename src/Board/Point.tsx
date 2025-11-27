@@ -11,11 +11,12 @@ type PointProps = {
     onSelect: (position: number | null) => void,
     enabled: boolean,
     valid: boolean,
-    ghostCount: number,
+    ghostWhiteCount: number,
+    ghostBlackCount: number,
     movedCount: number
 }
 
-export default function Point({ pieces, move, position, onSelect, selected, enabled, valid, ghostCount, movedCount }: PointProps) {
+export default function Point({ pieces, move, position, onSelect, selected, enabled, valid, ghostWhiteCount, ghostBlackCount, movedCount }: PointProps) {
     const [dragging, setDragging] = useState(false);
     const [dragOver, setDragOver] = useState(false);
     const pieceRef = useRef<HTMLImageElement>(null);
@@ -101,12 +102,21 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
                 moved={isMovedPiece}
             />
         })}
-        {/* Render ghost pieces at the end (last pieces on the point) */}
-        {ghostCount !== 0 && Array.from({ length: Math.abs(ghostCount) }, (_, index) => {
-            const ghostColor = ghostCount > 0 ? Color.White : Color.Black;
+        {/* Render white ghost pieces at the end (last pieces on the point) */}
+        {ghostWhiteCount > 0 && Array.from({ length: ghostWhiteCount }, (_, index) => {
             return <Piece 
-                key={`ghost-${index}`} 
-                color={ghostColor} 
+                key={`ghost-white-${index}`} 
+                color={Color.White} 
+                position={position} 
+                enabled={false}
+                ghost={true}
+            />
+        })}
+        {/* Render black ghost pieces at the end (last pieces on the point) */}
+        {ghostBlackCount > 0 && Array.from({ length: ghostBlackCount }, (_, index) => {
+            return <Piece 
+                key={`ghost-black-${index}`} 
+                color={Color.Black} 
                 position={position} 
                 enabled={false}
                 ghost={true}
