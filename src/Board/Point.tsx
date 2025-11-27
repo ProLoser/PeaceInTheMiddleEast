@@ -86,17 +86,6 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
         onDragStart={onDragStart}
         onDragEnd={onDragEnd}
     >
-        {/* Render ghost pieces */}
-        {ghostCount !== 0 && Array.from({ length: Math.abs(ghostCount) }, (_, index) => {
-            const ghostColor = ghostCount > 0 ? Color.White : Color.Black;
-            return <Piece 
-                key={`ghost-${index}`} 
-                color={ghostColor} 
-                position={position} 
-                enabled={false}
-                ghost={true}
-            />
-        })}
         {/* Render current pieces */}
         {Array.from({ length: Math.abs(pieces) }, (_, index) => {
             // Only mark the last 'movedCount' pieces as moved
@@ -110,6 +99,17 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
                 onSelect={onSelect} 
                 enabled={enabled}
                 moved={isMovedPiece}
+            />
+        })}
+        {/* Render ghost pieces at the end (last pieces on the point) */}
+        {ghostCount !== 0 && Array.from({ length: Math.abs(ghostCount) }, (_, index) => {
+            const ghostColor = ghostCount > 0 ? Color.White : Color.Black;
+            return <Piece 
+                key={`ghost-${index}`} 
+                color={ghostColor} 
+                position={position} 
+                enabled={false}
+                ghost={true}
             />
         })}
     </div>
