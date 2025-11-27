@@ -181,10 +181,14 @@ export function App() {
       
       // Handle moves from board positions (not bar or bearing off)
       if (typeof from === 'number' && from >= 0 && from < 24) {
-        const fromPieces = game.board[from];
-        const sign = Math.sign(fromPieces);
-        // Add ghost for the piece that left this position
-        newGhosts[from] = (newGhosts[from] || 0) + sign;
+        // Only add ghost if we're not leaving from a position we moved TO this turn
+        // (i.e., don't add ghost for the intermediate position when hitting and moving away)
+        if (!moved || !moved[from]) {
+          const fromPieces = game.board[from];
+          const sign = Math.sign(fromPieces);
+          // Add ghost for the piece that left this position
+          newGhosts[from] = (newGhosts[from] || 0) + sign;
+        }
       }
       
       // Handle hits - add ghost for enemy piece that was hit
@@ -244,7 +248,7 @@ export function App() {
       }
       return newUsedDice;
     });
-  }, [game, match, moves, usedDice, user, friend]);
+  }, [game, match, moves, usedDice, user, friend, moved]);
 
   const onDragOver: DragEventHandler = useCallback((event) => { event.preventDefault(); }, [])
   

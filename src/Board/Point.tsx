@@ -42,7 +42,9 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
         event.preventDefault();
         setDragOver(false);
         onSelect(null)
-        let from = event.dataTransfer?.getData("text")! as number|Color
+        const fromStr = event.dataTransfer?.getData("text")!;
+        // Parse the from position - could be a number string or a Color
+        const from = isNaN(parseInt(fromStr)) ? fromStr as Color : parseInt(fromStr);
         return move(from, position)
     }, [move])
 
