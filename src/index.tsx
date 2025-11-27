@@ -178,14 +178,14 @@ export function App() {
   }, [game, isMyTurn, usedDice])
 
   const parsedMove = useMemo((): ParsedMove => {
-    // Only show ghosts when it's my turn to roll the dice
-    if (!isMyTurn || game.status !== Status.Rolling || !lastMove) {
+    // Show ghosts and highlights when it's my turn (both rolling and moving phases)
+    if (!isMyTurn || !lastMove) {
       return { ghosts: {}, ghostHits: {}, destinations: {} };
     }
-    // Use the color of the player whose turn it is to roll (opposite of game.color)
+    // Use the color of the player whose turn it is (opposite of game.color)
     const currentColor = game.color === Color.White ? Color.Black : Color.White;
     return parseMoveNotation(lastMove.move, currentColor);
-  }, [isMyTurn, game.status, game.color, lastMove])
+  }, [isMyTurn, game.color, lastMove])
 
   const move = useCallback((from: number | Color, to: number) => {
     if (match && (!moves.has(to) || game.status !== Status.Moving)) return;
