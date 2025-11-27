@@ -182,10 +182,14 @@ export function App() {
     if (!isMyTurn || !lastMove) {
       return { ghosts: {}, ghostHits: {}, destinations: {} };
     }
-    // Use the color of the player whose turn it is (opposite of game.color)
-    const currentColor = game.color === Color.White ? Color.Black : Color.White;
+    // Determine the current player's color based on game status:
+    // - Rolling phase: game.color is opponent's color (who just moved), so current player is opposite
+    // - Moving phase: game.color is my color (was toggled when I rolled), so current player is game.color
+    const currentColor = game.status === Status.Rolling
+      ? (game.color === Color.White ? Color.Black : Color.White)
+      : game.color;
     return parseMoveNotation(lastMove.move, currentColor);
-  }, [isMyTurn, game.color, lastMove])
+  }, [isMyTurn, game.status, game.color, lastMove])
 
   const move = useCallback((from: number | Color, to: number) => {
     if (match && (!moves.has(to) || game.status !== Status.Moving)) return;
