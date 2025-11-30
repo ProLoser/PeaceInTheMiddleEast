@@ -197,13 +197,11 @@ export function App() {
     navigator.vibrate?.(Vibrations.Down)
     setGame(nextState)
     setSelected(null)
+    if (!match) return;
     setUsedDice(prev => {
       const newUsedDice = [...prev, { value: usedDie!, label: moveLabel }];
       // If the game ended, publish the game state immediately
-      if (
-        match &&
-        nextState.status === Status.GameOver
-      ) {
+      if (nextState.status === Status.GameOver) {
         const time = new Date().toISOString();
         const moveLabels = newUsedDice.map(die => die.label).join(' ');
         const moveString = `${nextState.dice.join("-")}: ${moveLabels} (game over)`;
@@ -432,7 +430,7 @@ export function App() {
           used={usedDice}
           disabled={!!game.turn && !isMyTurn}
           pulsate={isMyTurn && game.status === Status.Rolling}
-          undo={isMyTurn && usedDice.length > 0 && usedDice.length < game.dice.length}
+          undo={!!match && isMyTurn && usedDice.length > 0 && usedDice.length < game.dice.length}
         />
         <div className={classes('bar', { selected: selected === -1 })}>
           {Array.from({ length: game.prison?.white }, (_, index) =>
