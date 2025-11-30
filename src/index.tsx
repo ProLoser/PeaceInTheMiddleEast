@@ -46,6 +46,7 @@ export function App() {
   const [selected, setSelected] = useState<number | null>(null);
   const [usedDice, setUsedDice] = useState<UsedDie[]>([]);
   const hadMatchRef = useRef(false);
+  const gameSnapshotRef = useRef<SnapshotOrNullType>(null);
 
   const load = useCallback(async (friendId?: string | false, authUserUid?: string) => {
     if (friendId === 'PeaceInTheMiddleEast' || friendId === '__') return;
@@ -134,8 +135,15 @@ export function App() {
     const dice = [rollDie(), rollDie()] as Game['dice'];
     if (dice[0] === dice[1]) dice.push(dice[0], dice[0]); // doubles
     if (match && user && friend) { // online
-      if (!isMyTurn || game.status !== Status.Rolling)
-        return console.log("You cannot roll the dice twice in a row.");
+      if (!isMyTurn) return;
+      if (game.status !== Status.Rolling) {
+        if (gameSnapshotRef.current && usedDice.length > 0 && usedDice.length < game.dice.length) {
+          setGame(gameSnapshotRef.current.val());
+          setUsedDice([]);
+          setSelected(null);
+        }
+        return;
+      }
 
       const database = firebase.database();
       database.ref(`games/${match.game}`).update({
@@ -160,7 +168,7 @@ export function App() {
     setSelected(null);
     // TODO: autoselect bar, but game.color is not set yet
     // setSelected(match && game.color && game.prison[game.color] ? -1 : null);
-  }, [match, game, isMyTurn, user, friend]);
+  }, [match, game, isMyTurn, user, friend, usedDice]);
 
   const moves = useMemo(() => {
     if (!isMyTurn || game.status !== Status.Moving)
@@ -314,6 +322,7 @@ export function App() {
       hadMatchRef.current = true;
       const gameRef = firebase.database().ref(`games/${match.game}`);
       const onValue = (snapshot: firebaseType.database.DataSnapshot) => {
+        gameSnapshotRef.current = snapshot
         const nextGame = snapshot.val();
         if (nextGame) {
           setGame(prevGame => {
@@ -423,6 +432,7 @@ export function App() {
           used={usedDice}
           disabled={!!game.turn && !isMyTurn}
           pulsate={isMyTurn && game.status === Status.Rolling}
+          undo={isMyTurn && usedDice.length > 0 && usedDice.length < game.dice.length}
         />
         <div className="bar">
           {Array.from({ length: game.prison?.white }, (_, index) =>
