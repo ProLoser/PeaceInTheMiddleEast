@@ -23,11 +23,8 @@ on:
 jobs:
   deploy-firebase:
     runs-on: ubuntu-latest
-    # Only run on push to main, workflow_dispatch, or PRs with 'deploy' label
-    if: |
-      github.event_name == 'push' ||
-      github.event_name == 'workflow_dispatch' ||
-      (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'deploy'))
+    # Disabled: workflow has been failing and is not currently needed
+    if: false
 
     steps:
       - name: Checkout code
