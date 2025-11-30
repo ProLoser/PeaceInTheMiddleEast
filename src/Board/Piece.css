@@ -24,8 +24,17 @@
     }
 
     &.moved {
-        filter: drop-shadow(0 0 0.5rem rgba(255, 255, 255, 0.8));
-        animation: glow 1s infinite alternate;
+        outline-offset: 3px;
+        animation: moved 1s infinite alternate;
+        border-radius: 50%;
+        
+        &.white {
+            outline: 5px solid rgba(255, 255, 255, 0.5);
+        }
+        
+        &.black {
+            outline: 5px solid rgba(0, 0, 0, 0.5);
+        }
     }
 
 }
@@ -39,11 +48,13 @@
     }
 }
 
-@keyframes glow {
+@keyframes moved {
     0% {
-        filter: drop-shadow(0 0 1rem rgba(0, 0, 0, 0.8));
+        outline-width: 6px;
+        outline-offset: 8px;
     }
     100% {
-        filter: drop-shadow(0 0 0.5rem rgba(255, 255, 255, 0.8));
+        outline-width: 4px;
+        outline-offset: 3px;
     }
 }
