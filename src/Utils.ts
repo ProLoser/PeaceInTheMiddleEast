@@ -62,10 +62,13 @@ export const newGame = (oldGame?: Game) => ({
         black: 0,
         white: 0,
     },
+    lastMove: oldGame?.lastMove || null,
     status: oldGame?.status || Status.Rolling
 } as Game);
 
 
+// White: index 0→point 12, index 11→point 1, index 12→point 13, index 23→point 24
+// Black: index 0→point 13, index 11→point 24, index 12→point 12, index 23→point 1
 export const indexToPoint = (color: Color, index: number) => 
     color === Color.White ?
         index > 11 ?
@@ -74,6 +77,17 @@ export const indexToPoint = (color: Color, index: number) =>
             index < 12 ?
                 index + 13 : 24 - index
 
+// White: point 12→index 0, point 1→index 11, point 13→index 12, point 24→index 23
+// Black: point 13→index 0, point 24→index 11, point 12→index 12, point 1→index 23
+export const pointToIndex = (color: Color, point: number): number =>
+    color === Color.White ?
+        point > 12 ?
+            point - 1 : 12 - point
+        : // black
+            point > 12 ?
+                point - 13 : 24 - point
+
+export const invert = (color: Color) => color === Color.White ? Color.Black : Color.White;
 export const populated = (player: Color, pieces: number) => PLAYER_SIGN[player] * pieces > 0
 export const unprotected = (player: Color, pieces: number) => PLAYER_SIGN[player] * pieces >= -1;
 export const allHome = (player: Color, state: Game) => 
@@ -323,4 +337,99 @@ export const playCheckerSound = () => {
   const randomMp3 = checkerSounds[randomIndex];
   const audio = audioCache[randomMp3];
   playAudio(audio);
+};
+
+const parseMoveLabel = (label: string, color: Color, ghosts: { [point: number]: number }, moved: { [point: number]: number }, ghostHit: { [point: number]: number }) => {
+    const isHit = label.endsWith('*');
+    const cleanLabel = isHit ? label.slice(0, -1) : label;
+    const [from, to] = cleanLabel.split('/');
+    const sign = PLAYER_SIGN[color];
+
+    if (from === 'bar') {
+        const toPoint = parseInt(to);
+        if (!isNaN(toPoint)) {
+            const toIndex = pointToIndex(color, toPoint);
+            ghosts[-1] = (ghosts[-1] || 0) + sign;
+            moved[toIndex] = (moved[toIndex] || 0) + sign;
+            if (isHit) {
+                ghostHit[toIndex] = -sign;
+            }
+        }
+    } else if (to === 'off') {
+        const fromPoint = parseInt(from);
+        if (!isNaN(fromPoint)) {
+            const fromIndex = pointToIndex(color, fromPoint);
+            ghosts[fromIndex] = (ghosts[fromIndex] || 0) + sign;
+        }
+    } else {
+        const fromPoint = parseInt(from);
+        const toPoint = parseInt(to);
+        if (!isNaN(fromPoint) && !isNaN(toPoint)) {
+            const fromIndex = pointToIndex(color, fromPoint);
+            const toIndex = pointToIndex(color, toPoint);
+            ghosts[fromIndex] = (ghosts[fromIndex] || 0) + sign;
+            moved[toIndex] = (moved[toIndex] || 0) + sign;
+            if (isHit) {
+                ghostHit[toIndex] = -sign;
+            }
+        }
+    }
+};
+
+export const parseUsed = (usedDice: UsedDie[], color: Color | null) => {
+    const ghosts: { [point: number]: number } = {};
+    const moved: { [point: number]: number } = {};
+    const ghostHit: { [point: number]: number } = {};
+
+    if (!color) return { ghosts, moved, ghostHit };
+
+    usedDice.forEach(die => {
+        parseMoveLabel(die.label, color, ghosts, moved, ghostHit);
+    });
+
+    Object.keys(ghosts).forEach(pointStr => {
+        const point = parseInt(pointStr);
+        if (moved[point] && ghosts[point]) {
+            const sign = Math.sign(moved[point]);
+            const cancelAmount = Math.min(Math.abs(moved[point]), Math.abs(ghosts[point]));
+            moved[point] -= sign * cancelAmount;
+            if (moved[point] === 0) {
+                delete moved[point];
+            }
+        }
+    });
+
+    return { ghosts, moved, ghostHit };
+};
+
+export const parseMove = (moveString: string | undefined, color: Color | null) => {
+    const ghosts: { [point: number]: number } = {};
+    const moved: { [point: number]: number } = {};
+    const ghostHit: { [point: number]: number } = {};
+
+    if (!color || !moveString) return { ghosts, moved, ghostHit };
+
+    const parts = moveString.split(': ');
+    if (parts.length < 2) return { ghosts, moved, ghostHit };
+
+    const movesString = parts[1].replace(' (game over)', '');
+    const moveLabels = movesString.split(' ').filter(label => label.length > 0);
+
+    moveLabels.forEach(label => {
+        parseMoveLabel(label, color, ghosts, moved, ghostHit);
+    });
+
+    Object.keys(ghosts).forEach(pointStr => {
+        const point = parseInt(pointStr);
+        if (moved[point] && ghosts[point]) {
+            const sign = Math.sign(moved[point]);
+            const cancelAmount = Math.min(Math.abs(moved[point]), Math.abs(ghosts[point]));
+            moved[point] -= sign * cancelAmount;
+            if (moved[point] === 0) {
+                delete moved[point];
+            }
+        }
+    });
+
+    return { ghosts, moved, ghostHit };
 };

@@ -14,12 +14,10 @@ type DiceProps = {
 }
 
 export default function Dice({ onPointerUp, values = [6, 6], used = [], color, disabled, pulsate }: DiceProps) {
-    let dice = values;
-    
     const usedClone = [...used];
     
     return <div className={classes("dice", { pulsate })} onPointerUp={onPointerUp}>
-        {dice.map((value, index) => {
+        {values.map((value, index) => {
             const diceColor = color || (index % 2 === 0 ? Color.Black : Color.White);
             const src = `${diceColor}${value}` as keyof typeof IMAGES;
             const usedIndex = usedClone.findIndex(usedItem => usedItem.value === value);

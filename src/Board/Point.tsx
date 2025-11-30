@@ -10,13 +10,19 @@ type PointProps = {
     selected: number | null,
     onSelect: (position: number | null) => void,
     enabled: boolean,
-    valid: boolean
+    valid: boolean,
+    ghosts?: number,
+    ghostHit?: number,
+    moved?: number
 }
 
-export default function Point({ pieces, move, position, onSelect, selected, enabled, valid }: PointProps) {
+export default function Point({ pieces, move, position, onSelect, selected, enabled, valid, ghosts = 0, ghostHit = 0, moved = 0 }: PointProps) {
     const [dragging, setDragging] = useState(false);
     const [dragOver, setDragOver] = useState(false);
     const pieceRef = useRef<HTMLImageElement>(null);
+
+    const color = pieces > 0 ? Color.White : Color.Black;
+    const ghostColor = ghosts > 0 ? Color.White : Color.Black;
     
     const onDragOver: DragEventHandler = useCallback((event) => { 
         event.preventDefault(); 
@@ -39,11 +45,9 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
     const onDrop: DragEventHandler = useCallback((event) => {
         event.preventDefault();
         setDragOver(false);
-        let from = event.dataTransfer?.getData("text")! as number|Color
+        const from = event.dataTransfer?.getData("text") as number|Color
         return move(from, position)
-    }, [move, onSelect, position])
-
-    const color = pieces > 0 ? Color.White : Color.Black;
+    }, [move, position])
 
     const onDragStart: DragEventHandler = useCallback((event) => {
         onSelect(position)
@@ -71,7 +75,7 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
             onSelect(position)
         }
     }, [position, onSelect, dragging, enabled, selected, move, valid])
-
+    
     return <div className={classes('point', { valid, selected: selected === position, dragOver })} 
         draggable={enabled}
         onPointerUp={onPointerUp} 
@@ -87,10 +91,15 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
                 ref={index == 0 ? pieceRef : null} 
                 key={index} 
                 color={color} 
-                position={position} 
+                position={position}
                 onSelect={onSelect} 
                 enabled={enabled}
+                moved={index >= Math.abs(pieces) - Math.abs(moved)}
             />
         )}
+        {Array.from({ length: Math.abs(ghosts) }, (_, index) => 
+            <Piece key={index} color={ghostColor} ghost />
+        )}
+        {!!ghostHit && <Piece color={ghostHit > 0 ? Color.White : Color.Black} ghost /> || null}
     </div>
 }
