@@ -48,6 +48,10 @@
     transition: background-color 1s;
     justify-content: center;
     flex-direction: column;
+    &.selected {
+        --primary: var(--highlight);
+        --secondary: var(--highlight);
+    }
 }
 
 .home {

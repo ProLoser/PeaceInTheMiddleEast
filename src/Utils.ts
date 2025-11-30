@@ -222,6 +222,9 @@ export function calculate(state: Game, from: number | Color | undefined | null, 
             from = state.color;
         }
     }
+    if (from === -1 && state.color) {
+        from = state.color;
+    }
     if (from === to) return { state }; // no move
     const nextGame: Game = newGame(state);
     let moveLabel: string; // @see https://en.wikipedia.org/wiki/Backgammon_notation

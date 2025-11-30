@@ -434,7 +434,7 @@ export function App() {
           pulsate={isMyTurn && game.status === Status.Rolling}
           undo={isMyTurn && usedDice.length > 0 && usedDice.length < game.dice.length}
         />
-        <div className="bar">
+        <div className={classes('bar', { selected: selected === -1 })}>
           {Array.from({ length: game.prison?.white }, (_, index) =>
             <Piece
               key={index}
@@ -442,13 +442,14 @@ export function App() {
               color={Color.White}
               onSelect={onSelect}
               enabled={isMyTurn && (!game.color || game.color === Color.White)}
+              selected={selected}
             />
           )}
           {lastMove.ghosts[-1] > 0 ? Array.from({ length: lastMove.ghosts[-1] }, (_, index) => 
             <Piece key={`ghost-${index}`} color={Color.White} ghost />
           ): null}
         </div>
-        <div className="bar">
+        <div className={classes('bar', { selected: selected === -1 })}>
           {Array.from({ length: game.prison?.black }, (_, index) =>
             <Piece
               key={index}
@@ -456,6 +457,7 @@ export function App() {
               color={Color.Black}
               onSelect={onSelect}
               enabled={isMyTurn && (!game.color || game.color === Color.Black)}
+              selected={selected}
             />
           )}
           {lastMove.ghosts[-1] < 0 ? Array.from({ length: Math.abs(lastMove.ghosts[-1]) }, (_, index) => 
