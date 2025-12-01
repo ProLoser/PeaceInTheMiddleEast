@@ -1,4 +1,4 @@
-t// Import FirebaseAuth and firebase.
+// Import FirebaseAuth and firebase.
 import { useState, useCallback, useContext, ChangeEvent } from 'react';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
