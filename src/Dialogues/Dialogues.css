@@ -5,7 +5,7 @@ dialog {
   backdrop-filter: blur(10px);
   width: auto;
   text-align: center;
-  border-radius: 8px;
+  border-radius: 10px;
 
   header {
     > h1:first-of-type {
