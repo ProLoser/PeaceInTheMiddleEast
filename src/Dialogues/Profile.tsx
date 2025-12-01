@@ -144,7 +144,7 @@ export default function Profile({ user }: ProfileProps) {
         </header>
         <label>
             Name
-            <input type="text" name="name" value={editing.name} onChange={generateOnChange('name')} placeholder="Name" />
+            <input autofocus type="text" name="name" value={editing.name} onChange={generateOnChange('name')} placeholder="Name" />
         </label>
         <label>
             Language
