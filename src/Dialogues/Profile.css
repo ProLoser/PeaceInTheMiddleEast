@@ -16,6 +16,10 @@
         display: flex;
         justify-content: space-between;
         margin-top: 0;
+
+        a {
+            color: var(--primary-color);
+        }
     }
 
     .avatar {
