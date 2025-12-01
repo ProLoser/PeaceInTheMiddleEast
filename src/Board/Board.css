@@ -91,6 +91,9 @@
     &.valid {
         --primary: var(--valid);
         --secondary: var(--valid);
+        .piece {
+            pointer-events: none;
+        }
     }
     
     &.dragOver {
