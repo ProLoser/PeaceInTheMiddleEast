@@ -1,4 +1,4 @@
-// Import FirebaseAuth and firebase.
+t// Import FirebaseAuth and firebase.
 import { useState, useCallback, useContext, ChangeEvent } from 'react';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
@@ -144,7 +144,7 @@ export default function Profile({ user }: ProfileProps) {
         </header>
         <label>
             Name
-            <input autofocus type="text" name="name" value={editing.name} onChange={generateOnChange('name')} placeholder="Name" />
+            <input autoFocus type="text" name="name" value={editing.name} onChange={generateOnChange('name')} placeholder="Name" />
         </label>
         <label>
             Language
