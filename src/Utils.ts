@@ -67,25 +67,27 @@ export const newGame = (oldGame?: Game) => ({
 } as Game);
 
 
-// White: index 0→point 12, index 11→point 1, index 12→point 13, index 23→point 24
-// Black: index 0→point 13, index 11→point 24, index 12→point 12, index 23→point 1
+// Points numbered from each player's perspective (24→1 toward home)
+// White: index 0-11 (top) → points 13-24, index 12-23 (bottom) → points 12-1
+// Black: index 0-11 (top) → points 12-1, index 12-23 (bottom) → points 13-24
 export const indexToPoint = (color: Color, index: number) => 
     color === Color.White ?
         index > 11 ?
-            index + 1 : 12 - index
+            24 - index : index + 13
         : // black
-            index < 12 ?
-                index + 13 : 24 - index
+            index >= 12 ?
+                index + 1 : 12 - index
 
-// White: point 12→index 0, point 1→index 11, point 13→index 12, point 24→index 23
-// Black: point 13→index 0, point 24→index 11, point 12→index 12, point 1→index 23
+// Inverse of indexToPoint
+// White: points 1-12 → indices 23-12 (bottom), points 13-24 → indices 0-11 (top)
+// Black: points 1-12 → indices 11-0 (top), points 13-24 → indices 12-23 (bottom)
 export const pointToIndex = (color: Color, point: number): number =>
     color === Color.White ?
-        point > 12 ?
-            point - 1 : 12 - point
+        point <= 12 ?
+            24 - point : point - 13
         : // black
-            point > 12 ?
-                point - 13 : 24 - point
+            point <= 12 ?
+                12 - point : point - 1
 
 export const invert = (color: Color) => color === Color.White ? Color.Black : Color.White;
 export const populated = (player: Color, pieces: number) => PLAYER_SIGN[player] * pieces > 0
