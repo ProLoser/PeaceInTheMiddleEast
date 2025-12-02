@@ -1,0 +1,191 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Dice snapshots should render doubles with some dice used 1`] = `
+<div
+  class=" dice"
+>
+  <img
+    class=" used"
+    draggable="false"
+    src="test-file-stub"
+  />
+  <img
+    class=" used"
+    draggable="false"
+    src="test-file-stub"
+  />
+  <img
+    class=""
+    draggable="false"
+    src="test-file-stub"
+  />
+  <img
+    class=""
+    draggable="false"
+    src="test-file-stub"
+  />
+</div>
+`;
+
+exports[`Dice snapshots should render with all dice used 1`] = `
+<div
+  class=" dice"
+>
+  <img
+    class=" used"
+    draggable="false"
+    src="test-file-stub"
+  />
+  <img
+    class=" used"
+    draggable="false"
+    src="test-file-stub"
+  />
+</div>
+`;
+
+exports[`Dice snapshots should render with all die values 1-6 for white 1`] = `
+<div
+  class=" dice"
+>
+  <img
+    class=""
+    draggable="false"
+    src="test-file-stub"
+  />
+  <img
+    class=""
+    draggable="false"
+    src="test-file-stub"
+  />
+</div>
+`;
+
+exports[`Dice snapshots should render with black color 1`] = `
+<div
+  class=" dice"
+>
+  <img
+    class=""
+    draggable="false"
+    src="test-file-stub"
+  />
+  <img
+    class=""
+    draggable="false"
+    src="test-file-stub"
+  />
+</div>
+`;
+
+exports[`Dice snapshots should render with default values 1`] = `
+<div
+  class=" dice"
+>
+  <img
+    class=""
+    draggable="false"
+    src="test-file-stub"
+  />
+  <img
+    class=""
+    draggable="false"
+    src="test-file-stub"
+  />
+</div>
+`;
+
+exports[`Dice snapshots should render with disabled state 1`] = `
+<div
+  class=" dice"
+>
+  <img
+    class=" used"
+    draggable="false"
+    src="test-file-stub"
+  />
+  <img
+    class=" used"
+    draggable="false"
+    src="test-file-stub"
+  />
+</div>
+`;
+
+exports[`Dice snapshots should render with doubles (4 dice) 1`] = `
+<div
+  class=" dice"
+>
+  <img
+    class=""
+    draggable="false"
+    src="test-file-stub"
+  />
+  <img
+    class=""
+    draggable="false"
+    src="test-file-stub"
+  />
+  <img
+    class=""
+    draggable="false"
+    src="test-file-stub"
+  />
+  <img
+    class=""
+    draggable="false"
+    src="test-file-stub"
+  />
+</div>
+`;
+
+exports[`Dice snapshots should render with pulsate animation 1`] = `
+<div
+  class=" dice pulsate"
+>
+  <img
+    class=""
+    draggable="false"
+    src="test-file-stub"
+  />
+  <img
+    class=""
+    draggable="false"
+    src="test-file-stub"
+  />
+</div>
+`;
+
+exports[`Dice snapshots should render with some dice used 1`] = `
+<div
+  class=" dice"
+>
+  <img
+    class=" used"
+    draggable="false"
+    src="test-file-stub"
+  />
+  <img
+    class=""
+    draggable="false"
+    src="test-file-stub"
+  />
+</div>
+`;
+
+exports[`Dice snapshots should render with white color 1`] = `
+<div
+  class=" dice"
+>
+  <img
+    class=""
+    draggable="false"
+    src="test-file-stub"
+  />
+  <img
+    class=""
+    draggable="false"
+    src="test-file-stub"
+  />
+</div>
+`;
