@@ -13,10 +13,11 @@ type PointProps = {
     valid: boolean,
     ghosts?: number,
     ghostHit?: number,
-    moved?: number
+    moved?: number,
+    previewGhost?: Color | null
 }
 
-export default function Point({ pieces, move, position, onSelect, selected, enabled, valid, ghosts = 0, ghostHit = 0, moved = 0 }: PointProps) {
+export default function Point({ pieces, move, position, onSelect, selected, enabled, valid, ghosts = 0, ghostHit = 0, moved = 0, previewGhost = null }: PointProps) {
     const [dragging, setDragging] = useState(false);
     const [dragOver, setDragOver] = useState(false);
     const pieceRef = useRef<HTMLImageElement>(null);
@@ -101,5 +102,6 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
             <Piece key={index} color={ghostColor} ghost />
         )}
         {!!ghostHit && <Piece color={ghostHit > 0 ? Color.White : Color.Black} ghost /> || null}
+        {valid && previewGhost && <Piece color={previewGhost} ghost />}
     </div>
 }
