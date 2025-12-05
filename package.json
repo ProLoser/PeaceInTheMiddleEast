@@ -19,6 +19,7 @@
   "dependencies": {
     "@material-design-icons/svg": "^0.14.15",
     "@sentry/react": "^7.100.0",
+    "canvas-confetti": "^1.9.4",
     "date-fns": "^4.1.0",
     "firebase": "^10.12.2",
     "firebaseui": "^6.1.0",
@@ -36,6 +37,7 @@
     "vite-plugin-devtools-json": "^0.1.0"
   },
   "devDependencies": {
+    "@types/canvas-confetti": "^1.9.0",
     "@types/react": "^18.3.2",
     "@types/react-dom": "^18.3.0",
     "@typescript-eslint/eslint-plugin": "^7.8.0",
