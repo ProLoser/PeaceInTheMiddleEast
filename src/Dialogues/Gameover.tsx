@@ -10,12 +10,15 @@ interface GameoverProps {
   reset: () => void;
 }
 
+const CONFETTI_COLORS = ['#bb0000', '#ffffff', '#00bb00'];
+
 export default function Gameover({ user, reset }: GameoverProps) {
   const { t } = useTranslation();
 
   useEffect(() => {
     const duration = 3000;
     const end = Date.now() + duration;
+    let animationFrameId: number;
 
     const frame = () => {
       confetti({
@@ -23,22 +26,26 @@ export default function Gameover({ user, reset }: GameoverProps) {
         angle: 60,
         spread: 55,
         origin: { x: 0 },
-        colors: ['#bb0000', '#ffffff', '#00bb00']
+        colors: CONFETTI_COLORS
       });
       confetti({
         particleCount: 3,
         angle: 120,
         spread: 55,
         origin: { x: 1 },
-        colors: ['#bb0000', '#ffffff', '#00bb00']
+        colors: CONFETTI_COLORS
       });
 
       if (Date.now() < end) {
-        requestAnimationFrame(frame);
+        animationFrameId = requestAnimationFrame(frame);
       }
     };
 
     frame();
+
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+    };
   }, []);
 
   return (
