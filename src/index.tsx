@@ -491,6 +491,7 @@ export function App() {
             ghosts={lastMove.ghosts[index]}
             ghostHit={lastMove.ghostHit[index]}
             moved={lastMove.moved[index]}
+            previewGhost={selected !== null ? game.color : null}
           />
         )}
       </div>
