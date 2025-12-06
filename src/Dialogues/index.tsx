@@ -69,7 +69,7 @@ export default function Dialogues({ user, friend, load, reset, chats, gameover, 
           ) : state === 'chat' ? (
             <Chat chats={chats} user={user} />
           ) : gameover ? (
-            <Gameover user={gameover} reset={reset} />
+            <Gameover user={gameover} reset={reset} isWinner={user?.key === gameover.uid} />
           ) : null
         ) : (
           <Login reset={reset} friend={friend} load={load} />

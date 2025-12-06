@@ -8,14 +8,17 @@ import confetti from 'canvas-confetti';
 interface GameoverProps {
   user: User;
   reset: () => void;
+  isWinner?: boolean;
 }
 
 const CONFETTI_COLORS = ['#bb0000', '#ffffff', '#00bb00'];
 
-export default function Gameover({ user, reset }: GameoverProps) {
+export default function Gameover({ user, reset, isWinner }: GameoverProps) {
   const { t } = useTranslation();
 
   useEffect(() => {
+    if (!isWinner) return;
+
     const duration = 3000;
     const end = Date.now() + duration;
     let animationFrameId: number;
@@ -46,7 +49,7 @@ export default function Gameover({ user, reset }: GameoverProps) {
     return () => {
       cancelAnimationFrame(animationFrameId);
     };
-  }, []);
+  }, [isWinner]);
 
   return (
     <div className="gameover">
