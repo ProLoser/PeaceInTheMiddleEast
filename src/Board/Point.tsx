@@ -91,9 +91,6 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
                 ref={index == 0 ? pieceRef : null} 
                 key={index} 
                 color={color} 
-                position={position}
-                onSelect={onSelect} 
-                enabled={enabled}
                 moved={index >= Math.abs(pieces) - Math.abs(moved)}
             />
         )}

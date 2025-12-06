@@ -240,15 +240,34 @@ export function App() {
     }
   }, [move])
 
+  const onSelect = useCallback((position: number | null) => {
+    setSelected(position)
+  }, [])
+
   const onHomeClick = useCallback(() => {
     if (selected !== null) {
       move(selected, -1);
     }
   }, [selected, move]);
 
-  const onSelect = useCallback((position: number | null) => {
-    setSelected(position)
-  }, [])
+  const onBarDragStart: DragEventHandler = useCallback((event) => {
+    setSelected(-1);
+    navigator.vibrate?.(Vibrations.Up);
+    event.dataTransfer?.setData('text', '-1');
+  }, []);
+
+  const onBarDragEnd = useCallback(() => {
+    setSelected(null);
+  }, []);
+
+  const onBarPointerUp = useCallback(() => {
+    if (selected === -1) {
+      setSelected(null);
+    } else {
+      navigator.vibrate?.(Vibrations.Up);
+      setSelected(-1);
+    }
+  }, [selected]);
 
   const friendData: User | undefined = useMemo(() => friend?.val(), [friend])
 
@@ -412,6 +431,9 @@ export function App() {
     return undefined
   }, [game.status, game.turn, user, friend])
 
+  const whiteBarDraggable = isMyTurn && (!game.color || game.color === Color.White) && game.prison?.white > 0;
+  const blackBarDraggable = isMyTurn && (!game.color || game.color === Color.Black) && game.prison?.black > 0;
+
   return (
     <Dialogues
       user={user}
@@ -432,30 +454,34 @@ export function App() {
           pulsate={isMyTurn && game.status === Status.Rolling}
           undo={!!match && isMyTurn && usedDice.length > 0 && usedDice.length < game.dice.length}
         />
-        <div className={classes('bar', { selected: selected === -1 })}>
+        <div 
+          className={classes('bar', { selected: selected === -1 })}
+          draggable={whiteBarDraggable}
+          onDragStart={onBarDragStart}
+          onDragEnd={onBarDragEnd}
+          onPointerUp={onBarPointerUp}
+        >
           {Array.from({ length: game.prison?.white }, (_, index) =>
             <Piece
               key={index}
-              position={-1}
               color={Color.White}
-              onSelect={onSelect}
-              enabled={isMyTurn && (!game.color || game.color === Color.White)}
-              selected={selected}
             />
           )}
           {lastMove.ghosts[-1] > 0 ? Array.from({ length: lastMove.ghosts[-1] }, (_, index) => 
             <Piece key={`ghost-${index}`} color={Color.White} ghost />
           ): null}
         </div>
-        <div className={classes('bar', { selected: selected === -1 })}>
+        <div 
+          className={classes('bar', { selected: selected === -1 })}
+          draggable={blackBarDraggable}
+          onDragStart={onBarDragStart}
+          onDragEnd={onBarDragEnd}
+          onPointerUp={onBarPointerUp}
+        >
           {Array.from({ length: game.prison?.black }, (_, index) =>
             <Piece
               key={index}
-              position={-1}
               color={Color.Black}
-              onSelect={onSelect}
-              enabled={isMyTurn && (!game.color || game.color === Color.Black)}
-              selected={selected}
             />
           )}
           {lastMove.ghosts[-1] < 0 ? Array.from({ length: Math.abs(lastMove.ghosts[-1]) }, (_, index) => 
