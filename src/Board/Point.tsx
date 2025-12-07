@@ -45,7 +45,8 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
     const onDrop: DragEventHandler = useCallback((event) => {
         event.preventDefault();
         setDragOver(false);
-        const from = event.dataTransfer?.getData("text") as number|Color
+        const data = event.dataTransfer?.getData("text")
+        const from = (data === Color.White || data === Color.Black) ? data : parseInt(data)
         return move(from, position)
     }, [move, position])
 

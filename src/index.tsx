@@ -235,7 +235,8 @@ export function App() {
   const onDrop: DragEventHandler = useCallback((event) => {
     event.preventDefault();
     if (event.dataTransfer) {
-      const from = parseInt(event.dataTransfer.getData("text"))
+      const data = event.dataTransfer.getData("text")
+      const from = (data === Color.White || data === Color.Black) ? data : parseInt(data)
       move(from, -1)
     }
   }, [move])
