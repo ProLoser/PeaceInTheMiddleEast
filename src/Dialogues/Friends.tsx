@@ -189,6 +189,7 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
             case 'denied':
                 alert(t('notificationsDenied'));
                 break;
+            // @ts-expect-error
             case 'granted':
                 if (hasFcmToken) {
                     const confirmMessage = t('disableNotificationsConfirm');
