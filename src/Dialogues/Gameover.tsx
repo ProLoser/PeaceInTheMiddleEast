@@ -8,16 +8,16 @@ import confetti from 'canvas-confetti';
 interface GameoverProps {
   user: User;
   reset: () => void;
-  isWinner?: boolean;
+  winner?: boolean;
 }
 
 const CONFETTI_COLORS = ['#bb0000', '#ffffff', '#00bb00'];
 
-export default function Gameover({ user, reset, isWinner }: GameoverProps) {
+export default function Gameover({ user, reset, winner }: GameoverProps) {
   const { t } = useTranslation();
 
   useEffect(() => {
-    if (!isWinner) return;
+    if (!winner) return;
 
     const duration = 3000;
     const end = Date.now() + duration;
@@ -49,11 +49,11 @@ export default function Gameover({ user, reset, isWinner }: GameoverProps) {
     return () => {
       cancelAnimationFrame(animationFrameId);
     };
-  }, [isWinner]);
+  }, [winner]);
 
   return (
     <div className="gameover">
-      <h1>🎉 {t('gameover')} 🎉</h1>
+      <h1>{winner && '🎉 '}{t('gameover')}{winner && ' 🎉'}</h1>
       <Avatar user={user} />
       <p>{t('winner', { name: user.name })}</p>
       <button className="dialog-button" onClick={reset}>
