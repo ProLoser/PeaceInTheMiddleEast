@@ -21,6 +21,12 @@ export function rollDie() {
     return Math.floor(Math.random() * 6) + 1;
 }
 
+export function parseDragData(data: string | undefined): number | Color {
+    if (!data) return NaN;
+    if (data === Color.White || data === Color.Black) return data;
+    return parseInt(data);
+}
+
 export const Vibrations = {
     Dice: [50, 100, 60, 60, 90, 40, 110, 20, 150],
     Up: 2,

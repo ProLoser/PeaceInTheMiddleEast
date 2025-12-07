@@ -1,7 +1,7 @@
 import { useCallback, useRef, useState, type DragEventHandler } from "react";
 import Piece from './Piece'
 import { Color } from "../Types";
-import { Vibrations, classes } from "../Utils";
+import { Vibrations, classes, parseDragData } from "../Utils";
 
 type PointProps = {
     pieces: number,
@@ -45,8 +45,7 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
     const onDrop: DragEventHandler = useCallback((event) => {
         event.preventDefault();
         setDragOver(false);
-        const data = event.dataTransfer?.getData("text")
-        const from = (data === Color.White || data === Color.Black) ? data : parseInt(data)
+        const from = parseDragData(event.dataTransfer?.getData("text"))
         return move(from, position)
     }, [move, position])
 

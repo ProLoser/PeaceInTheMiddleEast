@@ -15,7 +15,7 @@ import Toolbar from './Board/Toolbar';
 import './index.css'
 import './Board/Board.css';
 import './Board/Toolbar.css'
-import { calculate, newGame, nextMoves, rollDie, Vibrations, playAudio, classes, parseUsed, parseMove } from './Utils';
+import { calculate, newGame, nextMoves, rollDie, Vibrations, playAudio, classes, parseUsed, parseMove, parseDragData } from './Utils';
 import firebase from "./firebase.config";
 import { playCheckerSound } from './Utils';
 import type firebaseType from 'firebase/compat/app';
@@ -235,8 +235,7 @@ export function App() {
   const onDrop: DragEventHandler = useCallback((event) => {
     event.preventDefault();
     if (event.dataTransfer) {
-      const data = event.dataTransfer.getData("text")
-      const from = (data === Color.White || data === Color.Black) ? data : parseInt(data)
+      const from = parseDragData(event.dataTransfer.getData("text"))
       move(from, -1)
     }
   }, [move])
