@@ -47,6 +47,9 @@ export function App() {
   const [usedDice, setUsedDice] = useState<UsedDie[]>([]);
   const hadMatchRef = useRef(false);
   const gameSnapshotRef = useRef<SnapshotOrNullType>(null);
+  const [barDragging, setBarDragging] = useState(false);
+  const whitePieceRef = useRef<HTMLImageElement>(null);
+  const blackPieceRef = useRef<HTMLImageElement>(null);
 
   const load = useCallback(async (friendId?: string | false, authUserUid?: string) => {
     if (friendId === 'PeaceInTheMiddleEast' || friendId === '__') return;
@@ -250,6 +253,22 @@ export function App() {
     setSelected(position)
   }, [])
 
+  const onBarDragStart = useCallback((color: Color): DragEventHandler => (event) => {
+    setBarDragging(true);
+    navigator.vibrate?.(Vibrations.Up);
+    onSelect(-1);
+    const pieceRef = color === Color.White ? whitePieceRef : blackPieceRef;
+    if (event.target === event.currentTarget && pieceRef.current) {
+      event.dataTransfer?.setDragImage(pieceRef.current, 50, 50);
+    }
+    event.dataTransfer?.setData('text', color);
+  }, [onSelect]);
+
+  const onBarDragEnd = useCallback(() => {
+    setBarDragging(false);
+    onSelect(null);
+  }, [onSelect]);
+
   const friendData: User | undefined = useMemo(() => friend?.val(), [friend])
 
   useEffect(() => { // PopState observer (browser history navigation)
@@ -432,30 +451,42 @@ export function App() {
           pulsate={isMyTurn && game.status === Status.Rolling}
           undo={!!match && isMyTurn && usedDice.length > 0 && usedDice.length < game.dice.length}
         />
-        <div className={classes('bar', { selected: selected === -1 })}>
+        <div className={classes('bar', { selected: selected === -1 })}
+          draggable={isMyTurn && (!game.color || game.color === Color.White) && game.prison?.white > 0}
+          onDragStart={onBarDragStart(Color.White)}
+          onDragEnd={onBarDragEnd}
+        >
           {Array.from({ length: game.prison?.white }, (_, index) =>
             <Piece
+              ref={index === 0 ? whitePieceRef : null}
               key={index}
               position={-1}
               color={Color.White}
               onSelect={onSelect}
               enabled={isMyTurn && (!game.color || game.color === Color.White)}
               selected={selected}
+              dragging={barDragging}
             />
           )}
           {lastMove.ghosts[-1] > 0 ? Array.from({ length: lastMove.ghosts[-1] }, (_, index) => 
             <Piece key={`ghost-${index}`} color={Color.White} ghost />
           ): null}
         </div>
-        <div className={classes('bar', { selected: selected === -1 })}>
+        <div className={classes('bar', { selected: selected === -1 })}
+          draggable={isMyTurn && (!game.color || game.color === Color.Black) && game.prison?.black > 0}
+          onDragStart={onBarDragStart(Color.Black)}
+          onDragEnd={onBarDragEnd}
+        >
           {Array.from({ length: game.prison?.black }, (_, index) =>
             <Piece
+              ref={index === 0 ? blackPieceRef : null}
               key={index}
               position={-1}
               color={Color.Black}
               onSelect={onSelect}
               enabled={isMyTurn && (!game.color || game.color === Color.Black)}
               selected={selected}
+              dragging={barDragging}
             />
           )}
           {lastMove.ghosts[-1] < 0 ? Array.from({ length: Math.abs(lastMove.ghosts[-1]) }, (_, index) => 
