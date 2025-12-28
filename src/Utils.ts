@@ -284,6 +284,7 @@ export function calculate(state: Game, from: number | Color | undefined | null, 
         
         const fromPoint = indexToPoint(player, fromIndex);
         const toPoint = indexToPoint(player, to);
+        const moveNotation = player === Color.White ? `${toPoint}/${fromPoint}` : `${fromPoint}/${toPoint}`;
         
         if (defense === undefined) { // bear off        
             usedDie = dice.find(die => destination(player, fromIndex, die) <= -1);    
@@ -294,11 +295,11 @@ export function calculate(state: Game, from: number | Color | undefined | null, 
                 nextGame.home.black++;
         } else if (!defense || Math.sign(defense) === Math.sign(offense)) { // move
             usedDie = dice.find(die => destination(player, fromIndex, die) === to);
-            moveLabel = player === Color.White ? `${toPoint}/${fromPoint}` : `${fromPoint}/${toPoint}`;
+            moveLabel = moveNotation;
             nextGame.board[to] += Math.sign(offense);
         } else if (Math.abs(defense) === 1) { // hit
             usedDie = dice.find(die => destination(player, fromIndex, die) === to);
-            moveLabel = player === Color.White ? `${toPoint}/${fromPoint}*` : `${fromPoint}/${toPoint}*`;
+            moveLabel = `${moveNotation}*`;
             nextGame.board[to] = -Math.sign(defense);
             if (offense > 0) nextGame.prison.black++;
             else nextGame.prison.white++;
