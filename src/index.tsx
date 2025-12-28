@@ -460,7 +460,7 @@ export function App() {
               position={-1}
               color={Color.White}
               onSelect={onSelect}
-              enabled={isMyTurn && (!game.color || game.color === Color.White)}
+              enabled={isMyTurn && (!game.color || game.color === Color.White) && (!match || sources.has(-1))}
               selected={selected}
             />
           )}
@@ -478,7 +478,7 @@ export function App() {
               position={-1}
               color={Color.Black}
               onSelect={onSelect}
-              enabled={isMyTurn && (!game.color || game.color === Color.Black)}
+              enabled={isMyTurn && (!game.color || game.color === Color.Black) && (!match || sources.has(-1))}
               selected={selected}
             />
           )}
