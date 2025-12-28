@@ -451,7 +451,7 @@ describe('Utils', () => {
       const result = calculate(game, 12, 15);
       expect(result.state?.board[12]).toBe(4);
       expect(result.state?.board[15]).toBe(1);
-      expect(result.moveLabel).toBe('13/16');
+      expect(result.moveLabel).toBe('16/13');
     });
 
     it('should handle white hitting black piece', () => {
@@ -460,7 +460,7 @@ describe('Utils', () => {
       expect(result.state?.board[12]).toBe(4);
       expect(result.state?.board[15]).toBe(1);
       expect(result.state?.prison.black).toBe(1);
-      expect(result.moveLabel).toBe('13/16*');
+      expect(result.moveLabel).toBe('16/13*');
     });
 
     it('should handle white bearing off', () => {

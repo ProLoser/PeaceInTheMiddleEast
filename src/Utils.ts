@@ -237,13 +237,14 @@ export function calculate(state: Game, from: number | Color | undefined | null, 
     let usedDie: number | undefined;
     if (from === Color.White) { // white re-enter
         usedDie = HOME_INDEXES.black[1] - to + 1;
+        const toPoint = indexToPoint(Color.White, to);
         if (nextGame.board[to] === -1) { // hit
-            moveLabel = `bar/${indexToPoint(Color.White, to)}*`;
+            moveLabel = `bar/${toPoint}*`;
             nextGame.prison.black++;
             nextGame.prison.white--;
             nextGame.board[to] = 1;
         } else if (nextGame.board[to] >= -1) { // move
-            moveLabel = `bar/${indexToPoint(Color.White, to)}`;
+            moveLabel = `bar/${toPoint}`;
             nextGame.prison.white--;
             nextGame.board[to]++;
         } else { // blocked
@@ -251,13 +252,14 @@ export function calculate(state: Game, from: number | Color | undefined | null, 
         }
     } else if (from === Color.Black) { // black re-enter
         usedDie = HOME_INDEXES.white[1] - to + 1;
+        const toPoint = indexToPoint(Color.Black, to);
         if (nextGame.board[to] === 1) { // hit
-            moveLabel = `bar/${indexToPoint(Color.Black, to)}*`;
+            moveLabel = `bar/${toPoint}*`;
             nextGame.prison.white++;
             nextGame.prison.black--;
             nextGame.board[to] = -1;
         } else if (nextGame.board[to] <= 1) { // move
-            moveLabel = `bar/${indexToPoint(Color.Black, to)}`;
+            moveLabel = `bar/${toPoint}`;
             nextGame.prison.black--;
             nextGame.board[to]--;
         } else { // blocked
@@ -280,20 +282,23 @@ export function calculate(state: Game, from: number | Color | undefined | null, 
         let dice = [...state.dice].sort((a, b) => a - b);
         usedDice.forEach(die => dice.splice(dice.indexOf(die.value), 1))
         
+        const fromPoint = indexToPoint(player, fromIndex);
+        const toPoint = indexToPoint(player, to);
+        
         if (defense === undefined) { // bear off        
             usedDie = dice.find(die => destination(player, fromIndex, die) <= -1);    
-            moveLabel = `${indexToPoint(player, fromIndex)}/off`;
+            moveLabel = player === Color.White ? `${fromPoint}/off` : `${fromPoint}/off`;
             if (offense > 0) // White
                 nextGame.home.white++;
             else // Black
                 nextGame.home.black++;
         } else if (!defense || Math.sign(defense) === Math.sign(offense)) { // move
             usedDie = dice.find(die => destination(player, fromIndex, die) === to);
-            moveLabel = `${indexToPoint(player, fromIndex)}/${indexToPoint(player, to)}`;
+            moveLabel = player === Color.White ? `${toPoint}/${fromPoint}` : `${fromPoint}/${toPoint}`;
             nextGame.board[to] += Math.sign(offense);
         } else if (Math.abs(defense) === 1) { // hit
             usedDie = dice.find(die => destination(player, fromIndex, die) === to);
-            moveLabel = `${indexToPoint(player, fromIndex)}/${indexToPoint(player, to)}*`;
+            moveLabel = player === Color.White ? `${toPoint}/${fromPoint}*` : `${fromPoint}/${toPoint}*`;
             nextGame.board[to] = -Math.sign(defense);
             if (offense > 0) nextGame.prison.black++;
             else nextGame.prison.white++;
@@ -351,11 +356,11 @@ export const playCheckerSound = () => {
 const parseMoveLabel = (label: string, color: Color, ghosts: { [point: number]: number }, moved: { [point: number]: number }, ghostHit: { [point: number]: number }) => {
     const isHit = label.endsWith('*');
     const cleanLabel = isHit ? label.slice(0, -1) : label;
-    const [from, to] = cleanLabel.split('/');
+    const [first, second] = cleanLabel.split('/');
     const sign = PLAYER_SIGN[color];
 
-    if (from === 'bar') {
-        const toPoint = parseInt(to);
+    if (first === 'bar') {
+        const toPoint = parseInt(second);
         if (!isNaN(toPoint)) {
             const toIndex = pointToIndex(color, toPoint);
             ghosts[-1] = (ghosts[-1] || 0) + sign;
@@ -364,16 +369,19 @@ const parseMoveLabel = (label: string, color: Color, ghosts: { [point: number]: 
                 ghostHit[toIndex] = -sign;
             }
         }
-    } else if (to === 'off') {
-        const fromPoint = parseInt(from);
+    } else if (second === 'off') {
+        const fromPoint = parseInt(first);
         if (!isNaN(fromPoint)) {
             const fromIndex = pointToIndex(color, fromPoint);
             ghosts[fromIndex] = (ghosts[fromIndex] || 0) + sign;
         }
     } else {
-        const fromPoint = parseInt(from);
-        const toPoint = parseInt(to);
-        if (!isNaN(fromPoint) && !isNaN(toPoint)) {
+        const firstPoint = parseInt(first);
+        const secondPoint = parseInt(second);
+        if (!isNaN(firstPoint) && !isNaN(secondPoint)) {
+            // For White, notation is reversed (toPoint/fromPoint), so we need to swap
+            const fromPoint = color === Color.White ? secondPoint : firstPoint;
+            const toPoint = color === Color.White ? firstPoint : secondPoint;
             const fromIndex = pointToIndex(color, fromPoint);
             const toIndex = pointToIndex(color, toPoint);
             ghosts[fromIndex] = (ghosts[fromIndex] || 0) + sign;
