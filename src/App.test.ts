@@ -291,4 +291,82 @@ describe('App Component Logic', () => {
       expect(result.state?.status).toBe(Status.GameOver);
     });
   });
+
+  describe('bar piece dragging with no valid moves', () => {
+    it('should not enable dragging when white has pieces on bar but all entry points are blocked', () => {
+      const game = newGame();
+      game.status = Status.Moving;
+      game.color = Color.White;
+      game.dice = [3, 4];
+      game.prison = {white: 1, black: 0};
+      game.board = [0, 0, 0, 0, 0, 0, 0, 0, -2, -2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] as Game['board'];
+      const isMyTurn = true;
+      const usedDice: UsedDie[] = [];
+
+      const sources = !isMyTurn || game.status !== Status.Moving ?
+        new Set<number>() :
+        nextMoves(game, usedDice);
+
+      const shouldEnableBarPiece = isMyTurn && (!game.color || game.color === Color.White) && sources.has(-1);
+      expect(sources.has(-1)).toBe(false);
+      expect(shouldEnableBarPiece).toBe(false);
+    });
+
+    it('should enable dragging when white has pieces on bar and at least one entry point is open', () => {
+      const game = newGame();
+      game.status = Status.Moving;
+      game.color = Color.White;
+      game.dice = [3, 4];
+      game.prison = {white: 1, black: 0};
+      game.board = [0, 0, 0, 0, 0, 0, 0, 0, -1, -2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] as Game['board'];
+      const isMyTurn = true;
+      const usedDice: UsedDie[] = [];
+
+      const sources = !isMyTurn || game.status !== Status.Moving ?
+        new Set<number>() :
+        nextMoves(game, usedDice);
+
+      const shouldEnableBarPiece = isMyTurn && (!game.color || game.color === Color.White) && sources.has(-1);
+      expect(sources.has(-1)).toBe(true);
+      expect(shouldEnableBarPiece).toBe(true);
+    });
+
+    it('should not enable dragging when black has pieces on bar but all entry points are blocked', () => {
+      const game = newGame();
+      game.status = Status.Moving;
+      game.color = Color.Black;
+      game.dice = [3, 4];
+      game.prison = {white: 0, black: 1};
+      game.board = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0] as Game['board'];
+      const isMyTurn = true;
+      const usedDice: UsedDie[] = [];
+
+      const sources = !isMyTurn || game.status !== Status.Moving ?
+        new Set<number>() :
+        nextMoves(game, usedDice);
+
+      const shouldEnableBarPiece = isMyTurn && (!game.color || game.color === Color.Black) && sources.has(-1);
+      expect(sources.has(-1)).toBe(false);
+      expect(shouldEnableBarPiece).toBe(false);
+    });
+
+    it('should enable dragging when black has pieces on bar and at least one entry point is open', () => {
+      const game = newGame();
+      game.status = Status.Moving;
+      game.color = Color.Black;
+      game.dice = [3, 4];
+      game.prison = {white: 0, black: 1};
+      game.board = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 0, 0] as Game['board'];
+      const isMyTurn = true;
+      const usedDice: UsedDie[] = [];
+
+      const sources = !isMyTurn || game.status !== Status.Moving ?
+        new Set<number>() :
+        nextMoves(game, usedDice);
+
+      const shouldEnableBarPiece = isMyTurn && (!game.color || game.color === Color.Black) && sources.has(-1);
+      expect(sources.has(-1)).toBe(true);
+      expect(shouldEnableBarPiece).toBe(true);
+    });
+  });
 });
