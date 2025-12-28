@@ -112,7 +112,8 @@ describe('App Component Logic', () => {
       const isMyTurn = true;
       const usedDice: UsedDie[] = [];
 
-      const moves = !isMyTurn || game.status !== Status.Moving ?
+      // Simulate runtime behavior - status could be any Status value
+      const moves = !isMyTurn || (game.status as Status) !== Status.Moving ?
         new Set<number>() :
         nextMoves(game, usedDice, null!);
 
@@ -150,7 +151,7 @@ describe('App Component Logic', () => {
 
     it('should detect when doubles are partially used', () => {
       const game = newGame();
-      game.dice = [5, 5, 5, 5];
+      game.dice = [5, 5, 5, 5] as unknown as [number, number];
       const usedDice: UsedDie[] = [
         {value: 5, label: '1/6'},
         {value: 5, label: '6/11'},
@@ -162,7 +163,7 @@ describe('App Component Logic', () => {
 
     it('should detect when all doubles are used', () => {
       const game = newGame();
-      game.dice = [5, 5, 5, 5];
+      game.dice = [5, 5, 5, 5] as unknown as [number, number];
       const usedDice: UsedDie[] = [
         {value: 5, label: '1/6'},
         {value: 5, label: '6/11'},
@@ -183,8 +184,9 @@ describe('App Component Logic', () => {
     });
 
     it('should switch from Black to White', () => {
-      const currentColor = Color.Black;
-      const nextColor = currentColor === Color.White ? Color.Black : Color.White;
+      const currentColor = Color.Black as Color;
+      const nextColor = currentColor === Color.White ?
+        Color.Black : Color.White;
       expect(nextColor).toBe(Color.White);
     });
   });
@@ -206,7 +208,8 @@ describe('App Component Logic', () => {
       const game = newGame();
       game.status = Status.Moving;
 
-      const isValidMove = moves.has(to) && game.status === Status.Moving;
+      const isValidMove = moves.has(to) &&
+        game.status === Status.Moving;
       expect(isValidMove).toBe(true);
     });
 
@@ -216,7 +219,8 @@ describe('App Component Logic', () => {
       const game = newGame();
       game.status = Status.Rolling;
 
-      const isValidMove = moves.has(to) && game.status === Status.Moving;
+      const isValidMove = moves.has(to) &&
+        (game.status as Status) === Status.Moving;
       expect(isValidMove).toBe(false);
     });
   });
@@ -239,7 +243,7 @@ describe('App Component Logic', () => {
       game.status = Status.Moving;
       game.turn = 'user1';
 
-      const isGameOver = game.status === Status.GameOver;
+      const isGameOver = (game.status as Status) === Status.GameOver;
       expect(isGameOver).toBe(false);
     });
   });

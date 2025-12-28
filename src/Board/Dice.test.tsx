@@ -1,6 +1,5 @@
 import {describe, it, expect} from '@jest/globals';
 import {render} from '@testing-library/react';
-import '@testing-library/jest-dom';
 import Dice from './Dice';
 import {Color} from '../Types';
 
@@ -136,12 +135,14 @@ describe('Dice', () => {
       const {container} = render(
           <Dice {...defaultProps} pulsate={true} />
       );
-      expect(container.firstChild).toHaveClass('pulsate');
+      const element = container.firstChild as HTMLElement;
+      expect(element.className).toContain('pulsate');
     });
 
     it('should have dice class on container', () => {
       const {container} = render(<Dice {...defaultProps} />);
-      expect(container.firstChild).toHaveClass('dice');
+      const element = container.firstChild as HTMLElement;
+      expect(element.className).toContain('dice');
     });
   });
 });
