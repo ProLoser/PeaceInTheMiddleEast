@@ -12,4 +12,5 @@ scope commands to functions: `yarn workspace functions ...`
 # Rules
 Avoid adding description comments
 Avoid removing my comments unless surrounding code is removed
+don't add tests unless explicitly instructed or when adding utilities that can be tested in isolation.
 Use screenshots when possible, in both dark and light themes if relevant
