@@ -49,18 +49,10 @@
     justify-content: center;
     flex-direction: column;
     &.selected {
-        --primary: var(--highlight);
-        --secondary: var(--highlight);
+        background: var(--highlight) !important;
     }
     &.valid {
-        --primary: var(--valid);
-        --secondary: var(--valid);
-        background: var(--valid);
-    }
-    &.dragOver {
-        --primary: var(--highlight);
-        --secondary: var(--highlight);
-        background: var(--highlight);
+        background: var(--valid) !important;
     }
 }
 
@@ -72,14 +64,10 @@
         min-height: 0;
     }
     &.valid {
-        --primary: var(--valid);
-        --secondary: var(--valid);
-        background: var(--valid);
+        background: var(--valid) !important;
     }
     &.dragOver {
-        --primary: var(--highlight);
-        --secondary: var(--highlight);
-        background: var(--highlight);
+        background: var(--highlight) !important;
     }
 }
 
