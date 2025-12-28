@@ -357,11 +357,11 @@ export const playCheckerSound = () => {
 const parseMoveLabel = (label: string, color: Color, ghosts: { [point: number]: number }, moved: { [point: number]: number }, ghostHit: { [point: number]: number }) => {
     const isHit = label.endsWith('*');
     const cleanLabel = isHit ? label.slice(0, -1) : label;
-    const [first, second] = cleanLabel.split('/');
+    const [from, to] = cleanLabel.split('/');
     const sign = PLAYER_SIGN[color];
 
-    if (first === 'bar') {
-        const toPoint = parseInt(second);
+    if (from === 'bar') {
+        const toPoint = parseInt(to);
         if (!isNaN(toPoint)) {
             const toIndex = pointToIndex(color, toPoint);
             ghosts[-1] = (ghosts[-1] || 0) + sign;
@@ -370,19 +370,16 @@ const parseMoveLabel = (label: string, color: Color, ghosts: { [point: number]: 
                 ghostHit[toIndex] = -sign;
             }
         }
-    } else if (second === 'off') {
-        const fromPoint = parseInt(first);
+    } else if (to === 'off') {
+        const fromPoint = parseInt(from);
         if (!isNaN(fromPoint)) {
             const fromIndex = pointToIndex(color, fromPoint);
             ghosts[fromIndex] = (ghosts[fromIndex] || 0) + sign;
         }
     } else {
-        const firstPoint = parseInt(first);
-        const secondPoint = parseInt(second);
-        if (!isNaN(firstPoint) && !isNaN(secondPoint)) {
-            // For White, notation is reversed (toPoint/fromPoint), so we need to swap
-            const fromPoint = color === Color.White ? secondPoint : firstPoint;
-            const toPoint = color === Color.White ? firstPoint : secondPoint;
+        const fromPoint = parseInt(from);
+        const toPoint = parseInt(to);
+        if (!isNaN(fromPoint) && !isNaN(toPoint)) {
             const fromIndex = pointToIndex(color, fromPoint);
             const toIndex = pointToIndex(color, toPoint);
             ghosts[fromIndex] = (ghosts[fromIndex] || 0) + sign;
