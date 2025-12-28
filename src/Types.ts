@@ -43,7 +43,7 @@ export type Match = {
     sort: string;
     lastChat?: number;
     lastMessage?: string;
-    lastMove?: number;
+    lastMove?: string;
     turn?: User['uid'] | true; // User ID whose turn it is, or true if game is over
 }
 
@@ -58,14 +58,15 @@ export type Game = {
     status?: Status;
     board: number[] & { length: 24 };
     dice: [number, number];
-    color: Color;
-    turn: User['uid'];
+    color?: Color;
+    turn?: User['uid'];
     prison: {
         [color in Color]: number;
     };
     home: {
         [color in Color]: number;
     };
+    lastMove?: string;
 };
 
 export type UsedDie = {

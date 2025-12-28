@@ -3,6 +3,7 @@
     cursor: pointer;
     justify-content: center;
     flex-direction: column;
+    position: relative;
 
     &.pulsate {
         animation: pulsate 1s infinite ease-out alternate-reverse;
@@ -22,6 +23,24 @@
         transition: opacity .2s;
         &.used {
             opacity: .5;
+        }
+    }
+
+    .undo {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 3em;
+        height: 3em;
+        fill: #000;
+        pointer-events: none;
+        z-index: 10;
+    }
+
+    @media (prefers-color-scheme: dark) {
+        .undo {
+            fill: #fff;
         }
     }
 }

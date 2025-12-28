@@ -1,7 +1,7 @@
 import { useCallback, useRef, useState, type DragEventHandler } from "react";
 import Piece from './Piece'
 import { Color } from "../Types";
-import { Vibrations, classes } from "../Utils";
+import { Vibrations, classes, parseDragData } from "../Utils";
 
 type PointProps = {
     pieces: number,
@@ -10,13 +10,19 @@ type PointProps = {
     selected: number | null,
     onSelect: (position: number | null) => void,
     enabled: boolean,
-    valid: boolean
+    valid: boolean,
+    ghosts?: number,
+    ghostHit?: number,
+    moved?: number
 }
 
-export default function Point({ pieces, move, position, onSelect, selected, enabled, valid }: PointProps) {
+export default function Point({ pieces, move, position, onSelect, selected, enabled, valid, ghosts = 0, ghostHit = 0, moved = 0 }: PointProps) {
     const [dragging, setDragging] = useState(false);
     const [dragOver, setDragOver] = useState(false);
     const pieceRef = useRef<HTMLImageElement>(null);
+
+    const color = pieces > 0 ? Color.White : Color.Black;
+    const ghostColor = ghosts > 0 ? Color.White : Color.Black;
     
     const onDragOver: DragEventHandler = useCallback((event) => { 
         event.preventDefault(); 
@@ -31,7 +37,7 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
     
     const onDragLeave: DragEventHandler = useCallback((event) => {
         event.preventDefault();
-        if (valid && dragOver) {
+        if (valid && dragOver && (!event.relatedTarget || !event.currentTarget.contains(event.relatedTarget as Node))) {
             setDragOver(false);
         }
     }, [valid, dragOver]);
@@ -39,11 +45,9 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
     const onDrop: DragEventHandler = useCallback((event) => {
         event.preventDefault();
         setDragOver(false);
-        let from = event.dataTransfer?.getData("text")! as number|Color
+        const from = parseDragData(event.dataTransfer?.getData("text"))
         return move(from, position)
-    }, [move, onSelect, position])
-
-    const color = pieces > 0 ? Color.White : Color.Black;
+    }, [move, position])
 
     const onDragStart: DragEventHandler = useCallback((event) => {
         onSelect(position)
@@ -62,14 +66,16 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
 
     const onPointerUp = useCallback(() => {
         if (dragging) return;
-        if (selected !== null) {
+        if (selected === position) {
+            onSelect(null)
+        } else if (selected !== null && valid) {
             move(selected, position)
         } else if (enabled) {
             navigator.vibrate?.(Vibrations.Up)
             onSelect(position)
         }
-    }, [position, onSelect, dragging, enabled, selected, move])
-
+    }, [position, onSelect, dragging, enabled, selected, move, valid])
+    
     return <div className={classes('point', { valid, selected: selected === position, dragOver })} 
         draggable={enabled}
         onPointerUp={onPointerUp} 
@@ -85,10 +91,15 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
                 ref={index == 0 ? pieceRef : null} 
                 key={index} 
                 color={color} 
-                position={position} 
+                position={position}
                 onSelect={onSelect} 
                 enabled={enabled}
+                moved={index >= Math.abs(pieces) - Math.abs(moved)}
             />
         )}
+        {Array.from({ length: Math.abs(ghosts) }, (_, index) => 
+            <Piece key={index} color={ghostColor} ghost />
+        )}
+        {!!ghostHit && <Piece color={ghostHit > 0 ? Color.White : Color.Black} ghost /> || null}
     </div>
 }

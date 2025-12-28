@@ -15,7 +15,7 @@ import Toolbar from './Board/Toolbar';
 import './index.css'
 import './Board/Board.css';
 import './Board/Toolbar.css'
-import { calculate, newGame, nextMoves, rollDie, Vibrations, playAudio, classes } from './Utils';
+import { calculate, newGame, nextMoves, rollDie, Vibrations, playAudio, classes, parseUsed, parseMove, parseDragData } from './Utils';
 import firebase from "./firebase.config";
 import { playCheckerSound } from './Utils';
 import type firebaseType from 'firebase/compat/app';
@@ -46,6 +46,7 @@ export function App() {
   const [selected, setSelected] = useState<number | null>(null);
   const [usedDice, setUsedDice] = useState<UsedDie[]>([]);
   const hadMatchRef = useRef(false);
+  const gameSnapshotRef = useRef<SnapshotOrNullType>(null);
 
   const load = useCallback(async (friendId?: string | false, authUserUid?: string) => {
     if (friendId === 'PeaceInTheMiddleEast' || friendId === '__') return;
@@ -114,7 +115,7 @@ export function App() {
   const reset = useCallback(() => {
     if (confirm(t('resetConfirm'))) {
       console.log('Resetting', match?.game);
-      let data = newGame()
+      const data = newGame()
       if (match)
         firebase.database().ref(`games/${match.game}`).set(data);
       setGame(data);
@@ -133,20 +134,26 @@ export function App() {
   const rollDice = useCallback(() => {
     const dice = [rollDie(), rollDie()] as Game['dice'];
     if (dice[0] === dice[1]) dice.push(dice[0], dice[0]); // doubles
-    if (match) { // online
-      if (!isMyTurn || game.status !== Status.Rolling)
-        return console.log("You cannot roll the dice twice in a row.");
+    if (match && user && friend) { // online
+      if (!isMyTurn) return;
+      if (game.status !== Status.Rolling) {
+        if (gameSnapshotRef.current && usedDice.length > 0 && usedDice.length < game.dice.length) {
+          setGame(gameSnapshotRef.current.val());
+          setUsedDice([]);
+          setSelected(null);
+        }
+        return;
+      }
 
       const database = firebase.database();
       database.ref(`games/${match.game}`).update({
         dice,
         color: game.color === Color.White ? Color.Black : Color.White,
-        turn: user?.key,
+        turn: user.key,
         status: Status.Moving
       });
-      // Update turn in both matches
-      database.ref(`matches/${user?.key}/${friend?.key}`).update({ turn: user?.key });
-      database.ref(`matches/${friend?.key}/${user?.key}`).update({ turn: user?.key });
+      database.ref(`matches/${user.key}/${friend.key}`).update({ turn: user.key });
+      database.ref(`matches/${friend.key}/${user.key}`).update({ turn: user.key });
     } else { // local
       setGame({
         ...game,
@@ -158,8 +165,10 @@ export function App() {
     playAudio(diceSound);
     navigator.vibrate?.(Vibrations.Dice);
     setUsedDice([]);
-    setSelected(match && game.prison[game.color] ? -1 : null);
-  }, [match, game, isMyTurn, user, friend]);
+    setSelected(null);
+    // TODO: autoselect bar, but game.color is not set yet
+    // setSelected(match && game.color && game.prison[game.color] ? -1 : null);
+  }, [match, game, isMyTurn, user, friend, usedDice]);
 
   const moves = useMemo(() => {
     if (!isMyTurn || game.status !== Status.Moving)
@@ -173,6 +182,13 @@ export function App() {
     return nextMoves(game, usedDice)
   }, [game, isMyTurn, usedDice])
 
+  const lastMove = useMemo(() => {
+    if (!game.color) return { ghosts: {}, moved: {}, ghostHit: {} };
+    if (usedDice.length > 0) return parseUsed(usedDice, game.color);
+    if (game.status === Status.Rolling) return parseMove(game.lastMove, game.color);
+    return { ghosts: {}, moved: {}, ghostHit: {} };
+  }, [usedDice, game])
+
   const move = useCallback((from: number | Color, to: number) => {
     if (match && (!moves.has(to) || game.status !== Status.Moving)) return;
     const { state: nextState, moveLabel, usedDie } = calculate(game, from, to, usedDice)
@@ -181,28 +197,31 @@ export function App() {
     navigator.vibrate?.(Vibrations.Down)
     setGame(nextState)
     setSelected(null)
+    if (!match) return;
     setUsedDice(prev => {
       const newUsedDice = [...prev, { value: usedDie!, label: moveLabel }];
       // If the game ended, publish the game state immediately
-      if (
-        match &&
-        nextState.status === Status.GameOver
-      ) {
+      if (nextState.status === Status.GameOver) {
         const time = new Date().toISOString();
         const moveLabels = newUsedDice.map(die => die.label).join(' ');
+        const moveString = `${nextState.dice.join("-")}: ${moveLabels} (game over)`;
         const nextMove: Move = {
-          player: user?.key!,
-          move: `${nextState.dice.join("-")}: ${moveLabels} (game over)`,
+          player: user?.key as User['uid'],
+          move: moveString,
           time,
-          friend: friend?.key!,
+          friend: friend?.key as User['uid'],
         };
         const update = {
           sort: time,
-          turn: true as const, // Game is over
+          turn: true, // Game is over
+        };
+        const nextGameWithMove = {
+          ...nextState,
+          lastMove: moveString
         };
         const database = firebase.database();
         database.ref('moves').push(nextMove);
-        database.ref(`games/${match.game}`).set(nextState);
+        database.ref(`games/${match.game}`).set(nextGameWithMove);
         database.ref(`matches/${user?.key}/${friend?.key}`).update(update);
         database.ref(`matches/${friend?.key}/${user?.key}`).update(update);
         return [];
@@ -216,7 +235,7 @@ export function App() {
   const onDrop: DragEventHandler = useCallback((event) => {
     event.preventDefault();
     if (event.dataTransfer) {
-      let from = parseInt(event.dataTransfer.getData("text"))
+      const from = parseDragData(event.dataTransfer.getData("text"))
       move(from, -1)
     }
   }, [move])
@@ -257,7 +276,7 @@ export function App() {
     const unregisterAuthObserver = firebase.auth().onAuthStateChanged(async authUser => {
       if (authUser) { // User is signed in
         const userRef = firebase.database().ref(`users/${authUser.uid}`);
-        let snapshot = await userRef.get();
+        const snapshot = await userRef.get();
         if (!snapshot.exists()) { // Upload initial user data
           const data: User = {
             uid: authUser.uid,
@@ -301,6 +320,7 @@ export function App() {
       hadMatchRef.current = true;
       const gameRef = firebase.database().ref(`games/${match.game}`);
       const onValue = (snapshot: firebaseType.database.DataSnapshot) => {
+        gameSnapshotRef.current = snapshot
         const nextGame = snapshot.val();
         if (nextGame) {
           setGame(prevGame => {
@@ -344,6 +364,8 @@ export function App() {
   useEffect(() => { // usedDice observer to publish moves
     if (
       match
+      && user 
+      && friend
       && isMyTurn
       && game.status === Status.Moving
       && game.dice?.length 
@@ -354,21 +376,26 @@ export function App() {
     ) {
       const time = new Date().toISOString();
       const moveLabels = usedDice.map(die => die.label).join(' ');
+      const isBlocked = usedDice.length === 0 && !moves.size;
+      const moveString = isBlocked 
+        ? `${game.dice.join("-")}: blocked`
+        : `${game.dice.join("-")}: ${moveLabels}`;
       const nextMove: Move = {
-        player: user?.key!,
-        move: `${game.dice.join("-")}: ${moveLabels}`,
+        player: user.key as User['uid'],
+        move: moveString,
         time,
-        friend: friend?.key!,
+        friend: friend.key as User['uid'],
       }
-      const update = {
+      const update: Partial<Match> = {
         sort: time,
-        turn: friend?.key, // Update whose turn it is
+        turn: friend.key as User['uid']
       };
       const database = firebase.database();
       const nextGame = {
         ...game,
         status: Status.Rolling,
-        turn: friend?.key
+        turn: friend?.key,
+        lastMove: moveString,
       }
       database.ref('moves').push(nextMove)
       database.ref(`games/${match.game}`).set(nextGame)
@@ -403,8 +430,9 @@ export function App() {
           used={usedDice}
           disabled={!!game.turn && !isMyTurn}
           pulsate={isMyTurn && game.status === Status.Rolling}
+          undo={!!match && isMyTurn && usedDice.length > 0 && usedDice.length < game.dice.length}
         />
-        <div className="bar">
+        <div className={classes('bar', { selected: selected === -1 })}>
           {Array.from({ length: game.prison?.white }, (_, index) =>
             <Piece
               key={index}
@@ -412,10 +440,14 @@ export function App() {
               color={Color.White}
               onSelect={onSelect}
               enabled={isMyTurn && (!game.color || game.color === Color.White)}
+              selected={selected}
             />
           )}
+          {lastMove.ghosts[-1] > 0 ? Array.from({ length: lastMove.ghosts[-1] }, (_, index) => 
+            <Piece key={`ghost-${index}`} color={Color.White} ghost />
+          ): null}
         </div>
-        <div className="bar">
+        <div className={classes('bar', { selected: selected === -1 })}>
           {Array.from({ length: game.prison?.black }, (_, index) =>
             <Piece
               key={index}
@@ -423,8 +455,12 @@ export function App() {
               color={Color.Black}
               onSelect={onSelect}
               enabled={isMyTurn && (!game.color || game.color === Color.Black)}
+              selected={selected}
             />
           )}
+          {lastMove.ghosts[-1] < 0 ? Array.from({ length: Math.abs(lastMove.ghosts[-1]) }, (_, index) => 
+            <Piece key={`ghost-${index}`} color={Color.Black} ghost />
+          ): null}
         </div>
         <div className={classes('home', { valid: typeof selected === 'number' && moves.has(-1) })} 
           onDragOver={onDragOver} 
@@ -452,6 +488,9 @@ export function App() {
             position={index}
             selected={selected}
             onSelect={onSelect}
+            ghosts={lastMove.ghosts[index]}
+            ghostHit={lastMove.ghostHit[index]}
+            moved={lastMove.moved[index]}
           />
         )}
       </div>

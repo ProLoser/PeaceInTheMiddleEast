@@ -3,6 +3,7 @@ import * as IMAGES from './images/dice';
 import './Dice.css'
 import { Color, UsedDie } from '../Types';
 import { classes } from '../Utils';
+import UndoIcon from '@material-design-icons/svg/filled/undo.svg?react';
 
 type DiceProps = {
     onPointerUp: PointerEventHandler,
@@ -11,15 +12,14 @@ type DiceProps = {
     color?: Color,
     disabled?: boolean,
     pulsate?: boolean,
+    undo?: boolean,
 }
 
-export default function Dice({ onPointerUp, values = [6, 6], used = [], color, disabled, pulsate }: DiceProps) {
-    let dice = values;
-    
+export default function Dice({ onPointerUp, values = [6, 6], used = [], color, disabled, pulsate, undo }: DiceProps) {
     const usedClone = [...used];
     
     return <div className={classes("dice", { pulsate })} onPointerUp={onPointerUp}>
-        {dice.map((value, index) => {
+        {values.map((value, index) => {
             const diceColor = color || (index % 2 === 0 ? Color.Black : Color.White);
             const src = `${diceColor}${value}` as keyof typeof IMAGES;
             const usedIndex = usedClone.findIndex(usedItem => usedItem.value === value);
@@ -37,5 +37,6 @@ export default function Dice({ onPointerUp, values = [6, 6], used = [], color, d
                 />
             );
         })}
+        {undo && <UndoIcon className="undo" aria-label="Undo moves" />}
     </div>
 }

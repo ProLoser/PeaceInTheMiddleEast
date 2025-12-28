@@ -1,7 +1,7 @@
 {
   "name": "backgammon.family",
   "description": "Open Source Backgammon with auto-translation to enable meaningful conversations across generations",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": "true",
   "type": "module",
   "repository": "https://github.com/ProLoser/PeaceInTheMiddleEast",
@@ -22,6 +22,7 @@
   "dependencies": {
     "@material-design-icons/svg": "^0.14.15",
     "@sentry/react": "^7.100.0",
+    "canvas-confetti": "^1.9.4",
     "date-fns": "^4.1.0",
     "firebase": "^10.12.2",
     "firebaseui": "^6.1.0",
@@ -43,6 +44,7 @@
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.0",
+    "@types/canvas-confetti": "^1.9.0",
     "@types/jest": "^30.0.0",
     "@types/react": "^18.3.2",
     "@types/react-dom": "^18.3.0",

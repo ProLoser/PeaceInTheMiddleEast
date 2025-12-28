@@ -23,6 +23,8 @@ export default {
   },
   moduleNameMapper: {
     '\\.(css|less|scss|sass)$': '<rootDir>/src/__mocks__/styleMock.js',
-    '\\.(jpg|jpeg|png|gif|svg|mp3)$': '<rootDir>/src/__mocks__/fileMock.js',
+    '\\.(jpg|jpeg|png|gif|mp3)$': '<rootDir>/src/__mocks__/fileMock.js',
+    '\\.svg\\?react$': '<rootDir>/src/__mocks__/svgMock.js',
+    '\\.svg$': '<rootDir>/src/__mocks__/fileMock.js',
   },
 };
