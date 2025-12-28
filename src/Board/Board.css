@@ -52,6 +52,16 @@
         --primary: var(--highlight);
         --secondary: var(--highlight);
     }
+    &.valid {
+        --primary: var(--valid);
+        --secondary: var(--valid);
+        background: var(--valid);
+    }
+    &.dragOver {
+        --primary: var(--highlight);
+        --secondary: var(--highlight);
+        background: var(--highlight);
+    }
 }
 
 .home {
@@ -64,6 +74,12 @@
     &.valid {
         --primary: var(--valid);
         --secondary: var(--valid);
+        background: var(--valid);
+    }
+    &.dragOver {
+        --primary: var(--highlight);
+        --secondary: var(--highlight);
+        background: var(--highlight);
     }
 }
 

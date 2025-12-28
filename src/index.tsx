@@ -45,6 +45,7 @@ export function App() {
   const [friend, setFriend] = useState<SnapshotOrNullType>(null);
   const [selected, setSelected] = useState<number | null>(null);
   const [usedDice, setUsedDice] = useState<UsedDie[]>([]);
+  const [homeDragOver, setHomeDragOver] = useState<Color | null>(null);
   const hadMatchRef = useRef(false);
   const gameSnapshotRef = useRef<SnapshotOrNullType>(null);
 
@@ -230,10 +231,27 @@ export function App() {
     });
   }, [game, match, moves, usedDice, user, friend]);
 
-  const onDragOver: DragEventHandler = useCallback((event) => { event.preventDefault(); }, [])
+  const onHomeDragOver: DragEventHandler = useCallback((event) => { 
+    event.preventDefault(); 
+  }, [])
   
-  const onDrop: DragEventHandler = useCallback((event) => {
+  const onHomeDragEnter = useCallback((homeColor: Color) => () => {
+    const isValid = typeof selected === 'number' && moves.has(-1);
+    if (isValid && homeDragOver !== homeColor) {
+      setHomeDragOver(homeColor);
+      navigator.vibrate?.(Vibrations.Up);
+    }
+  }, [selected, moves, homeDragOver]);
+
+  const onHomeDragLeave = useCallback((homeColor: Color) => (event: React.DragEvent) => {
+    if (homeDragOver === homeColor && (!event.relatedTarget || !event.currentTarget.contains(event.relatedTarget as Node))) {
+      setHomeDragOver(null);
+    }
+  }, [homeDragOver]);
+  
+  const onHomeDrop: DragEventHandler = useCallback((event) => {
     event.preventDefault();
+    setHomeDragOver(null);
     if (event.dataTransfer) {
       const from = parseDragData(event.dataTransfer.getData("text"))
       move(from, -1)
@@ -432,7 +450,10 @@ export function App() {
           pulsate={isMyTurn && game.status === Status.Rolling}
           undo={!!match && isMyTurn && usedDice.length > 0 && usedDice.length < game.dice.length}
         />
-        <div className={classes('bar', { selected: selected === -1 })}>
+        <div className={classes('bar', { 
+          selected: selected === -1,
+          valid: game.color === Color.White && game.prison?.white > 0 && sources.has(-1)
+        })}>
           {Array.from({ length: game.prison?.white }, (_, index) =>
             <Piece
               key={index}
@@ -447,7 +468,10 @@ export function App() {
             <Piece key={`ghost-${index}`} color={Color.White} ghost />
           ): null}
         </div>
-        <div className={classes('bar', { selected: selected === -1 })}>
+        <div className={classes('bar', { 
+          selected: selected === -1,
+          valid: game.color === Color.Black && game.prison?.black > 0 && sources.has(-1)
+        })}>
           {Array.from({ length: game.prison?.black }, (_, index) =>
             <Piece
               key={index}
@@ -462,17 +486,27 @@ export function App() {
             <Piece key={`ghost-${index}`} color={Color.Black} ghost />
           ): null}
         </div>
-        <div className={classes('home', { valid: typeof selected === 'number' && moves.has(-1) })} 
-          onDragOver={onDragOver} 
-          onDrop={onDrop} 
+        <div className={classes('home', { 
+          valid: game.color === Color.Black && typeof selected === 'number' && moves.has(-1),
+          dragOver: homeDragOver === Color.Black
+        })} 
+          onDragOver={onHomeDragOver} 
+          onDragEnter={onHomeDragEnter(Color.Black)}
+          onDragLeave={onHomeDragLeave(Color.Black)}
+          onDrop={onHomeDrop} 
           onPointerUp={onHomeClick}>
           {Array.from({ length: game.home?.black }, (_, index) =>
             <Piece key={index} color={Color.Black} />
           )}
         </div>
-        <div className={classes('home', { valid: typeof selected === 'number' && moves.has(-1) })} 
-          onDragOver={onDragOver} 
-          onDrop={onDrop} 
+        <div className={classes('home', { 
+          valid: game.color === Color.White && typeof selected === 'number' && moves.has(-1),
+          dragOver: homeDragOver === Color.White
+        })} 
+          onDragOver={onHomeDragOver} 
+          onDragEnter={onHomeDragEnter(Color.White)}
+          onDragLeave={onHomeDragLeave(Color.White)}
+          onDrop={onHomeDrop} 
           onPointerUp={onHomeClick}>
           {Array.from({ length: game.home?.white }, (_, index) =>
             <Piece key={index} color={Color.White} />
