@@ -159,6 +159,7 @@ export function App() {
       setGame({
         ...game,
         dice,
+        color: game.color === Color.White ? Color.Black : Color.White,
         status: Status.Moving
       });
     }

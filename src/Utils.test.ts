@@ -378,6 +378,22 @@ describe('Utils', () => {
       expect(moves.has(16)).toBe(true);
     });
 
+    it('should allow moving to points occupied by teammates', () => {
+      // Position 12 has 5 white pieces, position 15 has 2 white pieces
+      // White should be able to move from 12 to 15 (stacking on teammates)
+      game.board = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0] as Game['board'];
+      const moves = nextMoves(game, [], 12);
+      expect(moves.has(15)).toBe(true);
+    });
+
+    it('should include sources with teammates at destination', () => {
+      // Both position 12 and 15 have white pieces
+      // Position 12 should be in the sources since it can move to position 15
+      game.board = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0] as Game['board'];
+      const sources = nextMoves(game, []);
+      expect(sources.has(12)).toBe(true);
+    });
+
     it('should return destinations for prison entry when from is -1', () => {
       game.prison = {white: 1, black: 0};
       game.board = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] as Game['board'];
