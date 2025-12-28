@@ -284,7 +284,7 @@ export function calculate(state: Game, from: number | Color | undefined | null, 
         
         const fromPoint = indexToPoint(player, fromIndex);
         const toPoint = indexToPoint(player, to);
-        const moveNotation = player === Color.White ? `${toPoint}/${fromPoint}` : `${fromPoint}/${toPoint}`;
+        const moveNotation = `${toPoint}/${fromPoint}`;
         
         if (defense === undefined) { // bear off        
             usedDie = dice.find(die => destination(player, fromIndex, die) <= -1);    

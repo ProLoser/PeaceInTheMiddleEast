@@ -503,7 +503,7 @@ describe('Utils', () => {
       const result = calculate(game, 6, 9);
       expect(result.state?.board[6]).toBe(-4);
       expect(result.state?.board[9]).toBe(-1);
-      expect(result.moveLabel).toBe('19/22');
+      expect(result.moveLabel).toBe('22/19');
     });
 
     it('should handle black hitting white piece', () => {
@@ -513,7 +513,7 @@ describe('Utils', () => {
       expect(result.state?.board[6]).toBe(-4);
       expect(result.state?.board[9]).toBe(-1);
       expect(result.state?.prison.white).toBe(1);
-      expect(result.moveLabel).toBe('19/22*');
+      expect(result.moveLabel).toBe('22/19*');
     });
 
     it('should handle black bearing off', () => {
