@@ -20,6 +20,7 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
     const [dragging, setDragging] = useState(false);
     const [dragOver, setDragOver] = useState(false);
     const pieceRef = useRef<HTMLImageElement>(null);
+    const dropOccurredRef = useRef(false);
 
     const color = pieces > 0 ? Color.White : Color.Black;
     const ghostColor = ghosts > 0 ? Color.White : Color.Black;
@@ -45,6 +46,10 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
     const onDrop: DragEventHandler = useCallback((event) => {
         event.preventDefault();
         setDragOver(false);
+        dropOccurredRef.current = true;
+        setTimeout(() => {
+            dropOccurredRef.current = false;
+        }, 0);
         const from = parseDragData(event.dataTransfer?.getData("text"))
         return move(from, position)
     }, [move, position])
@@ -65,7 +70,7 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
     }, [onSelect]);
 
     const onPointerUp = useCallback(() => {
-        if (dragging) return;
+        if (dragging || dropOccurredRef.current) return;
         if (selected === position) {
             onSelect(null)
         } else if (selected !== null && valid) {
