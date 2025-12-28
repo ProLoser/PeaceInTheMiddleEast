@@ -302,12 +302,13 @@ describe('App Component Logic', () => {
       game.board = [0, 0, 0, 0, 0, 0, 0, 0, -2, -2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] as Game['board'];
       const isMyTurn = true;
       const usedDice: UsedDie[] = [];
+      const match: Match = {game: 'g1', chat: 'c1', sort: ''};
 
       const sources = !isMyTurn || game.status !== Status.Moving ?
         new Set<number>() :
         nextMoves(game, usedDice);
 
-      const shouldEnableBarPiece = isMyTurn && (!game.color || game.color === Color.White) && sources.has(-1);
+      const shouldEnableBarPiece = isMyTurn && (!game.color || game.color === Color.White) && (!match || sources.has(-1));
       expect(sources.has(-1)).toBe(false);
       expect(shouldEnableBarPiece).toBe(false);
     });
@@ -321,12 +322,13 @@ describe('App Component Logic', () => {
       game.board = [0, 0, 0, 0, 0, 0, 0, 0, -1, -2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] as Game['board'];
       const isMyTurn = true;
       const usedDice: UsedDie[] = [];
+      const match: Match = {game: 'g1', chat: 'c1', sort: ''};
 
       const sources = !isMyTurn || game.status !== Status.Moving ?
         new Set<number>() :
         nextMoves(game, usedDice);
 
-      const shouldEnableBarPiece = isMyTurn && (!game.color || game.color === Color.White) && sources.has(-1);
+      const shouldEnableBarPiece = isMyTurn && (!game.color || game.color === Color.White) && (!match || sources.has(-1));
       expect(sources.has(-1)).toBe(true);
       expect(shouldEnableBarPiece).toBe(true);
     });
@@ -340,12 +342,13 @@ describe('App Component Logic', () => {
       game.board = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0] as Game['board'];
       const isMyTurn = true;
       const usedDice: UsedDie[] = [];
+      const match: Match = {game: 'g1', chat: 'c1', sort: ''};
 
       const sources = !isMyTurn || game.status !== Status.Moving ?
         new Set<number>() :
         nextMoves(game, usedDice);
 
-      const shouldEnableBarPiece = isMyTurn && (!game.color || game.color === Color.Black) && sources.has(-1);
+      const shouldEnableBarPiece = isMyTurn && (!game.color || game.color === Color.Black) && (!match || sources.has(-1));
       expect(sources.has(-1)).toBe(false);
       expect(shouldEnableBarPiece).toBe(false);
     });
@@ -359,12 +362,13 @@ describe('App Component Logic', () => {
       game.board = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 0, 0] as Game['board'];
       const isMyTurn = true;
       const usedDice: UsedDie[] = [];
+      const match: Match = {game: 'g1', chat: 'c1', sort: ''};
 
       const sources = !isMyTurn || game.status !== Status.Moving ?
         new Set<number>() :
         nextMoves(game, usedDice);
 
-      const shouldEnableBarPiece = isMyTurn && (!game.color || game.color === Color.Black) && sources.has(-1);
+      const shouldEnableBarPiece = isMyTurn && (!game.color || game.color === Color.Black) && (!match || sources.has(-1));
       expect(sources.has(-1)).toBe(true);
       expect(shouldEnableBarPiece).toBe(true);
     });
