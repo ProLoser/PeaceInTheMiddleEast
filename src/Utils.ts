@@ -287,7 +287,7 @@ export function calculate(state: Game, from: number | Color | undefined | null, 
         
         if (defense === undefined) { // bear off        
             usedDie = dice.find(die => destination(player, fromIndex, die) <= -1);    
-            moveLabel = player === Color.White ? `${fromPoint}/off` : `${fromPoint}/off`;
+            moveLabel = `${fromPoint}/off`;
             if (offense > 0) // White
                 nextGame.home.white++;
             else // Black
