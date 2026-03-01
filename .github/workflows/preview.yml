@@ -1,0 +1,40 @@
+name: Deploy PR previews
+concurrency: preview-${{ github.ref }}
+on:
+    pull_request:
+        types:
+            - opened
+            - reopened
+            - synchronize
+            - closed
+jobs:
+    deploy-preview:
+        runs-on: ubuntu-latest
+        steps:    
+            - uses: actions/checkout@v4
+
+            - name: Install dependencies
+              if: github.event.action != 'closed'
+              run: yarn install --frozen-lockfile
+
+            - name: Build
+              if: github.event.action != 'closed'
+              run: yarn build
+              
+            - uses: rossjrw/pr-preview-action@v1
+              with:
+                  source-dir: .
+                  preview-branch: gh-pages
+                  umbrella-dir: preview
+                  action: auto
+                  wait-for-pages-deployment: true
+                  comment: true
+                  qr-code: false
+                  
+            - name: Setup Firebase Service Account
+              run: |
+                echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT_PEACEINTHEMIDDLEEAST }}' > $HOME/gcloud-key.json
+                echo "GOOGLE_APPLICATION_CREDENTIALS=$HOME/gcloud-key.json" >> $GITHUB_ENV
+
+            - name: Deploy to Firebase
+              run: yarn exec firebase deploy --project peaceinthemiddleeast

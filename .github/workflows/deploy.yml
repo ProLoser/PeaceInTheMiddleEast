@@ -1,0 +1,31 @@
+# .github/workflows/deploy.yml
+name: Deploy
+on:
+    push:
+        branches:
+            - main
+
+concurrency:
+  group: 'deploy'
+  cancel-in-progress: true
+
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - name: Inject tokens
+              env:
+                GOOGLE_TOKEN: ${{ secrets.GOOGLE_TOKEN }}
+              run: |
+                sed -i "s/__GOOGLE_TOKEN__/${GOOGLE_TOKEN}/g" index.html
+            - name: Install dependencies
+              run: yarn install --frozen-lockfile
+            - name: Build
+              run: yarn build
+            - uses: JamesIves/github-pages-deploy-action@v4
+              with:
+                  folder: .
+                  branch: gh-pages
+                  clean-exclude: preview
+                  force: false
