@@ -12,6 +12,12 @@ jobs:
         runs-on: ubuntu-latest
         steps:    
             - uses: actions/checkout@v4
+            
+            - name: Set up Node
+              uses: actions/setup-node@v4
+              with:
+                node-version: 20.19.5
+                cache: 'yarn'
 
             - name: Install dependencies
               if: github.event.action != 'closed'
@@ -23,18 +29,10 @@ jobs:
               
             - uses: rossjrw/pr-preview-action@v1
               with:
-                  source-dir: .
+                  source-dir: dist
                   preview-branch: gh-pages
                   umbrella-dir: preview
                   action: auto
                   wait-for-pages-deployment: true
                   comment: true
                   qr-code: false
-                  
-            - name: Setup Firebase Service Account
-              run: |
-                echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT_PEACEINTHEMIDDLEEAST }}' > $HOME/gcloud-key.json
-                echo "GOOGLE_APPLICATION_CREDENTIALS=$HOME/gcloud-key.json" >> $GITHUB_ENV
-
-            - name: Deploy to Firebase
-              run: yarn exec firebase deploy --project peaceinthemiddleeast
