@@ -50,7 +50,7 @@ export function App() {
   const gameSnapshotRef = useRef<SnapshotOrNullType>(null);
 
   const load = useCallback(async (friendId?: string | false, authUserUid?: string) => {
-    if (friendId === 'PeaceInTheMiddleEast' || friendId === '__') return;
+    if (friendId === 'PeaceInTheMiddleEast' || friendId === '__' || friendId === 'preview') return;
     console.log('Loading', friendId, 'with authUserUid:', authUserUid);
     
     setSelected(null)
