@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, createContext, useState, useCallback, useMemo } from 'react';
+import React, { useEffect, createContext, useState, useCallback, useMemo } from 'react';
 import Friends from './Friends';
 import Chat from './Chat';
 import Profile from './Profile';
@@ -27,8 +27,6 @@ interface DialoguesProps {
 export default function Dialogues({ user, friend, load, reset, chats, gameover, children }: DialoguesProps) {
   const [state, setState] = useState<string | boolean>(false);
   const [lastDialog, setLastDialog] = useState<Modal>(Modal.Friends);
-  const dialogRef = useRef<HTMLDialogElement>(null);
-
   const toggle = useCallback((value?: string | boolean) => {
     if (value === undefined) {
       setState(state => state ? false : lastDialog);
@@ -45,7 +43,8 @@ export default function Dialogues({ user, friend, load, reset, chats, gameover, 
   const isOpen = (friend && !user) || !!state || !!gameover;
 
   useEffect(() => {
-    const handleClickOutside = () => {
+    const handleClickOutside = (event: PointerEvent) => {
+      if ((event.target as Element).closest('dialog')) return;
       toggle(false);
     };
 
@@ -60,7 +59,7 @@ export default function Dialogues({ user, friend, load, reset, chats, gameover, 
 
   return (
     <DialogContext.Provider value={value}>
-      <dialog ref={dialogRef} onCancel={() => toggle(false)} open={isOpen} onPointerUp={event => event.stopPropagation()}>
+      <dialog onCancel={() => toggle(false)} open={isOpen}>
         {user ? (
           state === 'friends' ? (
             <Friends user={user} load={load} reset={reset} friend={friend} />
