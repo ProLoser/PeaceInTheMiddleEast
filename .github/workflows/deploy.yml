@@ -34,10 +34,10 @@ jobs:
                   clean-exclude: preview
                   force: false
 
-            - name: Setup Firebase Service Account
-              run: |
-                echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT_PEACEINTHEMIDDLEEAST }}' > $HOME/gcloud-key.json
-                echo "GOOGLE_APPLICATION_CREDENTIALS=$HOME/gcloud-key.json" >> $GITHUB_ENV
+            # - name: Setup Firebase Service Account
+            #   run: |
+            #     echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT_PEACEINTHEMIDDLEEAST }}' > $HOME/gcloud-key.json
+            #     echo "GOOGLE_APPLICATION_CREDENTIALS=$HOME/gcloud-key.json" >> $GITHUB_ENV
 
-            - name: Deploy to Firebase
-              run: yarn exec firebase deploy --project peaceinthemiddleeast
+            # - name: Deploy to Firebase
+            #   run: yarn exec firebase deploy --project peaceinthemiddleeast
