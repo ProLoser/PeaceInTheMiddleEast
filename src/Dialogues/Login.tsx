@@ -22,9 +22,8 @@ import CancelIcon from '@material-design-icons/svg/filled/cancel.svg?react';
 const uiConfig = {
     // Popup signin flow rather than redirect flow.
     signInFlow: 'popup',
-    // We will display Google and Facebook as auth providers.
     signInOptions: [
-        // firebase.auth.PhoneAuthProvider.PROVIDER_ID, // Requires Billing
+        firebase.auth.PhoneAuthProvider.PROVIDER_ID,
         firebase.auth.EmailAuthProvider.PROVIDER_ID,
         firebase.auth.GoogleAuthProvider.PROVIDER_ID,
         // firebase.auth.FacebookAuthProvider.PROVIDER_ID, // Requires Facebook App ID
