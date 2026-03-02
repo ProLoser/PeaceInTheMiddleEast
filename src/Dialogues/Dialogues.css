@@ -1,0 +1,113 @@
+dialog {
+  z-index: 1;
+  background: var(--dialog-background-color);
+  color: var(--primary-color);
+  backdrop-filter: blur(10px);
+  width: auto;
+  text-align: center;
+  border-radius: 10px;
+
+  header {
+    > h1:first-of-type {
+      margin-block-start: 0;
+    }
+    > button[aria-label="Close"] {
+      float: right;
+      margin: 0;
+      padding: 0;
+      border: none;
+      background: none;
+      font-size: 1.5em;
+      cursor: pointer;
+    }
+    > button[aria-haspopup="menu"] {
+      float: right;
+      margin: 0;
+      padding: 0;
+      border: none;
+      background: none;
+      font-size: 1.5em;
+      cursor: pointer;
+    }
+  }
+
+  /* Portrait layout (mobile) */
+  @media (orientation: portrait) {
+    top: 100px;
+    left: 40px;
+    right: 40px;
+    > :first-child {
+      margin-top: 0;
+    }
+  }
+
+  /* Landscape layout (laptop / tablet ) */
+  @media (orientation: landscape) {
+    top: 40px;
+    left: 100px;
+    right: 100px;
+  }
+}
+
+/*** DIALOG BUTTON ***/
+button.dialog-button {
+  border-radius: 2px;
+  min-width: 220px;
+  box-sizing: border-box;
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .14), 0 3px 1px -2px rgba(0, 0, 0, .2), 0 1px 5px 0 rgba(0, 0, 0, .12);
+  padding: 8px 16px;
+  border: none;
+  margin: 10px auto;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background-color: var(--primary-color);
+  color: var(--background-color);
+  font-size: 14px;
+}
+
+/*** MENU BUTTON ***/
+[aria-haspopup="menu"] {
+  padding: 5px 10px;
+  background: none;
+  border: none;
+  color: var(--primary-color);
+  cursor: pointer;
+
+  &+menu,
+  &+[role="menu"] {
+    display: none;
+    background-color: var(--dialog-menu-background-color);
+    border: 1px solid var(--secondary-color);
+    border-radius: 4px;
+    position: absolute;
+    padding: 0;
+    right: 0;
+    margin: 2em 0 0;
+    list-style-type: none;
+    z-index: 1;
+
+    /*** MENU ITEM ***/
+    [role="menuitem"],
+    li {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      a {
+        display: flex;
+        padding: .5em;
+        text-decoration: none;
+        color: var(--primary-color);
+      }
+    }
+  }
+
+  /* MENU ACTIVE */
+  &[aria-expanded="true"] {
+
+    &+menu,
+    &+[role="menu"] {
+      display: block;
+    }
+  }
+}

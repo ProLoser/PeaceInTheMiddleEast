@@ -1,0 +1,79 @@
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+#friends {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    
+    h1 {
+        vertical-align: text-top;
+        display: flex;
+        justify-content: space-between;
+
+        span {
+            display: flex;
+            overflow: hidden;
+            margin-right: .2em;
+        }
+    }  
+    menu {
+        right: 30px;
+
+        a.denied,
+        a.unsupported {
+            color: #d32f2f;
+        }
+
+        a.processing {
+            opacity: 0.5;
+            pointer-events: none;
+
+            svg {
+                animation: spin 1s linear infinite;
+            }
+        }
+    } 
+
+    input {
+        display: block;
+        width: 100%;
+        padding: 5px;
+    }
+
+    ul {
+        list-style: none;
+        padding: 0;
+        margin-bottom: 0;
+        max-height: 65vh;
+        overflow-y: auto;
+        li {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1em;
+            gap: 10px;
+            &.pulsate {
+                animation: pulsate 1s infinite ease-out alternate-reverse;
+            }
+            div {
+                overflow: hidden;
+            }
+            h3 {
+                margin: 0;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            > svg, > img {
+                width: 4em;
+                height: 4em;
+            }
+        }
+    }
+}

@@ -1,0 +1,27 @@
+#toolbar {
+  gap: 5px;
+  .avatar, svg {
+    width: 4em;
+    height: 4em;
+  }
+
+  @media (orientation: portrait) {
+    writing-mode: lr;
+
+    h2 {
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+  }
+
+  @media (orientation: landscape) {
+    flex-direction: column;
+
+    h2 {
+      text-overflow: ellipsis;
+      overflow: hidden;
+      writing-mode: tb;
+      text-orientation: mixed;
+    }
+  }
+}
