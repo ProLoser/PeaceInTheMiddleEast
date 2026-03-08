@@ -6,6 +6,7 @@
     --valid: greenyellow;
     --highlight: red;
     user-select: none;
+    position: relative;
     display: grid;
     grid-template-columns: repeat(15, 1fr);
     grid-template-rows: repeat(2, 50%);
