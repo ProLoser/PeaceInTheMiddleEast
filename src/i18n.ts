@@ -14,7 +14,7 @@ i18n
       escapeValue: false, // not needed for react as it escapes by default
     },
     backend: {
-      loadPath: '/locales/{{lng}}/{{ns}}.json',
+      loadPath: `${import.meta.env.BASE_URL}locales/{{lng}}/{{ns}}.json`,
     },
     detection: {
       convertDetectedLanguage: (lng) => lng?.substring(0,2)
