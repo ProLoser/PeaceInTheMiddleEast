@@ -27,6 +27,7 @@ export default defineConfig({
     devtoolsJson(),
     VitePWA({
       registerType: 'autoUpdate',
+      disable: !!process.env.BASE_URL,
       devOptions: {
         enabled: true
       },
