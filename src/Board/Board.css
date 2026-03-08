@@ -58,7 +58,7 @@
 }
 
 .home {
-    background: var(--background-color-secondary);
+    background: var(--secondary);
     flex-direction: column;
     .piece {
         min-width: 0;
