@@ -106,15 +106,10 @@ body,
   }
 
   > .material-icons-svg:first-child {
-    color: var(--secondary-color);
-    width: 75%;
-    height: 75%;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    fill: var(--secondary-color);
   }
 
   > .material-icons-svg:last-child {
-    color: var(--primary-color);
+    fill: var(--primary-color);
   }
 }
