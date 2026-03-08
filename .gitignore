@@ -98,3 +98,6 @@ dev-dist
 *.sw?
 
 ### /Vite ###
+# Playwright
+test-results/
+playwright-report/
