@@ -105,4 +105,8 @@ body,
     height: 100%;
     fill: var(--primary-color);
   }
+
+  > .material-icons-svg:last-child {
+    fill: var(--primary);
+  }
 }
