@@ -290,14 +290,8 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
                     </a>
                 </li>
             </menu>
-            <h1>
-                <span>
-                    <span>{user.val().name}'s</span>
-                    {t('friends')}
-                </span>
-            </h1>
+            <input name="search" ref={searchRef} type="search" autoComplete="off" placeholder={t('search')} onChange={onSearch} />
         </header>
-        <input name="search" ref={searchRef} type="search" autoComplete="off" placeholder={t('search')} onChange={onSearch} />
         <ul>
             {friend ? <li onPointerUp={() => handleLoad(false)}>
                 <LocalIcon className="material-icons-svg notranslate" />
