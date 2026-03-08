@@ -47,6 +47,8 @@ export default function MoveAnimation({ pairs, boardRef }: MoveAnimationProps) {
 
         const isLandscape = boardRect.width >= boardRect.height;
 
+        const SLOT = 6; // 7th slot (0-indexed)
+
         const getPiecePos = (rect: DOMRect, pointIndex: number | 'bar') => {
             if (pointIndex === 'bar') {
                 return {
@@ -59,15 +61,15 @@ export default function MoveAnimation({ pairs, boardRef }: MoveAnimationProps) {
                 return {
                     x: rect.left - boardRect.left + (rect.width - pieceSize) / 2,
                     y: isTopHalf
-                        ? rect.top - boardRect.top - pieceSize / 2
-                        : rect.bottom - boardRect.top - pieceSize / 2,
+                        ? rect.top - boardRect.top + SLOT * pieceSize
+                        : rect.bottom - boardRect.top - (SLOT + 1) * pieceSize,
                 };
             }
             // portrait (writing-mode: tb): "column" stacks left, "column-reverse" stacks right
             return {
                 x: isTopHalf
-                    ? rect.left - boardRect.left - pieceSize / 2
-                    : rect.right - boardRect.left - pieceSize / 2,
+                    ? rect.left - boardRect.left + SLOT * pieceSize
+                    : rect.right - boardRect.left - (SLOT + 1) * pieceSize,
                 y: rect.top - boardRect.top + (rect.height - pieceSize) / 2,
             };
         };
