@@ -35,6 +35,5 @@ jobs:
                   preview-branch: gh-pages
                   umbrella-dir: preview
                   action: auto
-                  wait-for-pages-deployment: true
                   comment: true
                   qr-code: false

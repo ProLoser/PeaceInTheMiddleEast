@@ -47,6 +47,25 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
     const fcmTokenRef = useRef<string | undefined>(undefined);
     const [users, setUsers] = useState<Users>({});
     const [isExpanded, setIsExpanded] = useState(false);
+    const menuButtonRef = useRef<HTMLButtonElement>(null);
+    const menuRef = useRef<HTMLMenuElement>(null);
+
+    useEffect(() => {
+        const handleClickOutside = (event: globalThis.PointerEvent) => {
+            if (menuButtonRef.current?.contains(event.target as Node)) return;
+            if (menuRef.current?.contains(event.target as Node)) return;
+            setIsExpanded(false);
+        };
+
+        if (isExpanded) {
+            document.addEventListener('pointerup', handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener('pointerup', handleClickOutside);
+        };
+    }, [isExpanded]);
+
     const [matches, setMatches] = useState<firebase.database.DataSnapshot | null>(null);
     const [searchResults, setSearchResults] = useState<firebase.database.DataSnapshot | null>(null);
     const [notificationStatus, setNotificationStatus] = useState<NotificationStatus>(
@@ -223,13 +242,14 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
     return <section id="friends">
         <header>
             <button
+                ref={menuButtonRef}
                 aria-haspopup="menu"
                 aria-expanded={isExpanded}
                 onPointerUp={() => setIsExpanded(!isExpanded)}
             >
                 <MenuIcon className="material-icons-svg notranslate" />
             </button>
-            <menu>
+            <menu ref={menuRef}>
                 <li>
                     <a onPointerUp={invite} href="#">
                         <PersonAddIcon className="material-icons-svg notranslate" />
@@ -242,7 +262,7 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
                     </li>
                     : null}
                 <li>
-                    <a onPointerUp={(e) => { e.preventDefault(); toggle(Modal.Profile); }} href="#">
+                    <a onPointerUp={(e) => { e.preventDefault();e.stopPropagation(); toggle(Modal.Profile); }} href="#">
                         <EditIcon className="material-icons-svg notranslate" />
                         {t('profile')}
                     </a>
@@ -262,7 +282,9 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
                         ) : (
                             <NotificationsIcon className="material-icons-svg notranslate" />
                         )}
-                        {t('notifications')}
+                        {notificationStatus === 'granted' && hasFcmToken
+                            ? t('notificationsEnabled')
+                            : t('enableNotifications')}
                     </a>
                 </li>
                 <li>
