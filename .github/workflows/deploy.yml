@@ -1,0 +1,43 @@
+# .github/workflows/deploy.yml
+name: Deploy
+on:
+    push:
+        branches:
+            - main
+
+concurrency:
+  group: 'deploy'
+  cancel-in-progress: true
+
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Set up Node
+              uses: actions/setup-node@v4
+              with:
+                node-version: 20.19.5
+                cache: 'yarn'
+
+            - name: Install dependencies
+              run: yarn install --frozen-lockfile
+
+            - name: Build
+              run: yarn build
+              
+            - uses: JamesIves/github-pages-deploy-action@v4
+              with:
+                  folder: dist
+                  branch: gh-pages
+                  clean-exclude: preview
+                  force: false
+
+            # - name: Setup Firebase Service Account
+            #   run: |
+            #     echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT_PEACEINTHEMIDDLEEAST }}' > $HOME/gcloud-key.json
+            #     echo "GOOGLE_APPLICATION_CREDENTIALS=$HOME/gcloud-key.json" >> $GITHUB_ENV
+
+            # - name: Deploy to Firebase
+            #   run: yarn exec firebase deploy --project peaceinthemiddleeast

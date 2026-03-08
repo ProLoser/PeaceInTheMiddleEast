@@ -120,28 +120,16 @@ describe('Utils', () => {
   });
 
   describe('indexToPoint', () => {
-    it('should convert white indices correctly for top board (0-11)', () => {
-      expect(indexToPoint(Color.White, 0)).toBe(12);
-      expect(indexToPoint(Color.White, 5)).toBe(7);
-      expect(indexToPoint(Color.White, 11)).toBe(1);
-    });
-
-    it('should convert white indices correctly for bottom board (12-23)', () => {
-      expect(indexToPoint(Color.White, 12)).toBe(13);
-      expect(indexToPoint(Color.White, 18)).toBe(19);
-      expect(indexToPoint(Color.White, 23)).toBe(24);
-    });
-
-    it('should convert black indices correctly for top board (0-11)', () => {
-      expect(indexToPoint(Color.Black, 0)).toBe(13);
-      expect(indexToPoint(Color.Black, 5)).toBe(18);
-      expect(indexToPoint(Color.Black, 11)).toBe(24);
-    });
-
-    it('should convert black indices correctly for bottom board (12-23)', () => {
-      expect(indexToPoint(Color.Black, 12)).toBe(12);
-      expect(indexToPoint(Color.Black, 18)).toBe(6);
-      expect(indexToPoint(Color.Black, 23)).toBe(1);
+    it.each([
+      [0, 13, 12],
+      [6, 19, 6],
+      [11, 24, 1],
+      [12, 12, 13],
+      [18, 6, 19],
+      [23, 1, 24],
+    ])('should convert indices correctly', (index, white, black) => {
+      expect(indexToPoint(Color.White, index)).toBe(white);
+      expect(indexToPoint(Color.Black, index)).toBe(black);
     });
   });
 
@@ -361,7 +349,7 @@ describe('Utils', () => {
 
     it('should not include prison entry if all entry points are blocked', () => {
       game.prison = {white: 1, black: 0};
-      // Block all possible entry points for white from bar (points 8, 9 for dice 3,4)
+      // Block all possible entry points for white from bar (points 21, 22 for dice 3,4)
       game.board = [0, 0, 0, 0, 0, 0, 0, 0, -2, -2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] as Game['board'];
       const moves = nextMoves(game);
       expect(moves.has(-1)).toBe(false);
@@ -451,7 +439,7 @@ describe('Utils', () => {
       const result = calculate(game, 12, 15);
       expect(result.state?.board[12]).toBe(4);
       expect(result.state?.board[15]).toBe(1);
-      expect(result.moveLabel).toBe('13/16');
+      expect(result.moveLabel).toBe('12/9');
     });
 
     it('should handle white hitting black piece', () => {
@@ -460,7 +448,7 @@ describe('Utils', () => {
       expect(result.state?.board[12]).toBe(4);
       expect(result.state?.board[15]).toBe(1);
       expect(result.state?.prison.black).toBe(1);
-      expect(result.moveLabel).toBe('13/16*');
+      expect(result.moveLabel).toBe('12/9*');
     });
 
     it('should handle white bearing off', () => {
@@ -468,25 +456,25 @@ describe('Utils', () => {
       const result = calculate(game, 20, -1);
       expect(result.state?.board[20]).toBe(4);
       expect(result.state?.home.white).toBe(1);
-      expect(result.moveLabel).toBe('21/off');
+      expect(result.moveLabel).toBe('4/off');
     });
 
     it('should handle white re-entering from bar', () => {
       game.prison = {white: 1, black: 0};
       game.board = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] as Game['board'];
-      const result = calculate(game, Color.White, 20);
+      const result = calculate(game, Color.White, 8);
       expect(result.state?.prison.white).toBe(0);
-      expect(result.state?.board[20]).toBe(1);
+      expect(result.state?.board[8]).toBe(1);
       expect(result.moveLabel).toBe('bar/21');
     });
 
     it('should handle white re-entering from bar and hitting', () => {
       game.prison = {white: 1, black: 0};
-      game.board = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0] as Game['board'];
-      const result = calculate(game, Color.White, 20);
+      game.board = [0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] as Game['board'];
+      const result = calculate(game, Color.White, 8);
       expect(result.state?.prison.white).toBe(0);
       expect(result.state?.prison.black).toBe(1);
-      expect(result.state?.board[20]).toBe(1);
+      expect(result.state?.board[8]).toBe(1);
       expect(result.moveLabel).toBe('bar/21*');
     });
 
@@ -503,7 +491,7 @@ describe('Utils', () => {
       const result = calculate(game, 6, 9);
       expect(result.state?.board[6]).toBe(-4);
       expect(result.state?.board[9]).toBe(-1);
-      expect(result.moveLabel).toBe('19/22');
+      expect(result.moveLabel).toBe('6/3');
     });
 
     it('should handle black hitting white piece', () => {
@@ -513,7 +501,7 @@ describe('Utils', () => {
       expect(result.state?.board[6]).toBe(-4);
       expect(result.state?.board[9]).toBe(-1);
       expect(result.state?.prison.white).toBe(1);
-      expect(result.moveLabel).toBe('19/22*');
+      expect(result.moveLabel).toBe('6/3*');
     });
 
     it('should handle black bearing off', () => {
@@ -522,7 +510,7 @@ describe('Utils', () => {
       const result = calculate(game, 6, -1);
       expect(result.state?.board[6]).toBe(-4);
       expect(result.state?.home.black).toBe(1);
-      expect(result.moveLabel).toBe('19/off');
+      expect(result.moveLabel).toBe('6/off');
     });
 
     it('should set game status to GameOver when player bears off all pieces', () => {
@@ -549,9 +537,9 @@ describe('Utils', () => {
     it('should automatically use prison as from when pieces are in prison', () => {
       game.prison = {white: 1, black: 0};
       game.board = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] as Game['board'];
-      const result = calculate(game, null, 20);
+      const result = calculate(game, null, 8);
       expect(result.state?.prison.white).toBe(0);
-      expect(result.state?.board[20]).toBe(1);
+      expect(result.state?.board[8]).toBe(1);
       expect(result.moveLabel).toBe('bar/21');
     });
 
@@ -568,28 +556,28 @@ describe('Utils', () => {
       game.color = Color.Black;
       game.prison = {white: 0, black: 1};
       game.board = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] as Game['board'];
-      const result = calculate(game, Color.Black, 9);
+      const result = calculate(game, Color.Black, 21);
       expect(result.state?.prison.black).toBe(0);
-      expect(result.state?.board[9]).toBe(-1);
+      expect(result.state?.board[21]).toBe(-1);
       expect(result.moveLabel).toBe('bar/22');
     });
 
     it('should handle black re-entering from bar and hitting', () => {
       game.color = Color.Black;
       game.prison = {white: 0, black: 1};
-      game.board = [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] as Game['board'];
-      const result = calculate(game, Color.Black, 9);
+      game.board = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0] as Game['board'];
+      const result = calculate(game, Color.Black, 21);
       expect(result.state?.prison.black).toBe(0);
       expect(result.state?.prison.white).toBe(1);
-      expect(result.state?.board[9]).toBe(-1);
+      expect(result.state?.board[21]).toBe(-1);
       expect(result.moveLabel).toBe('bar/22*');
     });
 
     it('should block black re-entering from bar to protected point', () => {
       game.color = Color.Black;
       game.prison = {white: 0, black: 1};
-      game.board = [0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] as Game['board'];
-      const result = calculate(game, Color.Black, 9);
+      game.board = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0] as Game['board'];
+      const result = calculate(game, Color.Black, 21);
       expect(result.state).toEqual(game);
       expect(result.moveLabel).toBeUndefined();
     });

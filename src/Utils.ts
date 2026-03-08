@@ -6,10 +6,14 @@ export const PLAYER_SIGN = {
 };
 
 export const DEFAULT_BOARD: Game['board'] = [
-    // index:           6             11
-    5, 0, 0, 0, -3, 0, -5, 0, 0, 0, 0, 2,
-    // index:         18              23
-    -5, 0, 0, 0, 3, 0, 5, 0, 0, 0, 0, -2,
+    // index: 0             6               11
+    // white: 13           19               24
+    // black: 12            6               1
+    5, 0, 0,  0, -3, 0,    -5, 0, 0,  0, 0, 2,
+    // index: 12           18               23
+    // white: 12            6               1
+    // black: 13           19               24
+    -5, 0, 0,  0, 3, 0,     5, 0, 0,  0, 0, -2,
 ];
 
 const HOME_INDEXES = {
@@ -73,23 +77,19 @@ export const newGame = (oldGame?: Game) => ({
 } as Game);
 
 
-// White: index 0→point 12, index 11→point 1, index 12→point 13, index 23→point 24
-// Black: index 0→point 13, index 11→point 24, index 12→point 12, index 23→point 1
 export const indexToPoint = (color: Color, index: number) => 
-    color === Color.White ?
+    color === Color.Black ?
         index > 11 ?
             index + 1 : 12 - index
-        : // black
+        : // white
             index < 12 ?
                 index + 13 : 24 - index
 
-// White: point 12→index 0, point 1→index 11, point 13→index 12, point 24→index 23
-// Black: point 13→index 0, point 24→index 11, point 12→index 12, point 1→index 23
 export const pointToIndex = (color: Color, point: number): number =>
-    color === Color.White ?
+    color === Color.Black ?
         point > 12 ?
             point - 1 : 12 - point
-        : // black
+        : // white
             point > 12 ?
                 point - 13 : 24 - point
 
