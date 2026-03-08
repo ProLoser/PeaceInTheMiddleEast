@@ -13,6 +13,7 @@
 }
 
 @keyframes slide-piece {
+    /* quick fade-in at source */
     0% {
         transform: translate(0, 0);
         opacity: 0;
@@ -21,15 +22,29 @@
         transform: translate(0, 0);
         opacity: 0.9;
     }
+    /* pause at source */
+    12% {
+        transform: translate(0, 0);
+        opacity: 0.9;
+        animation-timing-function: ease-in-out;
+    }
+    /* arrived at destination */
+    38% {
+        transform: translate(var(--dx), var(--dy));
+        opacity: 0.9;
+    }
+    /* pause at destination */
     45% {
         transform: translate(var(--dx), var(--dy));
         opacity: 0.9;
     }
-    55% {
+    /* fade out */
+    50% {
         transform: translate(var(--dx), var(--dy));
         opacity: 0;
     }
-    56% {
+    /* snap back invisibly */
+    51% {
         transform: translate(0, 0);
         opacity: 0;
     }

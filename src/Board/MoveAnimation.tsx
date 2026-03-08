@@ -45,6 +45,33 @@ export default function MoveAnimation({ pairs, boardRef }: MoveAnimationProps) {
             ? samplePiece.getBoundingClientRect().width
             : boardRect.width / 17;
 
+        const isLandscape = boardRect.width >= boardRect.height;
+
+        const getPiecePos = (rect: DOMRect, pointIndex: number | 'bar') => {
+            if (pointIndex === 'bar') {
+                return {
+                    x: rect.left - boardRect.left + (rect.width - pieceSize) / 2,
+                    y: rect.top - boardRect.top + (rect.height - pieceSize) / 2,
+                };
+            }
+            const isTopHalf = pointIndex < 12;
+            if (isLandscape) {
+                return {
+                    x: rect.left - boardRect.left + (rect.width - pieceSize) / 2,
+                    y: isTopHalf
+                        ? rect.top - boardRect.top
+                        : rect.bottom - boardRect.top - pieceSize,
+                };
+            }
+            // portrait (writing-mode: tb): "column" stacks left, "column-reverse" stacks right
+            return {
+                x: isTopHalf
+                    ? rect.left - boardRect.left
+                    : rect.right - boardRect.left - pieceSize,
+                y: rect.top - boardRect.top + (rect.height - pieceSize) / 2,
+            };
+        };
+
         const totalDuration = STEP_DURATION * activePairs.length;
         const result: Segment[] = [];
 
@@ -63,16 +90,14 @@ export default function MoveAnimation({ pairs, boardRef }: MoveAnimationProps) {
 
             if (!fromRect || !toRect) return;
 
-            const fromX = fromRect.left - boardRect.left + fromRect.width / 2 - pieceSize / 2;
-            const fromY = fromRect.top - boardRect.top + fromRect.height / 2 - pieceSize / 2;
-            const toX = toRect.left - boardRect.left + toRect.width / 2 - pieceSize / 2;
-            const toY = toRect.top - boardRect.top + toRect.height / 2 - pieceSize / 2;
+            const fromPos = getPiecePos(fromRect, pair.from);
+            const toPos = getPiecePos(toRect, pair.to as number);
 
             result.push({
-                fromX,
-                fromY,
-                dx: toX - fromX,
-                dy: toY - fromY,
+                fromX: fromPos.x,
+                fromY: fromPos.y,
+                dx: toPos.x - fromPos.x,
+                dy: toPos.y - fromPos.y,
                 color: pair.color,
                 size: pieceSize,
                 totalDuration,
