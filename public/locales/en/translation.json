@@ -26,5 +26,7 @@
   "disableNotificationsConfirm": "Disable Notifications?\nYou will stop receiving notifications when friends make a move",
   "notificationsDisabled": "Notifications Disabled",
   "notificationsEnabled": "Notifications Enabled",
-  "enableNotifications": "Enable Notifications"
+  "enableNotifications": "Enable Notifications",
+  "rulesEnforced": "Rules: On",
+  "rulesNotEnforced": "Rules: Off"
 }

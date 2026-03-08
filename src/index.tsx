@@ -46,8 +46,20 @@ export function App() {
   const [selected, setSelected] = useState<number | null>(null);
   const [usedDice, setUsedDice] = useState<UsedDie[]>([]);
   const [homeDragOver, setHomeDragOver] = useState<Color | null>(null);
+  const [rulesEnforced, setRulesEnforced] = useState<boolean>(() => {
+    const stored = localStorage.getItem('rulesEnforced');
+    return stored === null ? true : stored === 'true';
+  });
   const hadMatchRef = useRef(false);
   const gameSnapshotRef = useRef<SnapshotOrNullType>(null);
+
+  const toggleRules = useCallback((value?: boolean) => {
+    setRulesEnforced(prev => {
+      const next = value !== undefined ? value : !prev;
+      localStorage.setItem('rulesEnforced', String(next));
+      return next;
+    });
+  }, []);
 
   const load = useCallback(async (friendId?: string | false, authUserUid?: string) => {
     if (friendId === 'PeaceInTheMiddleEast' || friendId === '__' || friendId === 'preview') return;
@@ -191,7 +203,7 @@ export function App() {
   }, [usedDice, game])
 
   const move = useCallback((from: number | Color, to: number) => {
-    if (match && (!moves.has(to) || game.status !== Status.Moving)) return;
+    if ((match || rulesEnforced) && (!moves.has(to) || game.status !== Status.Moving)) return;
     const { state: nextState, moveLabel, usedDie } = calculate(game, from, to, usedDice)
     if (!moveLabel) return; // invalid
     playCheckerSound()
@@ -229,7 +241,7 @@ export function App() {
       }
       return newUsedDice;
     });
-  }, [game, match, moves, usedDice, user, friend]);
+  }, [game, match, moves, usedDice, user, friend, rulesEnforced]);
 
   const onHomeDragOver: DragEventHandler = useCallback((event) => { 
     event.preventDefault(); 
@@ -438,6 +450,8 @@ export function App() {
       reset={reset}
       chats={chats}
       gameover={winner}
+      rulesEnforced={rulesEnforced}
+      toggleRules={toggleRules}
     >
       <div id="board" className={game.color}>
         <Toolbar friend={friendData} />
@@ -460,7 +474,7 @@ export function App() {
               position={-1}
               color={Color.White}
               onSelect={onSelect}
-              enabled={isMyTurn && (!game.color || game.color === Color.White) && (!match || sources.has(-1))}
+              enabled={isMyTurn && (!game.color || game.color === Color.White) && (!(match || rulesEnforced) || sources.has(-1))}
               selected={selected}
             />
           )}
@@ -478,7 +492,7 @@ export function App() {
               position={-1}
               color={Color.Black}
               onSelect={onSelect}
-              enabled={isMyTurn && (!game.color || game.color === Color.Black) && (!match || sources.has(-1))}
+              enabled={isMyTurn && (!game.color || game.color === Color.Black) && (!(match || rulesEnforced) || sources.has(-1))}
               selected={selected}
             />
           )}
@@ -514,7 +528,7 @@ export function App() {
         </div>
         {game.board.map((pieces: number, index: number) =>
           <Point
-            enabled={!match || sources.has(index)}
+            enabled={!(match || rulesEnforced) || sources.has(index)}
             valid={moves.has(index)}
             key={index}
             pieces={pieces}
