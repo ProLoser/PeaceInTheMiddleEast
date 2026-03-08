@@ -17,6 +17,7 @@ try {
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: process.env.BASE_URL || '/',
   define: {
     VITE_VERSION: JSON.stringify(VITE_VERSION),
   },
@@ -26,6 +27,7 @@ export default defineConfig({
     devtoolsJson(),
     VitePWA({
       registerType: 'autoUpdate',
+      disable: !!process.env.BASE_URL,
       devOptions: {
         enabled: true
       },
@@ -37,8 +39,8 @@ export default defineConfig({
         'safari-pinned-tab.svg' // Added based on existing files in public/
       ],
       workbox: {
-        // Allows firebase auth routes to pass through service worker
-        navigateFallbackDenylist: [/__/],
+        // Allows firebase auth routes and PR preview pages to pass through service worker
+        navigateFallbackDenylist: [/__/, /^\/preview\//],
       },
       manifest: {
         theme_color: '#ed7560',
