@@ -65,11 +65,11 @@ export default function MoveAnimation({ pairs, boardRef }: MoveAnimationProps) {
                         : rect.bottom - boardRect.top - (SLOT + 1) * pieceSize,
                 };
             }
-            // portrait (writing-mode: tb): "column" stacks left, "column-reverse" stacks right
+            // portrait (writing-mode: tb): top-half stacks right→left (base=right), bottom-half stacks left→right (base=left)
             return {
                 x: isTopHalf
-                    ? rect.left - boardRect.left + SLOT * pieceSize
-                    : rect.right - boardRect.left - (SLOT + 1) * pieceSize,
+                    ? rect.right - boardRect.left - (SLOT + 1) * pieceSize
+                    : rect.left - boardRect.left + SLOT * pieceSize,
                 y: rect.top - boardRect.top + (rect.height - pieceSize) / 2,
             };
         };
