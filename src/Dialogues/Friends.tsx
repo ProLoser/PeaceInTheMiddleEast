@@ -21,7 +21,7 @@ import NotificationsIcon from '@material-design-icons/svg/outlined/notifications
 import NotificationsOffIcon from '@material-design-icons/svg/filled/notifications_off.svg?react';
 import NotificationsActiveIcon from '@material-design-icons/svg/filled/notifications_active.svg?react';
 import CircleNotificationsIcon from '@material-design-icons/svg/filled/circle_notifications.svg?react';
-import AccountCircleIcon from '@material-design-icons/svg/outlined/account_circle.svg?react';
+import AccountBoxIcon from '@material-design-icons/svg/outlined/account_box.svg?react';
 import LanguageIcon from '@material-design-icons/svg/filled/language.svg?react';
 import RestartAltIcon from '@material-design-icons/svg/filled/restart_alt.svg?react';
 import BugReportIcon from '@material-design-icons/svg/filled/bug_report.svg?react';
@@ -297,7 +297,7 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
             {friend ? <li onPointerUp={() => handleLoad(false)}>
                 <span className="offline-icon">
                     <LanguageIcon className="material-icons-svg notranslate" />
-                    <AccountCircleIcon className="material-icons-svg notranslate" />
+                    <AccountBoxIcon className="material-icons-svg notranslate" />
                 </span>
                 <h3>
                     {t('local')}
