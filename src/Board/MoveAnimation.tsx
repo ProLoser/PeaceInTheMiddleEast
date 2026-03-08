@@ -59,15 +59,15 @@ export default function MoveAnimation({ pairs, boardRef }: MoveAnimationProps) {
                 return {
                     x: rect.left - boardRect.left + (rect.width - pieceSize) / 2,
                     y: isTopHalf
-                        ? rect.top - boardRect.top
-                        : rect.bottom - boardRect.top - pieceSize,
+                        ? rect.top - boardRect.top - pieceSize / 2
+                        : rect.bottom - boardRect.top - pieceSize / 2,
                 };
             }
             // portrait (writing-mode: tb): "column" stacks left, "column-reverse" stacks right
             return {
                 x: isTopHalf
-                    ? rect.left - boardRect.left
-                    : rect.right - boardRect.left - pieceSize,
+                    ? rect.left - boardRect.left - pieceSize / 2
+                    : rect.right - boardRect.left - pieceSize / 2,
                 y: rect.top - boardRect.top + (rect.height - pieceSize) / 2,
             };
         };
