@@ -14,9 +14,9 @@ import { classes } from '../Utils';
 import ToggleFullscreen from './ToggleFullscreen';
 import { saveFcmToken, clearFcmToken, getFcmToken } from '../firebase.config';
 import Version from './Version';
-import SettingsIcon from '@material-design-icons/svg/filled/settings.svg?react';
+import MenuIcon from '@material-design-icons/svg/filled/menu.svg?react';
 import PersonAddIcon from '@material-design-icons/svg/filled/person_add_alt_1.svg?react';
-import ManageAccountsIcon from '@material-design-icons/svg/filled/manage_accounts.svg?react';
+import EditIcon from '@material-design-icons/svg/filled/edit.svg?react';
 import NotificationsIcon from '@material-design-icons/svg/outlined/notifications.svg?react';
 import NotificationsOffIcon from '@material-design-icons/svg/filled/notifications_off.svg?react';
 import NotificationsActiveIcon from '@material-design-icons/svg/filled/notifications_active.svg?react';
@@ -226,7 +226,7 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
                 aria-expanded={isExpanded}
                 onPointerUp={() => setIsExpanded(!isExpanded)}
             >
-                <SettingsIcon className="material-icons-svg notranslate" />
+                <MenuIcon className="material-icons-svg notranslate" />
             </button>
             <menu>
                 <li>
@@ -242,7 +242,7 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
                     : null}
                 <li>
                     <a onPointerUp={(e) => { e.preventDefault(); toggle(Modal.Profile); }} href="#">
-                        <ManageAccountsIcon className="material-icons-svg notranslate" />
+                        <EditIcon className="material-icons-svg notranslate" />
                         {t('profile')}
                     </a>
                 </li>
@@ -292,14 +292,8 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
                     </a>
                 </li>
             </menu>
-            <h1>
-                <span>
-                    <span>{user.val().name}'s</span>
-                    {t('friends')}
-                </span>
-            </h1>
+            <input name="search" ref={searchRef} type="search" autoComplete="off" placeholder={t('search')} onChange={onSearch} />
         </header>
-        <input name="search" ref={searchRef} type="search" autoComplete="off" placeholder={t('search')} onChange={onSearch} />
         <ul>
             {friend ? <li onPointerUp={() => handleLoad(false)}>
                 <LocalIcon className="material-icons-svg notranslate" />

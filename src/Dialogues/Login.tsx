@@ -12,7 +12,7 @@ import './Login.css';
 import { DialogContext } from '.';
 import { User } from '../Types';
 import Version from './Version';
-import SettingsIcon from '@material-design-icons/svg/filled/settings.svg?react';
+import MenuIcon from '@material-design-icons/svg/filled/menu.svg?react';
 import RestartAltIcon from '@material-design-icons/svg/filled/restart_alt.svg?react';
 import BugReportIcon from '@material-design-icons/svg/filled/bug_report.svg?react';
 import InfoIcon from '@material-design-icons/svg/filled/info.svg?react';
@@ -84,7 +84,7 @@ export default function Login({ reset, friend, load }: LoginProps) {
                     aria-expanded={isExpanded}
                     onPointerUp={() => setIsExpanded(!isExpanded)}
                 >
-                    <SettingsIcon className="material-icons-svg notranslate" />
+                    <MenuIcon className="material-icons-svg notranslate" />
                 </button>
                 <menu>
                     {document.fullscreenEnabled ?
