@@ -71,7 +71,7 @@
                 overflow: hidden;
                 text-overflow: ellipsis;
             }
-            > svg, > img, > .offline-icon {
+            > svg, > img {
                 width: 4em;
                 height: 4em;
                 flex-shrink: 0;
