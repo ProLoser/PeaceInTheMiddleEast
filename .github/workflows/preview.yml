@@ -26,6 +26,8 @@ jobs:
             - name: Build
               if: github.event.action != 'closed'
               run: yarn build
+              env:
+                BASE_URL: /preview/pr-${{ github.event.pull_request.number }}/
               
             - uses: rossjrw/pr-preview-action@v1
               with:
