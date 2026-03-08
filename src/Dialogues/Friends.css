@@ -30,7 +30,7 @@
     }
 
     menu {
-        right: 30px;
+        right: 0;
 
         a.denied,
         a.unsupported {
