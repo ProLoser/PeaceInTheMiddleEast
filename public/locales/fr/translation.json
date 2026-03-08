@@ -26,6 +26,5 @@
   "disableNotificationsConfirm": "Désactiver les notifications ?\nVous ne recevrez plus de notifications lorsque vos amis font un mouvement",
   "notificationsDisabled": "Notifications désactivées",
   "notificationsEnabled": "Notifications activées",
-  "enableNotifications": "Activer les notifications",
-  "disableNotifications": "Désactiver les notifications"
+  "enableNotifications": "Activer les notifications"
 }

@@ -26,6 +26,5 @@
   "disableNotificationsConfirm": "Benachrichtigungen deaktivieren?\nSie erhalten keine Benachrichtigungen mehr, wenn Freunde einen Zug machen",
   "notificationsDisabled": "Benachrichtigungen deaktiviert",
   "notificationsEnabled": "Benachrichtigungen aktiviert",
-  "enableNotifications": "Benachrichtigungen aktivieren",
-  "disableNotifications": "Benachrichtigungen deaktivieren"
+  "enableNotifications": "Benachrichtigungen aktivieren"
 }

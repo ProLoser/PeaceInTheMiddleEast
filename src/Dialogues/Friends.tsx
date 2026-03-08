@@ -262,9 +262,7 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
                             <NotificationsIcon className="material-icons-svg notranslate" />
                         )}
                         {notificationStatus === 'granted' && hasFcmToken
-                            ? t('disableNotifications')
-                            : notificationStatus === 'denied' || notificationStatus === 'unsupported' || notificationStatus === 'processing'
-                            ? t('notifications')
+                            ? t('notificationsEnabled')
                             : t('enableNotifications')}
                     </a>
                 </li>

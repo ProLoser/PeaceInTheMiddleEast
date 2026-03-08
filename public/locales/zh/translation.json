@@ -26,6 +26,5 @@
   "disableNotificationsConfirm": "禁用通知？\n当朋友移动时，您将不再收到通知",
   "notificationsDisabled": "通知已禁用",
   "notificationsEnabled": "通知已启用",
-  "enableNotifications": "启用通知",
-  "disableNotifications": "禁用通知"
+  "enableNotifications": "启用通知"
 }

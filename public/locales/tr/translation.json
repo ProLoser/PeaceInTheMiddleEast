@@ -27,6 +27,5 @@
   "disableNotificationsConfirm": "Bildirimler devre dışı bırakılsın mı?\nArkadaşlar hamle yaptığında artık bildirim almayacaksınız",
   "notificationsDisabled": "Bildirimler devre dışı bırakıldı",
   "notificationsEnabled": "Bildirimler etkinleştirildi",
-  "enableNotifications": "Bildirimleri etkinleştir",
-  "disableNotifications": "Bildirimleri devre dışı bırak"
+  "enableNotifications": "Bildirimleri etkinleştir"
 }

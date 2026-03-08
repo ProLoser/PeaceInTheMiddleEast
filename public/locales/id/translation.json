@@ -26,6 +26,5 @@
   "disableNotificationsConfirm": "Nonaktifkan Notifikasi?\nAnda tidak akan lagi menerima notifikasi saat teman membuat gerakan",
   "notificationsDisabled": "Notifikasi Dinonaktifkan",
   "notificationsEnabled": "Notifikasi Diaktifkan",
-  "enableNotifications": "Aktifkan Notifikasi",
-  "disableNotifications": "Nonaktifkan Notifikasi"
+  "enableNotifications": "Aktifkan Notifikasi"
 }
