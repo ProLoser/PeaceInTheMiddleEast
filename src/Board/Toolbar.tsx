@@ -4,7 +4,7 @@ import { DialogContext } from '../Dialogues';
 import type { User } from '../Types';
 import './Toolbar.css';
 import { classes } from '../Utils';
-import PersonIcon from '@material-design-icons/svg/outlined/person.svg?react';
+import PersonIcon from '@material-design-icons/svg/filled/person.svg?react';
 import LanguageIcon from '@material-design-icons/svg/filled/language.svg?react';
 import { useTranslation } from 'react-i18next';
 
