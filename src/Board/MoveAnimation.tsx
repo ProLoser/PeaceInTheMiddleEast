@@ -37,69 +37,54 @@ export default function MoveAnimation({ pairs, boardRef }: MoveAnimationProps) {
         }
 
         const boardRect = board.getBoundingClientRect();
+        const boardStyle = getComputedStyle(board);
+        const overlayLeft = boardRect.left + parseFloat(boardStyle.borderLeftWidth);
+        const overlayTop = boardRect.top + parseFloat(boardStyle.borderTopWidth);
+
         const points = board.querySelectorAll<HTMLElement>('.point');
         const bars = board.querySelectorAll<HTMLElement>('.bar');
 
-        const samplePiece = board.querySelector<HTMLElement>('.piece:not(.ghost) img');
+        const samplePiece = board.querySelector<HTMLElement>('.piece:not(.ghost):not(.moved) img');
         const pieceSize = samplePiece
             ? samplePiece.getBoundingClientRect().width
             : boardRect.width / 17;
 
-        const isLandscape = boardRect.width >= boardRect.height;
-
-        const SLOT = 6; // 7th slot (0-indexed)
-
-        const getPiecePos = (rect: DOMRect, pointIndex: number | 'bar') => {
-            if (pointIndex === 'bar') {
-                return {
-                    x: rect.left - boardRect.left + (rect.width - pieceSize) / 2,
-                    y: rect.top - boardRect.top + (rect.height - pieceSize) / 2,
-                };
-            }
-            const isTopHalf = pointIndex < 12;
-            if (isLandscape) {
-                return {
-                    x: rect.left - boardRect.left + (rect.width - pieceSize) / 2,
-                    y: isTopHalf
-                        ? rect.top - boardRect.top + SLOT * pieceSize
-                        : rect.bottom - boardRect.top - (SLOT + 1) * pieceSize,
-                };
-            }
-            // portrait (writing-mode: tb): top-half stacks right→left (base=right), bottom-half stacks left→right (base=left)
-            return {
-                x: isTopHalf
-                    ? rect.right - boardRect.left - (SLOT + 1) * pieceSize
-                    : rect.left - boardRect.left + SLOT * pieceSize,
-                y: rect.top - boardRect.top + (rect.height - pieceSize) / 2,
-            };
-        };
-
         const totalDuration = STEP_DURATION * activePairs.length;
         const result: Segment[] = [];
 
-        activePairs.forEach((pair, i) => {
-            let fromRect: DOMRect | null = null;
-            let toRect: DOMRect | null = null;
+        const fromCounts = new Map<number | 'bar', number>();
+        const toCounts = new Map<number, number>();
 
+        activePairs.forEach((pair, i) => {
+            const fromKey = pair.from;
+            const fromIdx = fromCounts.get(fromKey) ?? 0;
+            fromCounts.set(fromKey, fromIdx + 1);
+
+            let fromEl: HTMLElement | null = null;
             if (pair.from === 'bar') {
                 const barIndex = pair.color === Color.White ? 0 : 1;
-                fromRect = bars[barIndex]?.getBoundingClientRect() ?? null;
+                const ghosts = bars[barIndex]?.querySelectorAll<HTMLElement>('.piece.ghost');
+                fromEl = ghosts?.[fromIdx] ?? null;
             } else {
-                fromRect = points[pair.from]?.getBoundingClientRect() ?? null;
+                const ghosts = points[pair.from]?.querySelectorAll<HTMLElement>('.piece.ghost');
+                fromEl = ghosts?.[fromIdx] ?? null;
             }
 
-            toRect = points[pair.to as number]?.getBoundingClientRect() ?? null;
+            const toIdx = toCounts.get(pair.to as number) ?? 0;
+            toCounts.set(pair.to as number, toIdx + 1);
+            const movedEls = points[pair.to as number]?.querySelectorAll<HTMLElement>('.piece.moved');
+            const toEl = movedEls?.[toIdx] ?? null;
 
-            if (!fromRect || !toRect) return;
+            if (!fromEl || !toEl) return;
 
-            const fromPos = getPiecePos(fromRect, pair.from);
-            const toPos = getPiecePos(toRect, pair.to as number);
+            const fromRect = fromEl.getBoundingClientRect();
+            const toRect = toEl.getBoundingClientRect();
 
             result.push({
-                fromX: fromPos.x,
-                fromY: fromPos.y,
-                dx: toPos.x - fromPos.x,
-                dy: toPos.y - fromPos.y,
+                fromX: fromRect.left - overlayLeft,
+                fromY: fromRect.top - overlayTop,
+                dx: toRect.left - fromRect.left,
+                dy: toRect.top - fromRect.top,
                 color: pair.color,
                 size: pieceSize,
                 totalDuration,
