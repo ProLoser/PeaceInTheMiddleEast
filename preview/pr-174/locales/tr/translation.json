@@ -9,7 +9,7 @@
   "chatPlaceholder": "Bir mesaj yazın",
   "reset": "Oyunu Sıfırla",
   "inviteFriend": "Hadi Tavla oynayalım!",
-  "profile": "Profil",
+  "profile": "Adı değiştir",
   "notifications": "Bildirimler",
   "reportBug": "Hata Bildir",
   "about": "Bilgi",
@@ -27,6 +27,5 @@
   "disableNotificationsConfirm": "Bildirimler devre dışı bırakılsın mı?\nArkadaşlar hamle yaptığında artık bildirim almayacaksınız",
   "notificationsDisabled": "Bildirimler devre dışı bırakıldı",
   "notificationsEnabled": "Bildirimler etkinleştirildi",
-  "enableNotifications": "Bildirimleri etkinleştir",
-  "disableNotifications": "Bildirimleri devre dışı bırak"
+  "enableNotifications": "Bildirimleri etkinleştir"
 }

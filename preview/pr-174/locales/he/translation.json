@@ -9,7 +9,7 @@
   "chatPlaceholder": "הקלד הודעה",
   "reset": "איפוס משחק",
   "inviteFriend": "בוא נשחק שש בש!",
-  "profile": "פּרוֹפִיל",
+  "profile": "שינוי שם",
   "notifications": "התראות",
   "reportBug": "דווח באג",
   "decline": "לדחות את ההזמנה",
@@ -27,6 +27,5 @@
   "disableNotificationsConfirm": "להשבית התראות?\nלא תקבל עוד התראות כאשר חברים מבצעים מהלך",
   "notificationsDisabled": "ההתראות הושבתו",
   "notificationsEnabled": "ההתראות הופעלו",
-  "enableNotifications": "הפעל התראות",
-  "disableNotifications": "השבת התראות"
+  "enableNotifications": "הפעל התראות"
 }

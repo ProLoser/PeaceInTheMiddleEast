@@ -11,7 +11,7 @@
   "chatPlaceholder": "Écrire un message",
   "reset": "Réinitialiser le jeu",
   "inviteFriend": "Jouons au Backgammon !",
-  "profile": "Profil",
+  "profile": "Changer le nom",
   "notifications": "Notifications",
   "reportBug": "Signaler un bug",
   "about": "À propos",
@@ -26,6 +26,5 @@
   "disableNotificationsConfirm": "Désactiver les notifications ?\nVous ne recevrez plus de notifications lorsque vos amis font un mouvement",
   "notificationsDisabled": "Notifications désactivées",
   "notificationsEnabled": "Notifications activées",
-  "enableNotifications": "Activer les notifications",
-  "disableNotifications": "Désactiver les notifications"
+  "enableNotifications": "Activer les notifications"
 }

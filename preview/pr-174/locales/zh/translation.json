@@ -11,7 +11,7 @@
   "chatPlaceholder": "输入讯息",
   "reset": "重置游戏",
   "inviteFriend": "一起玩西洋双陆棋吧！",
-  "profile": "个人资料",
+  "profile": "更改名称",
   "notifications": "通知",
   "reportBug": "报告错误",
   "about": "关于",
@@ -26,6 +26,5 @@
   "disableNotificationsConfirm": "禁用通知？\n当朋友移动时，您将不再收到通知",
   "notificationsDisabled": "通知已禁用",
   "notificationsEnabled": "通知已启用",
-  "enableNotifications": "启用通知",
-  "disableNotifications": "禁用通知"
+  "enableNotifications": "启用通知"
 }

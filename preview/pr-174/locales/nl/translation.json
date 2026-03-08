@@ -11,7 +11,7 @@
   "chatPlaceholder": "Typ een bericht",
   "reset": "Reset spel",
   "inviteFriend": "Laten we Backgammon spelen!",
-  "profile": "Profiel",
+  "profile": "Naam wijzigen",
   "notifications": "Notificaties",
   "reportBug": "Meld een bug",
   "about": "Over",
@@ -26,6 +26,5 @@
   "disableNotificationsConfirm": "Notificaties uitschakelen?\nJe ontvangt geen notificaties meer wanneer vrienden een zet doen",
   "notificationsDisabled": "Notificaties uitgeschakeld",
   "notificationsEnabled": "Notificaties ingeschakeld",
-  "enableNotifications": "Notificaties inschakelen",
-  "disableNotifications": "Notificaties uitschakelen"
+  "enableNotifications": "Notificaties inschakelen"
 }

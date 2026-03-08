@@ -11,7 +11,7 @@
   "chatPlaceholder": "اكتب رسالة",
   "reset": "إعادة تعيين اللعبة",
   "inviteFriend": "هيا نلعب طاولة الزهر!",
-  "profile": "الملف الشخصي",
+  "profile": "تغيير الاسم",
   "notifications": "إشعارات",
   "reportBug": "الإبلاغ عن خطأ",
   "about": "حول",
@@ -26,6 +26,5 @@
   "disableNotificationsConfirm": "تعطيل الإشعارات؟\nلن تتلقى إشعارات عندما يقوم الأصدقاء بحركة",
   "notificationsDisabled": "تم تعطيل الإشعارات",
   "notificationsEnabled": "تم تفعيل الإشعارات",
-  "enableNotifications": "تفعيل الإشعارات",
-  "disableNotifications": "تعطيل الإشعارات"
+  "enableNotifications": "تفعيل الإشعارات"
 }

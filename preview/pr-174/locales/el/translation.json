@@ -11,7 +11,7 @@
   "chatPlaceholder": "Πληκτρολογήστε ένα μήνυμα",
   "reset": "Επαναφορά παιχνιδιού",
   "inviteFriend": "Ας παίξουμε τάβλι!",
-  "profile": "Προφίλ",
+  "profile": "Αλλαγή ονόματος",
   "notifications": "Ειδοποιήσεις",
   "reportBug": "Αναφορά σφάλματος",
   "about": "Σχετικά",
@@ -26,6 +26,5 @@
   "disableNotificationsConfirm": "Απενεργοποίηση ειδοποιήσεων;\nΔεν θα λαμβάνετε πλέον ειδοποιήσεις όταν οι φίλοι κάνουν μια κίνηση",
   "notificationsDisabled": "Οι ειδοποιήσεις απενεργοποιήθηκαν",
   "notificationsEnabled": "Οι ειδοποιήσεις ενεργοποιήθηκαν",
-  "enableNotifications": "Ενεργοποίηση ειδοποιήσεων",
-  "disableNotifications": "Απενεργοποίηση ειδοποιήσεων"
+  "enableNotifications": "Ενεργοποίηση ειδοποιήσεων"
 }

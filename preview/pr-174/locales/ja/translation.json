@@ -11,7 +11,7 @@
   "chatPlaceholder": "メッセージを入力",
   "reset": "ゲームをリセット",
   "inviteFriend": "バックギャモンをしましょう！",
-  "profile": "プロフィール",
+  "profile": "名前を変更",
   "notifications": "通知",
   "reportBug": "バグを報告",
   "about": "概要",
@@ -26,6 +26,5 @@
   "disableNotificationsConfirm": "通知を無効にしますか？\n友達が動いたときに通知を受け取らなくなります",
   "notificationsDisabled": "通知が無効になりました",
   "notificationsEnabled": "通知が有効になりました",
-  "enableNotifications": "通知を有効にする",
-  "disableNotifications": "通知を無効にする"
+  "enableNotifications": "通知を有効にする"
 }

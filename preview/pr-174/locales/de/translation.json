@@ -11,7 +11,7 @@
   "chatPlaceholder": "Nachricht schreiben",
   "reset": "Spiel zurücksetzen",
   "inviteFriend": "Lass uns Backgammon spielen!",
-  "profile": "Profil",
+  "profile": "Name ändern",
   "notifications": "Benachrichtigungen",
   "reportBug": "Fehler melden",
   "about": "Über",
@@ -26,6 +26,5 @@
   "disableNotificationsConfirm": "Benachrichtigungen deaktivieren?\nSie erhalten keine Benachrichtigungen mehr, wenn Freunde einen Zug machen",
   "notificationsDisabled": "Benachrichtigungen deaktiviert",
   "notificationsEnabled": "Benachrichtigungen aktiviert",
-  "enableNotifications": "Benachrichtigungen aktivieren",
-  "disableNotifications": "Benachrichtigungen deaktivieren"
+  "enableNotifications": "Benachrichtigungen aktivieren"
 }
