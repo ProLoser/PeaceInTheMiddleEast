@@ -90,3 +90,26 @@ body,
     background-color: lightgreen;
   }
 }
+
+.offline-icon {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+  width: 4em;
+  height: 4em;
+
+  > .material-icons-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  > .material-icons-svg:last-child {
+    width: 55%;
+    height: 55%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+}

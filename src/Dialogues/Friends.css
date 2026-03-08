@@ -70,9 +70,10 @@
                 overflow: hidden;
                 text-overflow: ellipsis;
             }
-            > svg, > img {
+            > svg, > img, > .offline-icon {
                 width: 4em;
                 height: 4em;
+                flex-shrink: 0;
             }
         }
     }
