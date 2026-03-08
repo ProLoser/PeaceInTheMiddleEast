@@ -44,8 +44,7 @@ export default function Dialogues({ user, friend, load, reset, chats, gameover, 
 
   useEffect(() => {
     const handleClickOutside = (event: PointerEvent) => {
-      const target = event.target as Element;
-      if (!target.isConnected || target.closest('dialog')) return;
+      if ((event.target as Element).closest('dialog')) return;
       toggle(false);
     };
 

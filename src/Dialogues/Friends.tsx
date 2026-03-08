@@ -241,7 +241,7 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
                     </li>
                     : null}
                 <li>
-                    <a onPointerUp={(e) => { e.preventDefault(); toggle(Modal.Profile); }} href="#">
+                    <a onPointerUp={(e) => { e.preventDefault(); e.stopPropagation(); toggle(Modal.Profile); }} href="#">
                         <ManageAccountsIcon className="material-icons-svg notranslate" />
                         {t('profile')}
                     </a>
