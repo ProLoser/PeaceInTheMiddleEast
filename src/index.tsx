@@ -171,7 +171,8 @@ export function App() {
       setGame({
         ...game,
         dice,
-        status: Status.Moving
+        status: Status.Moving,
+        ...(rulesEnforced && { color: game.color === Color.White ? Color.Black : Color.White })
       });
     }
 
@@ -181,7 +182,7 @@ export function App() {
     setSelected(null);
     // TODO: autoselect bar, but game.color is not set yet
     // setSelected(match && game.color && game.prison[game.color] ? -1 : null);
-  }, [match, game, isMyTurn, user, friend, usedDice]);
+  }, [match, game, isMyTurn, user, friend, usedDice, rulesEnforced]);
 
   const moves = useMemo(() => {
     if (!isMyTurn || game.status !== Status.Moving)
