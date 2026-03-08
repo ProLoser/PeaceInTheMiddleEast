@@ -25,5 +25,7 @@
   "notificationsDenied": "Le notifiche sono bloccate. Per abilitarle:\n\n1. Fai clic sull'icona del lucchetto nella barra degli indirizzi del browser\n2. Trova \"Notifiche\" nell'elenco delle autorizzazioni\n3. Cambia l'impostazione su \"Consenti\"\n4. Aggiorna la pagina",
   "disableNotificationsConfirm": "Disabilitare le notifiche?\nNon riceverai più notifiche quando gli amici fanno una mossa",
   "notificationsDisabled": "Notifiche disabilitate",
-  "notificationsEnabled": "Notifiche abilitate"
+  "notificationsEnabled": "Notifiche abilitate",
+  "enableNotifications": "Abilita notifiche",
+  "disableNotifications": "Disabilita notifiche"
 }
