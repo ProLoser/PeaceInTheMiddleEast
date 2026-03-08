@@ -105,11 +105,16 @@ body,
     height: 100%;
   }
 
-  > .material-icons-svg:last-child {
-    width: 55%;
-    height: 55%;
+  > .material-icons-svg:first-child {
+    color: var(--secondary-color);
+    width: 75%;
+    height: 75%;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+  }
+
+  > .material-icons-svg:last-child {
+    color: var(--primary-color);
   }
 }
