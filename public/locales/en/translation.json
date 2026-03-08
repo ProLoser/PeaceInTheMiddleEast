@@ -25,5 +25,7 @@
   "notificationsDenied": "Notifications are blocked. To enable them:\n\n1. Click the lock icon in your browser's address bar\n2. Find \"Notifications\" in the permissions list\n3. Change the setting to \"Allow\"\n4. Refresh the page",
   "disableNotificationsConfirm": "Disable Notifications?\nYou will stop receiving notifications when friends make a move",
   "notificationsDisabled": "Notifications Disabled",
-  "notificationsEnabled": "Notifications Enabled"
+  "notificationsEnabled": "Notifications Enabled",
+  "enableRules": "Enable Rules",
+  "disableRules": "Disable Rules"
 }

@@ -21,10 +21,12 @@ interface DialoguesProps {
   reset: () => void;
   chats: SnapshotOrNullType;
   gameover: User | undefined;
+  noRules: boolean;
+  onToggleRules: () => void;
   children: React.ReactNode
 }
 
-export default function Dialogues({ user, friend, load, reset, chats, gameover, children }: DialoguesProps) {
+export default function Dialogues({ user, friend, load, reset, chats, gameover, noRules, onToggleRules, children }: DialoguesProps) {
   const [state, setState] = useState<string | boolean>(false);
   const [lastDialog, setLastDialog] = useState<Modal>(Modal.Friends);
   const toggle = useCallback((value?: string | boolean) => {
@@ -62,7 +64,7 @@ export default function Dialogues({ user, friend, load, reset, chats, gameover, 
       <dialog onCancel={() => toggle(false)} open={isOpen}>
         {user ? (
           state === 'friends' ? (
-            <Friends user={user} load={load} reset={reset} friend={friend} />
+            <Friends user={user} load={load} reset={reset} friend={friend} noRules={noRules} onToggleRules={onToggleRules} />
           ) : state === 'profile' ? (
             <Profile user={user} />
           ) : state === 'chat' ? (

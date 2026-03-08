@@ -26,6 +26,7 @@ import BugReportIcon from '@material-design-icons/svg/filled/bug_report.svg?reac
 import InfoIcon from '@material-design-icons/svg/filled/info.svg?react';
 import LogoutIcon from '@material-design-icons/svg/filled/logout.svg?react';
 import LocalIcon from '@material-design-icons/svg/filled/location_on.svg?react';
+import GavelIcon from '@material-design-icons/svg/filled/gavel.svg?react';
 
 type Users = { [key: string]: User }
 
@@ -34,11 +35,13 @@ type FriendsProps = {
     friend?: User;
     load: (userId?: string | false, key?: string) => void;
     reset: () => void;
+    noRules: boolean;
+    onToggleRules: () => void;
 }
 
 type NotificationStatus = NotificationPermission | 'unsupported' | 'processing';
 
-export default function Friends({ user, load, reset, friend }: FriendsProps) {
+export default function Friends({ user, load, reset, friend, noRules, onToggleRules }: FriendsProps) {
     const { t } = useTranslation();
     const { toggle } = useContext(DialogContext)!;
 
@@ -270,6 +273,12 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
                         {t('reset')}
                     </a>
                 </li>
+                {!friend && <li>
+                    <a onPointerUp={(e) => { e.preventDefault(); onToggleRules(); toggle(false); }} href="#">
+                        <GavelIcon className="material-icons-svg notranslate" />
+                        {t(noRules ? 'enableRules' : 'disableRules')}
+                    </a>
+                </li>}
                 <li>
                     <a href="https://github.com/ProLoser/PeaceInTheMiddleEast/issues/new" target="_blank">
                         <BugReportIcon className="material-icons-svg notranslate" />

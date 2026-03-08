@@ -46,6 +46,7 @@ export function App() {
   const [selected, setSelected] = useState<number | null>(null);
   const [usedDice, setUsedDice] = useState<UsedDie[]>([]);
   const [homeDragOver, setHomeDragOver] = useState<Color | null>(null);
+  const [noRules, setNoRules] = useState(false);
   const hadMatchRef = useRef(false);
   const gameSnapshotRef = useRef<SnapshotOrNullType>(null);
 
@@ -191,7 +192,7 @@ export function App() {
   }, [usedDice, game])
 
   const move = useCallback((from: number | Color, to: number) => {
-    if (match && (!moves.has(to) || game.status !== Status.Moving)) return;
+    if ((match || !noRules) && (!moves.has(to) || game.status !== Status.Moving)) return;
     const { state: nextState, moveLabel, usedDie } = calculate(game, from, to, usedDice)
     if (!moveLabel) return; // invalid
     playCheckerSound()
@@ -229,7 +230,7 @@ export function App() {
       }
       return newUsedDice;
     });
-  }, [game, match, moves, usedDice, user, friend]);
+  }, [game, match, moves, noRules, usedDice, user, friend]);
 
   const onHomeDragOver: DragEventHandler = useCallback((event) => { 
     event.preventDefault(); 
@@ -438,6 +439,8 @@ export function App() {
       reset={reset}
       chats={chats}
       gameover={winner}
+      noRules={noRules}
+      onToggleRules={() => setNoRules(r => !r)}
     >
       <div id="board" className={game.color}>
         <Toolbar friend={friendData} />
@@ -460,7 +463,7 @@ export function App() {
               position={-1}
               color={Color.White}
               onSelect={onSelect}
-              enabled={isMyTurn && (!game.color || game.color === Color.White) && (!match || sources.has(-1))}
+              enabled={isMyTurn && (!game.color || game.color === Color.White) && ((!match && noRules) || sources.has(-1))}
               selected={selected}
             />
           )}
@@ -478,7 +481,7 @@ export function App() {
               position={-1}
               color={Color.Black}
               onSelect={onSelect}
-              enabled={isMyTurn && (!game.color || game.color === Color.Black) && (!match || sources.has(-1))}
+              enabled={isMyTurn && (!game.color || game.color === Color.Black) && ((!match && noRules) || sources.has(-1))}
               selected={selected}
             />
           )}
@@ -514,7 +517,7 @@ export function App() {
         </div>
         {game.board.map((pieces: number, index: number) =>
           <Point
-            enabled={!match || sources.has(index)}
+            enabled={(!match && noRules) || sources.has(index)}
             valid={moves.has(index)}
             key={index}
             pieces={pieces}
