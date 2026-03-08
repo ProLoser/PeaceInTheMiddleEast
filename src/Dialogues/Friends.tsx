@@ -241,6 +241,7 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
 
     return <section id="friends">
         <header>
+            <input name="search" ref={searchRef} type="search" autoComplete="off" placeholder={t('search')} onChange={onSearch} />
             <button
                 ref={menuButtonRef}
                 aria-haspopup="menu"
@@ -313,7 +314,6 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
                     </a>
                 </li>
             </menu>
-            <input name="search" ref={searchRef} type="search" autoComplete="off" placeholder={t('search')} onChange={onSearch} />
         </header>
         <ul>
             {friend ? <li onPointerUp={() => handleLoad(false)}>
