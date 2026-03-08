@@ -21,11 +21,11 @@ import NotificationsIcon from '@material-design-icons/svg/outlined/notifications
 import NotificationsOffIcon from '@material-design-icons/svg/filled/notifications_off.svg?react';
 import NotificationsActiveIcon from '@material-design-icons/svg/filled/notifications_active.svg?react';
 import CircleNotificationsIcon from '@material-design-icons/svg/filled/circle_notifications.svg?react';
+import LocalIcon from '@material-design-icons/svg/filled/location_on.svg?react';
 import RestartAltIcon from '@material-design-icons/svg/filled/restart_alt.svg?react';
 import BugReportIcon from '@material-design-icons/svg/filled/bug_report.svg?react';
 import InfoIcon from '@material-design-icons/svg/filled/info.svg?react';
 import LogoutIcon from '@material-design-icons/svg/filled/logout.svg?react';
-import LocalIcon from '@material-design-icons/svg/filled/location_on.svg?react';
 
 type Users = { [key: string]: User }
 

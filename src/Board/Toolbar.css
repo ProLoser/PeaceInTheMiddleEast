@@ -1,6 +1,6 @@
 #toolbar {
   gap: 5px;
-  .avatar, svg {
+  .avatar, .offline-icon {
     width: 4em;
     height: 4em;
   }
