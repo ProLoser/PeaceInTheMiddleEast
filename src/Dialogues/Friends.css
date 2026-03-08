@@ -17,6 +17,7 @@
         display: flex;
         align-items: center;
         gap: 0.5em;
+        position: relative;
 
         input {
             flex: 1;
@@ -30,7 +31,8 @@
     }
 
     menu {
-        right: 30px;
+        top: 60%;
+        right: 0;
 
         a.denied,
         a.unsupported {
