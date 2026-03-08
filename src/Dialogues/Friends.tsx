@@ -26,6 +26,7 @@ import BugReportIcon from '@material-design-icons/svg/filled/bug_report.svg?reac
 import InfoIcon from '@material-design-icons/svg/filled/info.svg?react';
 import LogoutIcon from '@material-design-icons/svg/filled/logout.svg?react';
 import LocalIcon from '@material-design-icons/svg/filled/location_on.svg?react';
+import GavelIcon from '@material-design-icons/svg/filled/gavel.svg?react';
 
 type Users = { [key: string]: User }
 
@@ -34,11 +35,13 @@ type FriendsProps = {
     friend?: User;
     load: (userId?: string | false, key?: string) => void;
     reset: () => void;
+    rulesEnforced: boolean;
+    toggleRules: (value?: boolean) => void;
 }
 
 type NotificationStatus = NotificationPermission | 'unsupported' | 'processing';
 
-export default function Friends({ user, load, reset, friend }: FriendsProps) {
+export default function Friends({ user, load, reset, friend, rulesEnforced, toggleRules }: FriendsProps) {
     const { t } = useTranslation();
     const { toggle } = useContext(DialogContext)!;
 
@@ -284,6 +287,12 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
                         {notificationStatus === 'granted' && hasFcmToken
                             ? t('notificationsEnabled')
                             : t('enableNotifications')}
+                    </a>
+                </li>
+                <li>
+                    <a onPointerUp={(e) => { e.preventDefault(); toggleRules(); }} href="#">
+                        <GavelIcon className="material-icons-svg notranslate" />
+                        {rulesEnforced ? t('rulesEnforced') : t('rulesNotEnforced')}
                     </a>
                 </li>
                 <li>
