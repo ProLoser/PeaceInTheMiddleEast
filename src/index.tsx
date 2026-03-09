@@ -36,6 +36,15 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 
 const diceSound = new Audio('./shake-and-roll-dice-soundbible.mp3');
 
+declare global {
+  interface Window {
+    __e2e__?: {
+      setGame: (state: Partial<Game>) => void;
+      setMatch: (match: Match | null) => void;
+    };
+  }
+}
+
 export function App() {
   const { t } = useTranslation();
   const [game, setGame] = useState<Game>(newGame);
@@ -48,6 +57,15 @@ export function App() {
   const [homeDragOver, setHomeDragOver] = useState<Color | null>(null);
   const hadMatchRef = useRef(false);
   const gameSnapshotRef = useRef<SnapshotOrNullType>(null);
+
+  useEffect(() => {
+    if (import.meta.env.DEV) {
+      window.__e2e__ = {
+        setGame: (s) => setGame(p => ({ ...p, ...s } as Game)),
+        setMatch,
+      };
+    }
+  }, []); // setGame and setMatch are stable React dispatchers
 
   const load = useCallback(async (friendId?: string | false, authUserUid?: string) => {
     if (friendId === 'PeaceInTheMiddleEast' || friendId === '__' || friendId === 'preview') return;
@@ -336,6 +354,7 @@ export function App() {
   useEffect(() => { // match observer
     if (match) {
       hadMatchRef.current = true;
+      if (match.game === '__test__') return; // skip Firebase subscription in tests
       const gameRef = firebase.database().ref(`games/${match.game}`);
       const onValue = (snapshot: firebaseType.database.DataSnapshot) => {
         gameSnapshotRef.current = snapshot
