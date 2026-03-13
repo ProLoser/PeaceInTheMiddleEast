@@ -51,11 +51,10 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
 
     const onDragStart: DragEventHandler = useCallback((event) => {
         onSelect(position)
-        setDragging(true)
         navigator.vibrate?.(Vibrations.Up)
-        if (event.target === event.currentTarget)
-            event.dataTransfer?.setDragImage(pieceRef.current!, 50, 50);
+        event.dataTransfer?.setDragImage(pieceRef.current!, 50, 50);
         event.dataTransfer?.setData('text', position?.toString());
+        requestAnimationFrame(() => setDragging(true));
     }, [position, pieceRef, onSelect]);
 
     const onDragEnd = useCallback(() => {
@@ -95,6 +94,7 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
                 onSelect={onSelect} 
                 enabled={enabled}
                 moved={index >= Math.abs(pieces) - Math.abs(moved)}
+                dragging={dragging && index === Math.abs(pieces) - 1}
             />
         )}
         {Array.from({ length: Math.abs(ghosts) }, (_, index) => 
