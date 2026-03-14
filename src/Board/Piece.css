@@ -23,6 +23,10 @@
         animation: ghost 1s infinite alternate;
     }
 
+    &.dragging {
+        opacity: 0.5;
+    }
+
     &.moved {
         outline-offset: 3px;
         animation: moved 1s infinite alternate;
