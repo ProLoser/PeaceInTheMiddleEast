@@ -1,5 +1,6 @@
 // Sentry initialization should be imported first!
 import "./instrument";
+import 'drag-drop-touch';
 import './i18n';
 import { StrictMode, useEffect, useState, useCallback, useMemo, type DragEventHandler, useRef } from "react";
 import ReactDOM from 'react-dom/client'
