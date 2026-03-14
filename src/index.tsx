@@ -514,7 +514,7 @@ export function App() {
         </div>
         {game.board.map((pieces: number, index: number) =>
           <Point
-            enabled={!match || sources.has(index)}
+            enabled={pieces !== 0 && (!match || sources.has(index))}
             valid={moves.has(index)}
             key={index}
             pieces={pieces}
