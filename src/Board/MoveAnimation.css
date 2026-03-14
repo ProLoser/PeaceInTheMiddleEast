@@ -1,0 +1,55 @@
+.move-animation-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 10;
+    overflow: hidden;
+}
+
+.move-animation-piece {
+    position: absolute;
+    border-radius: 50%;
+    animation: slide-piece linear infinite;
+}
+
+@keyframes slide-piece {
+    /* quick fade-in at source */
+    0% {
+        transform: translate(0, 0);
+        opacity: 0;
+    }
+    5% {
+        transform: translate(0, 0);
+        opacity: 0.9;
+    }
+    /* pause at source */
+    12% {
+        transform: translate(0, 0);
+        opacity: 0.9;
+        animation-timing-function: ease-in-out;
+    }
+    /* arrived at destination */
+    38% {
+        transform: translate(var(--dx), var(--dy));
+        opacity: 0.9;
+    }
+    /* pause at destination */
+    45% {
+        transform: translate(var(--dx), var(--dy));
+        opacity: 0.9;
+    }
+    /* fade out */
+    50% {
+        transform: translate(var(--dx), var(--dy));
+        opacity: 0;
+    }
+    /* snap back invisibly */
+    51% {
+        transform: translate(0, 0);
+        opacity: 0;
+    }
+    100% {
+        transform: translate(0, 0);
+        opacity: 0;
+    }
+}
