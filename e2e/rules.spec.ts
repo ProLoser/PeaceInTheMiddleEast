@@ -14,7 +14,7 @@ const TEST_MATCH = { game: '__test__', chat: '__test__', sort: '' };
 
 test.describe('Game rules (online match simulation)', () => {
   test.describe('Turn enforcement', () => {
-    test.beforeEach(({ page }) => load(page));
+    test.beforeEach(async ({ page }) => await load(page));
 
     test('dice are disabled when it is not your turn', async ({ page }) => {
       await setMatch(page, TEST_MATCH);
@@ -40,7 +40,7 @@ test.describe('Game rules (online match simulation)', () => {
   });
 
   test.describe('Valid move highlighting', () => {
-    test.beforeEach(({ page }) => load(page));
+    test.beforeEach(async ({ page }) => await load(page));
 
     test('valid source points are highlighted after rolling', async ({ page }) => {
       await setGame(page, { color: 'white', status: 'MOVING', dice: [3, 5] });
@@ -67,7 +67,7 @@ test.describe('Game rules (online match simulation)', () => {
   });
 
   test.describe('Bar (Prison)', () => {
-    test.beforeEach(({ page }) => load(page));
+    test.beforeEach(async ({ page }) => await load(page));
 
     test('bar is highlighted as valid source when a piece is on it', async ({ page }) => {
       // White has a piece on the bar; die=3 re-enters at index 9 (empty)

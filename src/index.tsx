@@ -42,6 +42,7 @@ declare global {
     __e2e__?: {
       setGame: (state: Partial<Game>) => void;
       setMatch: (match: Match | null) => void;
+      authReady: boolean;
     };
   }
 }
@@ -64,6 +65,7 @@ export function App() {
       window.__e2e__ = {
         setGame: (s) => setGame(p => ({ ...p, ...s } as Game)),
         setMatch,
+        authReady: false,
       };
     }
   }, []); // setGame and setMatch are stable React dispatchers
@@ -333,6 +335,11 @@ export function App() {
           if (previousUserKey !== currentUserKey) {
             previousUserKey = currentUserKey || null;
             load(friendId, authUser.uid);
+            if (import.meta.env.DEV) {
+              requestAnimationFrame(() => requestAnimationFrame(() => {
+                if (window.__e2e__) window.__e2e__.authReady = true;
+              }));
+            }
           }
         }
         userRef.on('value', onUserValue);
@@ -344,6 +351,14 @@ export function App() {
         setUser(null);
         setMatch(null);
         load(friendId);
+        if (import.meta.env.DEV) {
+          // Double rAF: by the 2nd frame React has committed all batched state
+          // updates from load() (setSelected(null), setUsedDice([])), so tests
+          // waiting for authReady will never race with that reset.
+          requestAnimationFrame(() => requestAnimationFrame(() => {
+            if (window.__e2e__) window.__e2e__.authReady = true;
+          }));
+        }
       }
     });
     return () => {

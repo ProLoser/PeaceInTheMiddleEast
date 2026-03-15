@@ -1,14 +1,8 @@
-import { test, expect, type Page } from '@playwright/test';
-
-async function waitForBoard(page: Page) {
-  await page.goto('/');
-  await page.locator('#board').waitFor({ state: 'visible' });
-}
+import { test, expect } from '@playwright/test';
+import { load } from './helpers';
 
 test.describe('Game board', () => {
-  test.beforeEach(async ({ page }) => {
-    await waitForBoard(page);
-  });
+  test.beforeEach(async ({ page }) => await load(page));
 
   test('renders the board with toolbar and dice', async ({ page }) => {
     await expect(page.locator('#board')).toBeVisible();
@@ -33,9 +27,7 @@ test.describe('Game board', () => {
 });
 
 test.describe('Dice', () => {
-  test.beforeEach(async ({ page }) => {
-    await waitForBoard(page);
-  });
+  test.beforeEach(async ({ page }) => await load(page));
 
   test('dice start in pulsating rolling state', async ({ page }) => {
     await expect(page.locator('.dice.pulsate')).toBeVisible();
@@ -54,9 +46,7 @@ test.describe('Dice', () => {
 });
 
 test.describe('Piece selection', () => {
-  test.beforeEach(async ({ page }) => {
-    await waitForBoard(page);
-  });
+  test.beforeEach(async ({ page }) => await load(page));
 
   test('clicking a point selects it in local mode', async ({ page }) => {
     const point = page.locator('.point').first();
@@ -84,9 +74,7 @@ test.describe('Piece selection', () => {
 });
 
 test.describe('Login dialog', () => {
-  test.beforeEach(async ({ page }) => {
-    await waitForBoard(page);
-  });
+  test.beforeEach(async ({ page }) => await load(page));
 
   test('dialog is initially closed', async ({ page }) => {
     await expect(page.locator('dialog')).not.toBeVisible();

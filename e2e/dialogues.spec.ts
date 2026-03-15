@@ -3,7 +3,7 @@ import { load } from './helpers';
 
 test.describe('Dialogues', () => {
   test.describe('Login dialog', () => {
-    test.beforeEach(({ page }) => load(page));
+    test.beforeEach(async ({ page }) => await load(page));
 
     test('dialog is closed by default', async ({ page }) => {
       await expect(page.locator('dialog')).not.toBeVisible();

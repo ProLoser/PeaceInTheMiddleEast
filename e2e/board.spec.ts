@@ -3,7 +3,7 @@ import { load, setGame } from './helpers';
 
 test.describe('Board UI', () => {
   test.describe('Structure', () => {
-    test.beforeEach(({ page }) => load(page));
+    test.beforeEach(async ({ page }) => await load(page));
 
     test('has 24 points', async ({ page }) => {
       await expect(page.locator('.point')).toHaveCount(24);
@@ -27,7 +27,7 @@ test.describe('Board UI', () => {
   });
 
   test.describe('Toolbar', () => {
-    test.beforeEach(({ page }) => load(page));
+    test.beforeEach(async ({ page }) => await load(page));
 
     test('shows Offline Game label when no opponent is loaded', async ({ page }) => {
       await expect(page.locator('#toolbar h2')).toHaveText('Offline Game');
@@ -39,7 +39,7 @@ test.describe('Board UI', () => {
   });
 
   test.describe('Color state', () => {
-    test.beforeEach(({ page }) => load(page));
+    test.beforeEach(async ({ page }) => await load(page));
 
     test('board has no color class before any moves', async ({ page }) => {
       await expect(page.locator('#board')).not.toHaveClass(/white|black/);
@@ -57,7 +57,7 @@ test.describe('Board UI', () => {
   });
 
   test.describe('Dice', () => {
-    test.beforeEach(({ page }) => load(page));
+    test.beforeEach(async ({ page }) => await load(page));
 
     test('dice pulsate while waiting for a roll', async ({ page }) => {
       await expect(page.locator('.dice.pulsate')).toBeVisible();
@@ -75,7 +75,7 @@ test.describe('Board UI', () => {
   });
 
   test.describe('Piece selection', () => {
-    test.beforeEach(({ page }) => load(page));
+    test.beforeEach(async ({ page }) => await load(page));
 
     test('valid source points are highlighted during a move', async ({ page }) => {
       await setGame(page, { color: 'white', status: 'MOVING', dice: [3, 5] });
@@ -83,15 +83,12 @@ test.describe('Board UI', () => {
     });
 
     test('clicking a point selects it', async ({ page }) => {
-      // Wait for toolbar label to confirm auth has settled (prevents auth-reset race)
-      await expect(page.locator('#toolbar h2')).toBeVisible();
       const point = page.locator('.point').nth(18);
       await point.click();
       await expect(point).toHaveClass(/selected/);
     });
 
     test('clicking a selected point deselects it', async ({ page }) => {
-      await expect(page.locator('#toolbar h2')).toBeVisible();
       const point = page.locator('.point').nth(18);
       await point.click();
       await expect(point).toHaveClass(/selected/);
@@ -100,7 +97,6 @@ test.describe('Board UI', () => {
     });
 
     test('selecting a different point moves the selection highlight', async ({ page }) => {
-      await expect(page.locator('#toolbar h2')).toBeVisible();
       const first = page.locator('.point').nth(0);
       const second = page.locator('.point').nth(16);
       await first.click();
