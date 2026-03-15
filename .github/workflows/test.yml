@@ -30,7 +30,7 @@ jobs:
         run: yarn lint
         continue-on-error: true
       
-      - name: Run tests
+      - name: Run unit tests
         run: yarn test --coverage
       
       - name: Upload coverage reports
@@ -39,4 +39,18 @@ jobs:
         with:
           name: coverage-report
           path: coverage/
+          retention-days: 30
+
+      - name: Install Playwright browsers
+        run: yarn playwright install chromium --with-deps
+
+      - name: Run E2E tests
+        run: yarn test:e2e
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
           retention-days: 30
