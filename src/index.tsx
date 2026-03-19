@@ -63,8 +63,8 @@ export function App() {
       setFriend(null);
       setMatch(null);
       setChats(null);
-      if (window.location.pathname !== `/`) {
-        window.history.pushState(null, '', `/`);
+      if (window.location.pathname !== import.meta.env.BASE_URL) {
+        window.history.pushState(null, '', import.meta.env.BASE_URL);
       }
       return;
     }
@@ -78,8 +78,8 @@ export function App() {
       setFriend(null);
       setMatch(null);
       setChats(null);
-      if (window.location.pathname !== `/`) {
-        window.history.pushState(null, '', `/`);
+      if (window.location.pathname !== import.meta.env.BASE_URL) {
+        window.history.pushState(null, '', import.meta.env.BASE_URL);
       }
       return;
     }
@@ -87,8 +87,8 @@ export function App() {
     // Friend exists - now update URL and state
     setFriend(friendSnapshot);
     setGame(newGame());
-    if (window.location.pathname !== `/${friendId}`) {
-      window.history.pushState(null, '', `/${friendId}`);
+    if (window.location.pathname !== `${import.meta.env.BASE_URL}${friendId}`) {
+      window.history.pushState(null, '', `${import.meta.env.BASE_URL}${friendId}`);
     }
 
     if (!authUserUid) {
@@ -283,7 +283,7 @@ export function App() {
     if (location.href.includes('__/auth/handler')) return;
     const onPopState = () => {
       load(
-        location.pathname.split('/')[1],
+        location.pathname.slice(import.meta.env.BASE_URL.length).split('/')[0],
         user?.key || undefined
       )
     };
@@ -294,7 +294,7 @@ export function App() {
   }, [load, user]);
 
   useEffect(() => { // auth observer
-    const friendId = location.pathname.split('/')[1]
+    const friendId = location.pathname.slice(import.meta.env.BASE_URL.length).split('/')[0]
 
     let unsubscribeUser: (() => void) | null;
     let previousUserKey: string | null = null;
