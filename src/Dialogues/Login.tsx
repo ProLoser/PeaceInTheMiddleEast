@@ -17,6 +17,7 @@ import RestartAltIcon from '@material-design-icons/svg/filled/restart_alt.svg?re
 import BugReportIcon from '@material-design-icons/svg/filled/bug_report.svg?react';
 import InfoIcon from '@material-design-icons/svg/filled/info.svg?react';
 import CancelIcon from '@material-design-icons/svg/filled/cancel.svg?react';
+import GavelIcon from '@material-design-icons/svg/filled/gavel.svg?react';
 
 // Configure FirebaseUI.
 const uiConfig = {
@@ -39,9 +40,11 @@ type LoginProps = {
     reset: () => void;
     friend?: User;
     load: () => void;
+    rulesEnforced: boolean;
+    toggleRules: (value?: boolean) => void;
 };
 
-export default function Login({ reset, friend, load }: LoginProps) {
+export default function Login({ reset, friend, load, rulesEnforced, toggleRules }: LoginProps) {
     const { t } = useTranslation();
     const [userSignedIn, setUserSignedIn] = useState(false);
     const elementRef = useRef(null);
@@ -92,6 +95,12 @@ export default function Login({ reset, friend, load }: LoginProps) {
                             <ToggleFullscreen />
                         </li>
                         : null}
+                    <li>
+                        <a onPointerUp={(e) => { e.preventDefault(); toggleRules(); }} href="#">
+                            <GavelIcon className="material-icons-svg notranslate" />
+                            {rulesEnforced ? t('rulesEnforced') : t('rulesNotEnforced')}
+                        </a>
+                    </li>
                     <li>
                         <a onPointerUp={(e) => { e.preventDefault(); reset(); }} href="#">
                             <RestartAltIcon className="material-icons-svg notranslate" />

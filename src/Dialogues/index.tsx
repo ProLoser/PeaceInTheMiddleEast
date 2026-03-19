@@ -21,10 +21,12 @@ interface DialoguesProps {
   reset: () => void;
   chats: SnapshotOrNullType;
   gameover: User | undefined;
+  rulesEnforced: boolean;
+  toggleRules: (value?: boolean) => void;
   children: React.ReactNode
 }
 
-export default function Dialogues({ user, friend, load, reset, chats, gameover, children }: DialoguesProps) {
+export default function Dialogues({ user, friend, load, reset, chats, gameover, rulesEnforced, toggleRules, children }: DialoguesProps) {
   const [state, setState] = useState<string | boolean>(false);
   const [lastDialog, setLastDialog] = useState<Modal>(Modal.Friends);
   const toggle = useCallback((value?: string | boolean) => {
@@ -62,7 +64,7 @@ export default function Dialogues({ user, friend, load, reset, chats, gameover, 
       <dialog onCancel={() => toggle(false)} open={isOpen}>
         {user ? (
           state === 'friends' ? (
-            <Friends user={user} load={load} reset={reset} friend={friend} />
+            <Friends user={user} load={load} reset={reset} friend={friend} rulesEnforced={rulesEnforced} toggleRules={toggleRules} />
           ) : state === 'profile' ? (
             <Profile user={user} />
           ) : state === 'chat' ? (
@@ -71,7 +73,7 @@ export default function Dialogues({ user, friend, load, reset, chats, gameover, 
             <Gameover user={gameover} reset={reset} winner={user?.key === gameover.uid} />
           ) : null
         ) : (
-          <Login reset={reset} friend={friend} load={load} />
+          <Login reset={reset} friend={friend} load={load} rulesEnforced={rulesEnforced} toggleRules={toggleRules} />
         )}
       </dialog>
       {children}
