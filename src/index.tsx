@@ -13,10 +13,11 @@ import Dice from './Board/Dice';
 import Point from './Board/Point';
 import Piece from './Board/Piece';
 import Toolbar from './Board/Toolbar';
+import MoveAnimation from './Board/MoveAnimation';
 import './index.css'
 import './Board/Board.css';
 import './Board/Toolbar.css'
-import { calculate, newGame, nextMoves, rollDie, Vibrations, playAudio, classes, parseUsed, parseMove, parseDragData } from './Utils';
+import { calculate, newGame, nextMoves, rollDie, Vibrations, playAudio, classes, parseUsed, parseMove, parseMovePairs, parseDragData } from './Utils';
 import firebase from "./firebase.config";
 import { playCheckerSound } from './Utils';
 import type firebaseType from 'firebase/compat/app';
@@ -49,6 +50,7 @@ export function App() {
   const [homeDragOver, setHomeDragOver] = useState<Color | null>(null);
   const hadMatchRef = useRef(false);
   const gameSnapshotRef = useRef<SnapshotOrNullType>(null);
+  const boardRef = useRef<HTMLDivElement>(null);
 
   const load = useCallback(async (friendId?: string | false, authUserUid?: string) => {
     if (friendId === 'PeaceInTheMiddleEast' || friendId === '__' || friendId === 'preview') return;
@@ -62,8 +64,8 @@ export function App() {
       setFriend(null);
       setMatch(null);
       setChats(null);
-      if (window.location.pathname !== `/`) {
-        window.history.pushState(null, '', `/`);
+      if (window.location.pathname !== import.meta.env.BASE_URL) {
+        window.history.pushState(null, '', import.meta.env.BASE_URL);
       }
       return;
     }
@@ -77,8 +79,8 @@ export function App() {
       setFriend(null);
       setMatch(null);
       setChats(null);
-      if (window.location.pathname !== `/`) {
-        window.history.pushState(null, '', `/`);
+      if (window.location.pathname !== import.meta.env.BASE_URL) {
+        window.history.pushState(null, '', import.meta.env.BASE_URL);
       }
       return;
     }
@@ -86,8 +88,8 @@ export function App() {
     // Friend exists - now update URL and state
     setFriend(friendSnapshot);
     setGame(newGame());
-    if (window.location.pathname !== `/${friendId}`) {
-      window.history.pushState(null, '', `/${friendId}`);
+    if (window.location.pathname !== `${import.meta.env.BASE_URL}${friendId}`) {
+      window.history.pushState(null, '', `${import.meta.env.BASE_URL}${friendId}`);
     }
 
     if (!authUserUid) {
@@ -191,6 +193,12 @@ export function App() {
     return { ghosts: {}, moved: {}, ghostHit: {} };
   }, [usedDice, game])
 
+  const movePairs = useMemo(() =>
+    match && isMyTurn && game.status === Status.Rolling
+      ? parseMovePairs(game.lastMove, game.color ?? null)
+      : []
+  , [match, isMyTurn, game.status, game.lastMove, game.color])
+
   const move = useCallback((from: number | Color, to: number) => {
     if (match && (!moves.has(to) || game.status !== Status.Moving)) return;
     const { state: nextState, moveLabel, usedDie } = calculate(game, from, to, usedDice)
@@ -276,7 +284,7 @@ export function App() {
     if (location.href.includes('__/auth/handler')) return;
     const onPopState = () => {
       load(
-        location.pathname.split('/')[1],
+        location.pathname.slice(import.meta.env.BASE_URL.length).split('/')[0],
         user?.key || undefined
       )
     };
@@ -287,7 +295,7 @@ export function App() {
   }, [load, user]);
 
   useEffect(() => { // auth observer
-    const friendId = location.pathname.split('/')[1]
+    const friendId = location.pathname.slice(import.meta.env.BASE_URL.length).split('/')[0]
 
     let unsubscribeUser: (() => void) | null;
     let previousUserKey: string | null = null;
@@ -440,7 +448,7 @@ export function App() {
       chats={chats}
       gameover={winner}
     >
-      <div id="board" className={game.color}>
+      <div id="board" ref={boardRef} className={game.color}>
         <Toolbar friend={friendData} />
         <Dice
           onPointerUp={rollDice}
@@ -451,6 +459,7 @@ export function App() {
           pulsate={isMyTurn && game.status === Status.Rolling}
           undo={!!match && isMyTurn && usedDice.length > 0 && usedDice.length < game.dice.length}
         />
+        <MoveAnimation pairs={movePairs} boardRef={boardRef} />
         <div className={classes('bar', { 
           selected: selected === -1,
           valid: game.color === Color.White && game.prison?.white > 0 && sources.has(-1)

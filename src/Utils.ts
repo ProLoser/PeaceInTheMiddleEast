@@ -442,3 +442,44 @@ export const parseMove = (moveString: string | undefined, color: Color | null) =
 
     return { ghosts, moved, ghostHit };
 };
+
+export type MovePair = {
+    from: number | 'bar';
+    to: number | 'off';
+    color: Color;
+};
+
+export const parseMovePairs = (moveString: string | undefined, color: Color | null): MovePair[] => {
+    if (!color || !moveString) return [];
+    const parts = moveString.split(': ');
+    if (parts.length < 2) return [];
+
+    const movesString = parts[1].replace(' (game over)', '');
+    const moveLabels = movesString.split(' ').filter(label => label.length > 0 && label !== 'blocked');
+
+    const pairs: MovePair[] = [];
+    moveLabels.forEach(label => {
+        const cleanLabel = label.endsWith('*') ? label.slice(0, -1) : label;
+        const [from, to] = cleanLabel.split('/');
+
+        if (from === 'bar') {
+            const toPoint = parseInt(to);
+            if (!isNaN(toPoint)) {
+                pairs.push({ from: 'bar', to: pointToIndex(color, toPoint), color });
+            }
+        } else if (to === 'off') {
+            const fromPoint = parseInt(from);
+            if (!isNaN(fromPoint)) {
+                pairs.push({ from: pointToIndex(color, fromPoint), to: 'off', color });
+            }
+        } else {
+            const fromPoint = parseInt(from);
+            const toPoint = parseInt(to);
+            if (!isNaN(fromPoint) && !isNaN(toPoint)) {
+                pairs.push({ from: pointToIndex(color, fromPoint), to: pointToIndex(color, toPoint), color });
+            }
+        }
+    });
+
+    return pairs;
+};
