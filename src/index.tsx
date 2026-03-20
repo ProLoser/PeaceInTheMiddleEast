@@ -204,8 +204,11 @@ export function App() {
     if (match && !moves.has(to)) {
       // For bar piece drags the moves set may be stale due to React batching dragstart+dragenter
       // in the same touchmove handler; recalculate from bar position as fallback
-      if (from !== Color.White && from !== Color.Black) return;
-      if (!nextMoves(game, usedDice, -1).has(to)) return;
+      if (from === Color.White || from === Color.Black) {
+        if (!nextMoves(game, usedDice, -1).has(to)) return;
+      } else {
+        return;
+      }
     }
     const { state: nextState, moveLabel, usedDie } = calculate(game, from, to, usedDice)
     if (!moveLabel) return; // invalid
