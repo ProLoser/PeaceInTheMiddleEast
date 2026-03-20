@@ -461,7 +461,7 @@ export function App() {
         />
         <MoveAnimation pairs={movePairs} boardRef={boardRef} />
         <div className={classes('bar', { 
-          selected: selected === -1,
+          selected: selected === -1 && game.color === Color.White,
           valid: game.color === Color.White && game.prison?.white > 0 && sources.has(-1)
         })}>
           {Array.from({ length: game.prison?.white }, (_, index) =>
@@ -479,7 +479,7 @@ export function App() {
           ): null}
         </div>
         <div className={classes('bar', { 
-          selected: selected === -1,
+          selected: selected === -1 && game.color === Color.Black,
           valid: game.color === Color.Black && game.prison?.black > 0 && sources.has(-1)
         })}>
           {Array.from({ length: game.prison?.black }, (_, index) =>
