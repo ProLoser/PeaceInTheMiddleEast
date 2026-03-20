@@ -28,6 +28,12 @@ const Piece = forwardRef<HTMLImageElement, PieceProps>(({ color, position, onSel
             onSelect!(-1)
         }
     }, [position, color, onSelect, enabled]);
+
+    const onDragEnd = useCallback(() => {
+        if (position === -1) { // bar
+            onSelect!(null)
+        }
+    }, [position, onSelect]);
     
     const onPointerUp = useCallback(() => {
         if (enabled && position === -1) { // bar
@@ -40,7 +46,7 @@ const Piece = forwardRef<HTMLImageElement, PieceProps>(({ color, position, onSel
         }
     }, [position, onSelect, enabled, selected]);
     
-    return <div className={classes('piece', color, { ghost, moved, dragging })} onDragStart={onDragStart} onPointerUp={onPointerUp} draggable={enabled}>
+    return <div className={classes('piece', color, { ghost, moved, dragging })} onDragStart={onDragStart} onDragEnd={onDragEnd} onPointerUp={onPointerUp} draggable={enabled}>
         <img ref={ref} src={IMAGES[color]} onContextMenu={event => event.preventDefault()} draggable={enabled} />
     </div>
 })
