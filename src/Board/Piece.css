@@ -9,7 +9,7 @@
     } */
     aspect-ratio: 1;
 
-    &[draggable="true"] {
+    &.enabled {
         cursor: pointer;
     }
 

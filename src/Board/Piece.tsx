@@ -30,7 +30,7 @@ const Piece = forwardRef<HTMLImageElement, PieceProps>(({ color, position, onSel
         }
     }, [position, onSelect, enabled, selected]);
     
-    return <div className={classes('piece', color, { ghost, moved, dragging })} onPointerUp={onPointerUp} draggable={enabled}>
+    return <div className={classes('piece', color, { ghost, moved, dragging, enabled })} onPointerUp={onPointerUp}>
         <img ref={ref} src={IMAGES[color]} onContextMenu={event => event.preventDefault()} draggable={false} />
     </div>
 })
