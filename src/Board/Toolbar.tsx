@@ -4,7 +4,8 @@ import { DialogContext } from '../Dialogues';
 import type { User } from '../Types';
 import './Toolbar.css';
 import { classes } from '../Utils';
-import AccountCircleIcon from '@material-design-icons/svg/filled/account_circle.svg?react';
+import PersonIcon from '@material-design-icons/svg/filled/person.svg?react';
+import LanguageIcon from '@material-design-icons/svg/filled/language.svg?react';
 import { useTranslation } from 'react-i18next';
 
 interface ToolbarProps {
@@ -18,7 +19,10 @@ export default function Toolbar({ friend }: ToolbarProps) {
     <div id="toolbar" onPointerUp={(e) => { toggle(); e.stopPropagation(); }} className={classes({ active: dialogState })}>
       {friend
         ? <Avatar user={friend} />
-        : <AccountCircleIcon className="material-icons-svg notranslate" />}
+        : <span className="offline-icon">
+            <LanguageIcon className="material-icons-svg notranslate" />
+            <PersonIcon className="material-icons-svg notranslate" />
+          </span>}
       <h2>{friend?.name ?? t('local')}</h2>
     </div>
   );
