@@ -106,7 +106,7 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
                 
                 // TODO: Disable? After 3 failed attempts, permission = 'blocked'
                 // Also re-save on 'granted' in case the service worker was refreshed (e.g. version reset)
-                if (window.Notification?.permission !== 'denied')
+                if (token && window.Notification?.permission !== 'denied')
                     tokensRef.once('value', snapshot => snapshot.child(token).exists() || saveFcmToken())
             })
             .catch(error => {
