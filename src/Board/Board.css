@@ -49,11 +49,11 @@
     transition: background-color 1s;
     justify-content: center;
     flex-direction: column;
-    &.selected {
-        background: var(--highlight) !important;
-    }
     &.valid {
         background: var(--valid) !important;
+    }
+    &.selected {
+        background: var(--highlight) !important;
     }
 }
 
