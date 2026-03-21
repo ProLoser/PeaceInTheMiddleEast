@@ -1,9 +1,8 @@
 .move-animation-overlay {
     position: absolute;
-    inset: calc(-1 * var(--board-border, 5vmin));
+    inset: 0;
     pointer-events: none;
     z-index: 0;
-    overflow: hidden;
 }
 
 .move-animation-piece {
