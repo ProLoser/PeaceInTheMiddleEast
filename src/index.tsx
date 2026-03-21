@@ -200,16 +200,7 @@ export function App() {
   , [match, isMyTurn, game.status, game.lastMove, game.color])
 
   const move = useCallback((from: number | Color, to: number) => {
-    if (match && game.status !== Status.Moving) return;
-    if (match && !moves.has(to)) {
-      // For bar piece drags the moves set may be stale due to React batching dragstart+dragenter
-      // in the same touchmove handler; recalculate from bar position as fallback
-      if (from === Color.White || from === Color.Black) {
-        if (!nextMoves(game, usedDice, -1).has(to)) return;
-      } else {
-        return;
-      }
-    }
+    if (match && (!moves.has(to) || game.status !== Status.Moving)) return;
     const { state: nextState, moveLabel, usedDie } = calculate(game, from, to, usedDice)
     if (!moveLabel) return; // invalid
     playCheckerSound()
