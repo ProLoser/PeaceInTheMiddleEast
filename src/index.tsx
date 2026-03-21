@@ -277,6 +277,18 @@ export function App() {
     setSelected(position)
   }, [])
 
+  const onBarDragStart = useCallback((color: Color) => (event: React.DragEvent) => {
+    event.dataTransfer.setData('text', color);
+    const imgEl = event.currentTarget.querySelector('img');
+    if (imgEl) event.dataTransfer.setDragImage(imgEl, 50, 50);
+    navigator.vibrate?.(Vibrations.Up);
+    onSelect(-1);
+  }, [onSelect]);
+
+  const onBarDragEnd: DragEventHandler = useCallback(() => {
+    onSelect(null);
+  }, [onSelect]);
+
   const friendData: User | undefined = useMemo(() => friend?.val(), [friend])
 
   useEffect(() => { // PopState observer (browser history navigation)
@@ -463,7 +475,11 @@ export function App() {
         <div className={classes('bar', { 
           selected: selected === -1,
           valid: game.color === Color.White && game.prison?.white > 0 && sources.has(-1)
-        })}>
+        })}
+          draggable={isMyTurn && (!game.color || game.color === Color.White) && (!match || sources.has(-1)) && game.prison?.white > 0}
+          onDragStart={onBarDragStart(Color.White)}
+          onDragEnd={onBarDragEnd}
+        >
           {Array.from({ length: game.prison?.white }, (_, index) =>
             <Piece
               key={index}
@@ -481,7 +497,11 @@ export function App() {
         <div className={classes('bar', { 
           selected: selected === -1,
           valid: game.color === Color.Black && game.prison?.black > 0 && sources.has(-1)
-        })}>
+        })}
+          draggable={isMyTurn && (!game.color || game.color === Color.Black) && (!match || sources.has(-1)) && game.prison?.black > 0}
+          onDragStart={onBarDragStart(Color.Black)}
+          onDragEnd={onBarDragEnd}
+        >
           {Array.from({ length: game.prison?.black }, (_, index) =>
             <Piece
               key={index}
