@@ -459,7 +459,6 @@ export function App() {
           pulsate={isMyTurn && game.status === Status.Rolling}
           undo={!!match && isMyTurn && usedDice.length > 0 && usedDice.length < game.dice.length}
         />
-        <MoveAnimation pairs={movePairs} boardRef={boardRef} />
         <div className={classes('bar', { 
           selected: selected === -1,
           valid: game.color === Color.White && game.prison?.white > 0 && sources.has(-1)
@@ -537,6 +536,7 @@ export function App() {
             moved={lastMove.moved[index]}
           />
         )}
+        <MoveAnimation pairs={movePairs} boardRef={boardRef} />
       </div>
     </Dialogues>
   );
