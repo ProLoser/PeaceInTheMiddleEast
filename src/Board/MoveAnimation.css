@@ -1,10 +1,9 @@
 .move-animation-overlay {
     position: absolute;
-    inset: 0;
+    inset: calc(-1 * var(--board-border, 5vmin));
     pointer-events: none;
     z-index: 10;
-    overflow: clip;
-    overflow-clip-margin: var(--board-border, 5vmin);
+    overflow: hidden;
 }
 
 .move-animation-piece {
