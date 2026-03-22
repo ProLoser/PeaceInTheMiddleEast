@@ -80,7 +80,7 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
     }, [position, onSelect, dragging, enabled, selected, move, valid])
     
     return <div className={classes('point', { valid, selected: selected === position, dragOver })} 
-        draggable={enabled}
+        draggable={enabled && pieces !== 0}
         onPointerUp={onPointerUp} 
         onDragOver={onDragOver}
         onDragEnter={onDragEnter}
