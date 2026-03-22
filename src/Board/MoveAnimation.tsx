@@ -72,7 +72,8 @@ export default function MoveAnimation({ pairs, boardRef }: MoveAnimationProps) {
             const toIdx = toCounts.get(pair.to as number) ?? 0;
             toCounts.set(pair.to as number, toIdx + 1);
             const movedEls = points[pair.to as number]?.querySelectorAll<HTMLElement>('.piece.moved');
-            const toEl = movedEls?.[toIdx] ?? null;
+            const ghostFallbackEls = points[pair.to as number]?.querySelectorAll<HTMLElement>('.piece.ghost');
+            const toEl = movedEls?.[toIdx] ?? ghostFallbackEls?.[toIdx] ?? null;
 
             if (!fromEl || !toEl) return;
 
