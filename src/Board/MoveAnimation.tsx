@@ -37,8 +37,9 @@ export default function MoveAnimation({ pairs, boardRef }: MoveAnimationProps) {
         }
 
         const boardRect = board.getBoundingClientRect();
-        const overlayLeft = boardRect.left;
-        const overlayTop = boardRect.top;
+        const boardStyle = getComputedStyle(board);
+        const overlayLeft = boardRect.left + parseFloat(boardStyle.borderLeftWidth);
+        const overlayTop = boardRect.top + parseFloat(boardStyle.borderTopWidth);
 
         const points = board.querySelectorAll<HTMLElement>('.point');
         const bars = board.querySelectorAll<HTMLElement>('.bar');
