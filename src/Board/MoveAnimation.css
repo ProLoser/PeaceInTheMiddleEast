@@ -1,6 +1,8 @@
 .move-animation-overlay {
     position: absolute;
     inset: calc(-1 * var(--board-border, 5vmin));
+    width: auto;
+    height: auto;
     pointer-events: none;
     z-index: 10;
     overflow: hidden;
