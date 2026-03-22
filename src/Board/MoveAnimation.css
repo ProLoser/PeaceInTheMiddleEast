@@ -2,7 +2,7 @@
     position: absolute;
     inset: 0;
     pointer-events: none;
-    z-index: 0;
+    z-index: 10;
     overflow: clip;
     overflow-clip-margin: var(--board-border, 5vmin);
 }
