@@ -144,6 +144,7 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
     if (!user) return null;
 
     const renderFriends: ReactNode[] = []
+    const myTurnFriends: ReactNode[] = []
     const friends: string[] = []
 
     const NOW = new Date()
@@ -170,7 +171,11 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
             return;
         }
         friends.push(match.key)
-        renderFriends.unshift(row(users[match.key], matchData))
+        if (matchData.turn === user?.key) {
+            myTurnFriends.unshift(row(users[match.key], matchData))
+        } else {
+            renderFriends.unshift(row(users[match.key], matchData))
+        }
     })
     searchResults?.forEach(result => {
         const resultData: User = result.val()
@@ -322,7 +327,7 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
                     {t('local')}
                 </h3>
             </li> : null}
-            {renderFriends}
+            {[...myTurnFriends, ...renderFriends]}
         </ul>
     </section>
 }
