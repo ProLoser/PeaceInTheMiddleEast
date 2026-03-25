@@ -113,13 +113,38 @@ export const LANGUAGES = ["af", "af-NA", "af-ZA", "agq", "agq-CM", "ak", "ak-GH"
 type ProfileProps = {
     user: SnapshotOrNullType,
 }
+const MAX_NAME_LENGTH = 64;
+const MAX_PHOTO_URL_LENGTH = 500;
+
+function validateProfile(editing: User): string | null {
+    if (!editing.name?.trim()) return 'Name is required.';
+    if (editing.name.length > MAX_NAME_LENGTH) return `Name must be ${MAX_NAME_LENGTH} characters or fewer.`;
+    if (editing.photoURL) {
+        try {
+            const url = new URL(editing.photoURL);
+            if (url.protocol !== 'https:') return 'Avatar URL must start with https://';
+        } catch {
+            return 'Avatar URL must be a valid URL starting with https://';
+        }
+        if (editing.photoURL.length > MAX_PHOTO_URL_LENGTH) return `Avatar URL must be ${MAX_PHOTO_URL_LENGTH} characters or fewer.`;
+    }
+    return null;
+}
+
 export default function Profile({ user }: ProfileProps) {
     const { toggle } = useContext(DialogContext)!;
     const [editing, setEditing] = useState<User>(user?.val() || { uid: '', name: '', language: '', photoURL: '' });
+    const [error, setError] = useState<string | null>(null);
 
     const save = useCallback(async (event: React.PointerEvent<HTMLAnchorElement>) => {
         event.preventDefault();
         if (!editing) return;
+        const validationError = validateProfile(editing);
+        if (validationError) {
+            setError(validationError);
+            return;
+        }
+        setError(null);
         const userRef = firebase.database().ref(`users/${user!.key}`);
         userRef.set(editing);
         console.log('Saved', editing);
@@ -128,6 +153,7 @@ export default function Profile({ user }: ProfileProps) {
 
     const generateOnChange = (key: string) => (event: ChangeEvent<HTMLInputElement|HTMLSelectElement>) => {
         setEditing(editing => ({ ...editing, [key]: event.target.value }));
+        setError(null);
     };
 
     return <form id="profile">
@@ -142,9 +168,10 @@ export default function Profile({ user }: ProfileProps) {
                 </a>
             </h1>
         </header>
+        {error && <p className="profile-error">{error}</p>}
         <label>
             Name
-            <input autoFocus type="text" name="name" value={editing.name} onChange={generateOnChange('name')} placeholder="Name" />
+            <input autoFocus type="text" name="name" value={editing.name} onChange={generateOnChange('name')} placeholder="Name" maxLength={MAX_NAME_LENGTH} />
         </label>
         <label>
             Language
@@ -156,7 +183,7 @@ export default function Profile({ user }: ProfileProps) {
         </label>
         <label>
             Avatar URL
-            <input type="text" name="photoURL" value={editing.photoURL || ''} onChange={generateOnChange('photoURL')} placeholder="Photo URL" />
+            <input type="text" name="photoURL" value={editing.photoURL || ''} onChange={generateOnChange('photoURL')} placeholder="https://" maxLength={MAX_PHOTO_URL_LENGTH} />
         </label>
         <Avatar user={editing} />
     </form>

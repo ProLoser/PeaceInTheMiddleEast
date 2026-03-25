@@ -26,4 +26,10 @@
         display: block;
         margin: 1em auto;
     }
+
+    .profile-error {
+        color: var(--error-color, #d32f2f);
+        margin: 0.5em 0;
+        font-size: 0.9em;
+    }
 }
