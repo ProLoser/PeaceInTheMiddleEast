@@ -121,7 +121,7 @@ export default function Profile({ user }: ProfileProps) {
         event.preventDefault();
         if (!editing) return;
         const userRef = firebase.database().ref(`users/${user!.key}`);
-        userRef.set(editing);
+        userRef.set({ ...editing, search: (editing.name || '').toLocaleLowerCase() });
         console.log('Saved', editing);
         toggle(Modal.Friends)
     }, [editing, user, toggle]);
