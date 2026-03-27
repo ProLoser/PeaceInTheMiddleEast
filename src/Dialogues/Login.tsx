@@ -27,7 +27,7 @@ const uiConfig = {
         firebase.auth.PhoneAuthProvider.PROVIDER_ID,
         firebase.auth.EmailAuthProvider.PROVIDER_ID,
         firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-        // firebase.auth.FacebookAuthProvider.PROVIDER_ID, // Requires Facebook App ID
+        firebase.auth.FacebookAuthProvider.PROVIDER_ID, // Requires Facebook App ID in Firebase console
         firebaseui.auth.AnonymousAuthProvider.PROVIDER_ID
     ],
     callbacks: {
