@@ -26,5 +26,6 @@
   "disableNotificationsConfirm": "Απενεργοποίηση ειδοποιήσεων;\nΔεν θα λαμβάνετε πλέον ειδοποιήσεις όταν οι φίλοι κάνουν μια κίνηση",
   "notificationsDisabled": "Οι ειδοποιήσεις απενεργοποιήθηκαν",
   "notificationsEnabled": "Οι ειδοποιήσεις ενεργοποιήθηκαν",
-  "enableNotifications": "Ενεργοποίηση ειδοποιήσεων"
+  "enableNotifications": "Ενεργοποίηση ειδοποιήσεων",
+  "privacyPolicy": "Πολιτική Απορρήτου"
 }
