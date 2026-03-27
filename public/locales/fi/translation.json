@@ -26,5 +26,6 @@
   "disableNotificationsConfirm": "Poistetaanko ilmoitukset käytöstä?\nEt enää saa ilmoituksia, kun ystävät tekevät siirron",
   "notificationsDisabled": "Ilmoitukset poistettu käytöstä",
   "notificationsEnabled": "Ilmoitukset otettu käyttöön",
-  "enableNotifications": "Ota ilmoitukset käyttöön"
+  "enableNotifications": "Ota ilmoitukset käyttöön",
+  "privacyPolicy": "Tietosuojakäytäntö"
 }

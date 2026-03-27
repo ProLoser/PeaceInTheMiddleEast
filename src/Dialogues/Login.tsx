@@ -16,6 +16,7 @@ import MenuIcon from '@material-design-icons/svg/filled/menu.svg?react';
 import RestartAltIcon from '@material-design-icons/svg/filled/restart_alt.svg?react';
 import BugReportIcon from '@material-design-icons/svg/filled/bug_report.svg?react';
 import InfoIcon from '@material-design-icons/svg/filled/info.svg?react';
+import PolicyIcon from '@material-design-icons/svg/filled/policy.svg?react';
 import CancelIcon from '@material-design-icons/svg/filled/cancel.svg?react';
 
 // Configure FirebaseUI.
@@ -108,6 +109,12 @@ export default function Login({ reset, friend, load }: LoginProps) {
                         <a href="https://github.com/ProLoser/PeaceInTheMiddleEast/" target="_blank" rel="noopener noreferrer">
                             <InfoIcon className="material-icons-svg notranslate" />
                             {t('about')}
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://github.com/ProLoser/PeaceInTheMiddleEast/blob/main/PRIVACY.md" target="_blank" rel="noopener noreferrer">
+                            <PolicyIcon className="material-icons-svg notranslate" />
+                            {t('privacyPolicy')}
                         </a>
                     </li>
                     <Version />
