@@ -76,6 +76,9 @@
                 height: 4em;
                 flex-shrink: 0;
             }
+            &:nth-child(even) .avatar-initials {
+                background-color: var(--secondary-color);
+            }
         }
     }
 }

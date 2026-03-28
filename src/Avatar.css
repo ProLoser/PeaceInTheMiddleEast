@@ -5,3 +5,14 @@
     /* border: 2px solid #AAA; */
     object-fit: cover;
 }
+
+.avatar-initials {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--primary-color);
+    color: var(--background-color);
+    font-weight: bold;
+    font-size: 1.2em;
+    user-select: none;
+}
