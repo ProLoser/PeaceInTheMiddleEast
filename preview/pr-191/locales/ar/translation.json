@@ -26,5 +26,6 @@
   "disableNotificationsConfirm": "تعطيل الإشعارات؟\nلن تتلقى إشعارات عندما يقوم الأصدقاء بحركة",
   "notificationsDisabled": "تم تعطيل الإشعارات",
   "notificationsEnabled": "تم تفعيل الإشعارات",
-  "enableNotifications": "تفعيل الإشعارات"
+  "enableNotifications": "تفعيل الإشعارات",
+  "privacyPolicy": "سياسة الخصوصية"
 }

@@ -27,5 +27,6 @@
   "disableNotificationsConfirm": "להשבית התראות?\nלא תקבל עוד התראות כאשר חברים מבצעים מהלך",
   "notificationsDisabled": "ההתראות הושבתו",
   "notificationsEnabled": "ההתראות הופעלו",
-  "enableNotifications": "הפעל התראות"
+  "enableNotifications": "הפעל התראות",
+  "privacyPolicy": "מדיניות פרטיות"
 }
