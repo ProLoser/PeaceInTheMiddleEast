@@ -1,6 +1,8 @@
 import { User } from './Types';
 import './Avatar.css';
 
+export const PRAVATAR_URL = (uid: string) => `https://i.pravatar.cc/100?u=${uid}`;
+
 export type AvatarProps = {
     user?: User;
 }
