@@ -38,6 +38,13 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 
 const diceSound = new Audio('./shake-and-roll-dice-soundbible.mp3');
 
+async function gravatarHash(email: string): Promise<string> {
+  const normalized = email.trim().toLowerCase();
+  const data = new TextEncoder().encode(normalized);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
 export function App() {
   const { t } = useTranslation();
   const [game, setGame] = useState<Game>(newGame);
@@ -304,16 +311,20 @@ export function App() {
       if (authUser) { // User is signed in
         const userRef = firebase.database().ref(`users/${authUser.uid}`);
         const snapshot = await userRef.get();
+        const emailHash = authUser.email ? await gravatarHash(authUser.email) : undefined;
         if (!snapshot.exists()) { // Upload initial user data
           const data: User = {
             uid: authUser.uid,
             name: authUser.displayName || authUser.uid,
             search: (authUser.displayName || authUser.uid).toLocaleLowerCase(),
             photoURL: authUser.photoURL,
+            emailHash,
             language: navigator.language,
           };
           console.log('Creating user', data);
           userRef.set(data);
+        } else if (emailHash && !snapshot.val()?.emailHash) {
+          userRef.update({ emailHash }).catch(console.error);
         }
 
         // Subscribe to user data changes

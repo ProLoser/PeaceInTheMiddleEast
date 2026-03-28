@@ -8,6 +8,7 @@ export type User = {
     name: string;
     search: string;
     photoURL: string | null;
+    emailHash?: string;
     language: string;
     fcmToken?: string; // Legacy: single token (for backward compatibility)
     fcmTokens?: { [token: string]: { ts: number; ua: string } }; // Token is key, value contains metadata

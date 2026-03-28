@@ -6,8 +6,11 @@ export type AvatarProps = {
 }
 
 export default function Avatar({ user }: AvatarProps) {
+    const fallback = user?.emailHash
+      ? `https://gravatar.com/avatar/${user.emailHash}?s=100&d=retro`
+      : `https://i.pravatar.cc/100?u=${user?.uid}`;
     return <img className="avatar"
-      src={user ? user.photoURL || `https://i.pravatar.cc/100?u=${user.uid}` : 'https://i.pravatar.cc/100'}
+      src={user ? user.photoURL || fallback : 'https://i.pravatar.cc/100'}
       alt={user?.name}
       draggable={false} />
 }
