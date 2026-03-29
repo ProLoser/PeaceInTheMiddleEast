@@ -8,26 +8,29 @@ on:
             - synchronize
             - closed
 jobs:
+    build:
+        if: github.event.action != 'closed'
+        uses: ./.github/workflows/build.yml
+        permissions: {}
+        with:
+            base-url: /preview/pr-${{ github.event.pull_request.number }}/
+
     deploy-preview:
+        needs: [build]
+        if: always()
         runs-on: ubuntu-latest
+        permissions:
+            contents: write
+            pull-requests: write
         steps:    
             - uses: actions/checkout@v4
-            
-            - name: Set up Node
-              uses: actions/setup-node@v4
+
+            - name: Download build artifact
+              if: github.event.action != 'closed'
+              uses: actions/download-artifact@v4
               with:
-                node-version: 20.19.5
-                cache: 'yarn'
-
-            - name: Install dependencies
-              if: github.event.action != 'closed'
-              run: yarn install --frozen-lockfile
-
-            - name: Build
-              if: github.event.action != 'closed'
-              run: yarn build
-              env:
-                BASE_URL: /preview/pr-${{ github.event.pull_request.number }}/
+                name: dist
+                path: dist/
               
             - uses: rossjrw/pr-preview-action@v1
               with:

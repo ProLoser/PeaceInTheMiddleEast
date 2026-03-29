@@ -10,23 +10,24 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+    build:
+        uses: ./.github/workflows/build.yml
+        permissions: {}
+
     deploy:
+        needs: build
         runs-on: ubuntu-latest
+        permissions:
+            contents: write
         steps:
             - uses: actions/checkout@v4
 
-            - name: Set up Node
-              uses: actions/setup-node@v4
+            - name: Download build artifact
+              uses: actions/download-artifact@v4
               with:
-                node-version: 20.19.5
-                cache: 'yarn'
+                name: dist
+                path: dist/
 
-            - name: Install dependencies
-              run: yarn install --frozen-lockfile
-
-            - name: Build
-              run: yarn build
-              
             - uses: JamesIves/github-pages-deploy-action@v4
               with:
                   folder: dist

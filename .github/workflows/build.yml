@@ -1,0 +1,37 @@
+name: Build
+on:
+    workflow_call:
+        inputs:
+            base-url:
+                required: false
+                type: string
+                default: '/'
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Set up Node
+              uses: actions/setup-node@v4
+              with:
+                node-version: 20.19.5
+                cache: 'yarn'
+
+            - name: Install dependencies
+              run: yarn install --frozen-lockfile
+
+            - name: Build
+              run: yarn build
+              env:
+                BASE_URL: ${{ inputs.base-url }}
+
+            - name: Upload build artifact
+              uses: actions/upload-artifact@v4
+              with:
+                name: dist
+                path: dist/
+                retention-days: 1
