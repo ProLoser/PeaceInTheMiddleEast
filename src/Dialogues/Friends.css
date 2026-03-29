@@ -76,6 +76,10 @@
                 height: 4em;
                 flex-shrink: 0;
             }
+            &:nth-child(even) .avatar-initials {
+                background-color: var(--secondary, #ffd8a0);
+                color: #213547;
+            }
         }
     }
 }
