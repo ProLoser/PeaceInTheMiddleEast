@@ -7,15 +7,18 @@
 }
 
 .avatar-initials {
+    height: 4em;
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
     background-color: var(--primary, brown);
     color: white;
     font-weight: bold;
     user-select: none;
 
     span {
-        font-size: 2.4em;
+        font-size: 1.5em;
     }
 }
