@@ -38,6 +38,16 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 
 const diceSound = new Audio('./shake-and-roll-dice-soundbible.mp3');
 
+declare global {
+  interface Window {
+    __e2e__?: {
+      setGame: (state: Partial<Game>) => void;
+      setMatch: (match: Match | null) => void;
+      authReady: boolean;
+    };
+  }
+}
+
 export function App() {
   const { t } = useTranslation();
   const [game, setGame] = useState<Game>(newGame);
@@ -51,6 +61,16 @@ export function App() {
   const hadMatchRef = useRef(false);
   const gameSnapshotRef = useRef<SnapshotOrNullType>(null);
   const boardRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (import.meta.env.DEV) {
+      window.__e2e__ = {
+        setGame: (s) => setGame(p => ({ ...p, ...s } as Game)),
+        setMatch,
+        authReady: false,
+      };
+    }
+  }, []); // setGame and setMatch are stable React dispatchers
 
   const load = useCallback(async (friendId?: string | false, authUserUid?: string) => {
     if (friendId === 'PeaceInTheMiddleEast' || friendId === '__' || friendId === 'preview') return;
@@ -323,6 +343,11 @@ export function App() {
           if (previousUserKey !== currentUserKey) {
             previousUserKey = currentUserKey || null;
             load(friendId, authUser.uid);
+            if (import.meta.env.DEV) {
+              requestAnimationFrame(() => requestAnimationFrame(() => {
+                if (window.__e2e__) window.__e2e__.authReady = true;
+              }));
+            }
           }
         }
         userRef.on('value', onUserValue);
@@ -334,6 +359,14 @@ export function App() {
         setUser(null);
         setMatch(null);
         load(friendId);
+        if (import.meta.env.DEV) {
+          // Double rAF: by the 2nd frame React has committed all batched state
+          // updates from load() (setSelected(null), setUsedDice([])), so tests
+          // waiting for authReady will never race with that reset.
+          requestAnimationFrame(() => requestAnimationFrame(() => {
+            if (window.__e2e__) window.__e2e__.authReady = true;
+          }));
+        }
       }
     });
     return () => {
@@ -345,6 +378,7 @@ export function App() {
   useEffect(() => { // match observer
     if (match) {
       hadMatchRef.current = true;
+      if (match.game === '__test__') return; // skip Firebase subscription in tests
       const gameRef = firebase.database().ref(`games/${match.game}`);
       const onValue = (snapshot: firebaseType.database.DataSnapshot) => {
         gameSnapshotRef.current = snapshot
