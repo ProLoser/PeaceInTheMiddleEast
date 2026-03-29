@@ -32,5 +32,7 @@ This wasn't originally a goal but ended up being a great way to test AI
 - [x] Amazon q
 - [x] ChatGPT 
 ## Setup
+I use volta to manage node and yarn versions even though it's deprecated, use whatever you want.
+
 1. `yarn`
 2. `yarn start`
