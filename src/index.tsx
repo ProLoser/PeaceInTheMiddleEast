@@ -140,6 +140,7 @@ export function App() {
     if (dice[0] === dice[1]) dice.push(dice[0], dice[0]); // doubles
     if (match && user && friend) { // online
       if (!isMyTurn) return;
+      if (!gameSnapshotRef.current) return; // game not yet loaded from Firebase
       if (game.status !== Status.Rolling) {
         if (gameSnapshotRef.current && usedDice.length > 0 && usedDice.length < game.dice.length) {
           setGame(gameSnapshotRef.current.val());
@@ -345,6 +346,7 @@ export function App() {
   useEffect(() => { // match observer
     if (match) {
       hadMatchRef.current = true;
+      gameSnapshotRef.current = null; // reset until first snapshot arrives
       const gameRef = firebase.database().ref(`games/${match.game}`);
       const onValue = (snapshot: firebaseType.database.DataSnapshot) => {
         gameSnapshotRef.current = snapshot
