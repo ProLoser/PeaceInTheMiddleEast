@@ -54,9 +54,10 @@ export default function Point({ pieces, move, position, onSelect, selected, enab
     }, [move, position])
 
     const onDragStart: DragEventHandler = useCallback((event) => {
+        if (!pieceRef.current) return event.preventDefault();
         onSelect(position)
         navigator.vibrate?.(Vibrations.Up)
-        event.dataTransfer?.setDragImage(pieceRef.current!, 50, 50);
+        event.dataTransfer?.setDragImage(pieceRef.current, 50, 50);
         event.dataTransfer?.setData('text', position?.toString());
         requestAnimationFrame(() => setDragging(true));
     }, [position, pieceRef, onSelect]);
