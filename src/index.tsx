@@ -26,6 +26,14 @@ import { useTranslation } from 'react-i18next';
 
 import { Suspense } from "react";
 
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(err => {
+      console.warn('Service worker registration failed:', err);
+    });
+  });
+}
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <Suspense fallback="loading">
