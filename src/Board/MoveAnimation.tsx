@@ -44,7 +44,7 @@ export default function MoveAnimation({ pairs, boardRef }: MoveAnimationProps) {
         const points = board.querySelectorAll<HTMLElement>('.point');
         const bars = board.querySelectorAll<HTMLElement>('.bar');
 
-        const samplePiece = board.querySelector<HTMLElement>('.piece:not(.ghost):not(.moved) img');
+        const samplePiece = board.querySelector<HTMLElement>('.point .piece:not(.ghost):not(.moved) img');
         const pieceSize = samplePiece
             ? samplePiece.getBoundingClientRect().width
             : boardRect.width / 17;
