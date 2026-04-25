@@ -3,7 +3,7 @@ import DiceBox from '@3d-dice/dice-box';
 import './DiceBox3D.css';
 
 export type DiceBox3DHandle = {
-  roll: (values: number[]) => void;
+  roll: (count: number) => Promise<number[]>;
 };
 
 const DiceBox3D = forwardRef<DiceBox3DHandle>(function DiceBox3D(_, ref) {
@@ -33,13 +33,6 @@ const DiceBox3D = forwardRef<DiceBox3DHandle>(function DiceBox3D(_, ref) {
     });
 
     box.init().then(() => {
-      box.onRollComplete = () => {
-        if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
-        hideTimerRef.current = setTimeout(() => {
-          setVisible(false);
-          box.clear();
-        }, 600);
-      };
       boxRef.current = box;
     });
 
@@ -49,12 +42,28 @@ const DiceBox3D = forwardRef<DiceBox3DHandle>(function DiceBox3D(_, ref) {
   }, []);
 
   useImperativeHandle(ref, () => ({
-    roll(values: number[]) {
-      if (!boxRef.current) return;
-      const notation = `${values.length}d6`;
+    roll(count: number): Promise<number[]> {
+      const box = boxRef.current;
+      if (!box) {
+        return Promise.resolve(
+          Array.from({ length: count }, () => Math.floor(Math.random() * 6) + 1)
+        );
+      }
+
       setVisible(true);
       if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
-      boxRef.current.roll(notation);
+
+      return new Promise((resolve) => {
+        box.onRollComplete = (results) => {
+          const values = results.map(r => r.value);
+          hideTimerRef.current = setTimeout(() => {
+            setVisible(false);
+            box.clear();
+          }, 600);
+          resolve(values);
+        };
+        box.roll(`${count}d6`);
+      });
     },
   }));
 

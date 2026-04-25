@@ -137,9 +137,7 @@ export function App() {
       && user.key === game.turn
   , [match, user, game.turn]);
 
-  const rollDice = useCallback(() => {
-    const dice = [rollDie(), rollDie()] as Game['dice'];
-    if (dice[0] === dice[1]) dice.push(dice[0], dice[0]); // doubles
+  const rollDice = useCallback(async () => {
     if (match && user && friend) { // online
       if (!isMyTurn) return;
       if (!gameSnapshotRef.current) return; // game not yet loaded from Firebase
@@ -151,7 +149,21 @@ export function App() {
         }
         return;
       }
+    }
 
+    playAudio(diceSound);
+    navigator.vibrate?.(Vibrations.Dice);
+    setUsedDice([]);
+    setSelected(null);
+
+    const rawValues = diceBox3DRef.current
+      ? await diceBox3DRef.current.roll(2)
+      : [rollDie(), rollDie()];
+
+    const dice = rawValues.slice(0, 2) as Game['dice'];
+    if (dice[0] === dice[1]) dice.push(dice[0], dice[0]); // doubles
+
+    if (match && user && friend) { // online
       const database = firebase.database();
       database.ref(`games/${match.game}`).update({
         dice,
@@ -168,12 +180,6 @@ export function App() {
         status: Status.Moving
       });
     }
-
-    playAudio(diceSound);
-    navigator.vibrate?.(Vibrations.Dice);
-    setUsedDice([]);
-    setSelected(null);
-    diceBox3DRef.current?.roll(dice);
     // TODO: autoselect bar, but game.color is not set yet
     // setSelected(match && game.color && game.prison[game.color] ? -1 : null);
   }, [match, game, isMyTurn, user, friend, usedDice]);
