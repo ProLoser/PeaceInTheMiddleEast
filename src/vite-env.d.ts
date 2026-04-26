@@ -23,7 +23,6 @@ declare module '@3d-dice/dice-box' {
     theme?: string;
     themeColor?: string;
     origin?: string;
-    suspendSimulation?: boolean;
   }
 
   interface DieResult {
