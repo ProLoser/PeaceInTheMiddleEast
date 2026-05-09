@@ -29,9 +29,9 @@
     "firebaseui": "^6.1.0",
     "i18next": "^25.3.2",
     "i18next-browser-languagedetector": "^8.2.0",
-    "i18next-http-backend": "^3.0.2",
+    "i18next-http-backend": "^3.0.6",
     "jest": "^30.2.0",
-    "postcss": "^8.5.6",
+    "postcss": "^8.5.10",
     "postcss-nesting": "^13.0.2",
     "react": "^17.0.0 || ^18.0.0",
     "react-dom": "^17.0.0 || ^18.0.0",
@@ -66,6 +66,11 @@
     "vite": "^5.2.11",
     "vite-plugin-pwa": "^0.20.0",
     "vite-plugin-svgr": "^4.5.0"
+  },
+  "resolutions": {
+    "undici": ">=6.25.0",
+    "postcss": ">=8.5.14",
+    "brace-expansion": ">=2.0.3"
   },
   "workspaces": [
     "functions"
