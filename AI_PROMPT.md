@@ -31,28 +31,7 @@ You rolled: {{dice[0]}} and {{dice[1]}}
 
 ### Your Task
 
-Choose the best legal play for this turn and respond **only** in standard backgammon notation.
-
-**Notation rules:**
-- A single move: `source/destination` (e.g. `13/9`)
-- Multiple moves in one turn are space-separated: `13/9 6/2`
-- Re-entering from the bar: `bar/destination` (e.g. `bar/21`)
-- Bearing off: `source/off` (e.g. `3/off`)
-- When the same checker makes consecutive moves with both dice: `13/7/2`
-
-If no legal moves are available, respond with: `no move`
-
-### Rules to Enforce
-
-1. A player **must** use both dice if legally possible; if only one can be used, they must use the higher-value die if possible.
-2. A piece in **prison** must re-enter before any other move can be made. Re-entry is onto the opponent's home board (points {{entryRange}}) using the exact die value.
-3. A point occupied by **2 or more** opponent pieces is blocked – you cannot land on it.
-4. A point with exactly **1 opponent piece** (a blot) can be hit – the opponent's piece goes to prison.
-5. **Bearing off**: You may only bear off when all your pieces are in your home board (points {{homeRange}}). Use a die equal to the exact point, or the highest available die if no piece sits on that exact point, provided no pieces remain on higher points.
-6. Doubles give **4 moves** (not 2) of the shown value.
-
-Example response for a roll of 4-2:
-`13/9 6/4`
+Choose the best legal play for this turn and respond **only** in standard backgammon notation. If no legal moves are available, respond with: `no move`
 ```
 
 ---
