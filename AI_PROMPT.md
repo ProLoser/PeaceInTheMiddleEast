@@ -70,5 +70,5 @@ Respond with a numbered list of moves, e.g.:
 
 | Color | Moves toward | Entry range | Home board |
 |---|---|---|---|
-| White | Point 1 → 24, then off | Points 1–6 | Points 19–24 |
-| Black | Point 24 → 1, then off | Points 19–24 | Points 1–6 |
+| White | Point 24 → 1, then off | Points 19–24 | Points 1–6 |
+| Black | Point 1 → 24, then off | Points 1–6 | Points 19–24 |
