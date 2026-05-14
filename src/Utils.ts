@@ -311,6 +311,7 @@ export function calculate(state: Game, from: number | Color | undefined | null, 
 const audioCache: { [key: string]: HTMLAudioElement } = {};
 const audioBufferCache: { [key: string]: Promise<AudioBuffer> } = {};
 let audioContext: AudioContext | null = null;
+type WindowWithWebkitAudioContext = Window & { webkitAudioContext?: typeof AudioContext };
 
 const checkerSounds = [
   'capture.mp3',
@@ -333,7 +334,7 @@ const getAudioElement = (source: string) => {
 
 const getAudioContext = () => {
   if (audioContext) return audioContext;
-  const AudioContextConstructor = window.AudioContext || (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+  const AudioContextConstructor = window.AudioContext || (window as WindowWithWebkitAudioContext).webkitAudioContext;
   if (!AudioContextConstructor) return null;
   audioContext = new AudioContextConstructor();
   return audioContext;
@@ -348,7 +349,11 @@ const getAudioBuffer = async (source: string, context: AudioContext) => {
   if (!audioBufferCache[source]) {
     audioBufferCache[source] = fetch(source)
       .then(response => response.arrayBuffer())
-      .then(arrayBuffer => context.decodeAudioData(arrayBuffer));
+      .then(arrayBuffer => context.decodeAudioData(arrayBuffer))
+      .catch(error => {
+        delete audioBufferCache[source];
+        throw error;
+      });
   }
   return audioBufferCache[source];
 };
