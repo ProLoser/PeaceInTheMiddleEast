@@ -309,6 +309,14 @@ export function calculate(state: Game, from: number | Color | undefined | null, 
 }
 
 const audioCache: { [key: string]: HTMLAudioElement } = {};
+let audioSessionConfigured = false;
+
+type AudioSessionType = 'auto' | 'ambient' | 'playback' | 'play-and-record' | 'transient' | 'transient-solo';
+type NavigatorWithAudioSession = Navigator & {
+    audioSession?: {
+        type: AudioSessionType;
+    };
+};
 
 const checkerSounds = [
   'capture.mp3',
@@ -327,6 +335,13 @@ checkerSounds.forEach(file => {
 });
 
 export const playAudio = (audio: HTMLAudioElement) => {
+  if (!audioSessionConfigured) {
+    audioSessionConfigured = true;
+    const audioSession = (navigator as NavigatorWithAudioSession).audioSession;
+    if (audioSession && audioSession.type !== 'ambient') {
+      audioSession.type = 'ambient';
+    }
+  }
   audio.currentTime = 0;
   (async () => {
     try {
