@@ -71,6 +71,11 @@
                 overflow: hidden;
                 text-overflow: ellipsis;
             }
+            &.ai-opponent {
+                opacity: 0.5;
+                cursor: not-allowed;
+                pointer-events: none;
+            }
             > svg, > img {
                 width: 4em;
                 height: 4em;
