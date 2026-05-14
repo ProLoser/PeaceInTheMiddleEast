@@ -309,6 +309,8 @@ export function calculate(state: Game, from: number | Color | undefined | null, 
 }
 
 const audioCache: { [key: string]: HTMLAudioElement } = {};
+const audioBufferCache: { [key: string]: Promise<AudioBuffer> } = {};
+let audioContext: AudioContext | null = null;
 
 const checkerSounds = [
   'capture.mp3',
@@ -319,17 +321,56 @@ const checkerSounds = [
   'promote.mp3',
 ];
 
-checkerSounds.forEach(file => {
-  const audio = new Audio();
-  audio.preload = 'auto';
-  audio.src = file;
-  audioCache[file] = audio;
-});
+const getAudioElement = (source: string) => {
+  if (!audioCache[source]) {
+    const audio = new Audio();
+    audio.preload = 'auto';
+    audio.src = source;
+    audioCache[source] = audio;
+  }
+  return audioCache[source];
+};
 
-export const playAudio = (audio: HTMLAudioElement) => {
-  audio.currentTime = 0;
+const getAudioContext = () => {
+  if (audioContext) return audioContext;
+  const AudioContextConstructor = window.AudioContext || (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+  if (!AudioContextConstructor) return null;
+  audioContext = new AudioContextConstructor();
+  return audioContext;
+};
+
+const getAudioSource = (source: string | HTMLAudioElement) => {
+  if (typeof source === "string") return source;
+  return source.currentSrc || source.src;
+};
+
+const getAudioBuffer = async (source: string, context: AudioContext) => {
+  if (!audioBufferCache[source]) {
+    audioBufferCache[source] = fetch(source)
+      .then(response => response.arrayBuffer())
+      .then(arrayBuffer => context.decodeAudioData(arrayBuffer));
+  }
+  return audioBufferCache[source];
+};
+
+export const playAudio = (source: string | HTMLAudioElement) => {
+  const audioSource = getAudioSource(source);
   (async () => {
     try {
+      const context = getAudioContext();
+      if (context && audioSource) {
+        if (context.state === "suspended") {
+          await context.resume();
+        }
+        const buffer = await getAudioBuffer(audioSource, context);
+        const player = context.createBufferSource();
+        player.buffer = buffer;
+        player.connect(context.destination);
+        player.start(0);
+        return;
+      }
+      const audio = typeof source === "string" ? getAudioElement(source) : source;
+      audio.currentTime = 0;
       await audio.play();
     } catch (e) {
       if (e instanceof DOMException && e.name === "NotAllowedError") {
@@ -344,8 +385,7 @@ export const playAudio = (audio: HTMLAudioElement) => {
 export const playCheckerSound = () => {
   const randomIndex = Math.floor(Math.random() * checkerSounds.length);
   const randomMp3 = checkerSounds[randomIndex];
-  const audio = audioCache[randomMp3];
-  playAudio(audio);
+  playAudio(randomMp3);
 };
 
 const parseMoveLabel = (label: string, color: Color, ghosts: { [point: number]: number }, moved: { [point: number]: number }, ghostHit: { [point: number]: number }) => {
