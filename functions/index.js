@@ -55,8 +55,7 @@ exports.sendMoveNotification = onValueCreated('/moves/{moveId}', async event => 
 
   const message = {
     notification: {
-      title: `${playerName} moved`,
-      body: move.move
+      title: `${playerName} moved`
     },
     data: {
       player: move.player
