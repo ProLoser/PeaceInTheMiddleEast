@@ -4,26 +4,6 @@
 importScripts('https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/10.12.4/firebase-messaging-compat.js');
 
-/**
- * @typedef {{
- *   notification?: {
- *     title?: string,
- *     body?: string,
- *     image?: string
- *   },
- *   data?: Record<string, string | undefined>
- * }} FirebaseBackgroundMessagePayload
- */
-
-/**
- * @typedef {{
- *   initializeApp(config: Record<string, string>): void,
- *   messaging(): {
- *     onBackgroundMessage(callback: (payload: FirebaseBackgroundMessagePayload) => void | Promise<void>): void
- *   }
- * }} FirebaseCompatApp
- */
-
 const firebaseConfig = {
   apiKey: "AIzaSyAJ-hHh7fs0aOMR6Zqe0Wu_z_y1j9Ivgos",
   authDomain: "peaceinthemiddleeast.firebaseapp.com",
@@ -35,13 +15,6 @@ const firebaseConfig = {
   measurementId: "G-NKGPNTLDF1"
 };
 
-const serviceWorker = /** @type {ServiceWorkerGlobalScope & typeof globalThis} */ (
-  /** @type {unknown} */ (self)
-);
-const firebase = (/** @type {{ firebase: FirebaseCompatApp }} */ (
-  /** @type {unknown} */ (serviceWorker)
-)).firebase;
-
 firebase.initializeApp(firebaseConfig);
 
 console.log('Service Worker: Firebase initialized.');
@@ -51,37 +24,35 @@ const messaging = firebase.messaging();
 messaging.onBackgroundMessage(async payload => {
   console.log('Received background message', payload);
 
-  const data = payload.data || {};
   const { title, body, image } = payload.notification || {};
-  const { player } = data;
-  if (!title) {
-    console.log('Notification title missing, skipping notification.');
-    return;
-  }
+  const { player } = payload.data;
   const tag = player || 'new_message';
 
   const notificationOptions = {
-    body,
+    body: body,
     icon: '/android-chrome-512x512.png',
     tag,
     renotify: true,
     data: {
-      ...data,
-      url: `${serviceWorker.location.origin}/${player || ''}`
-    },
-    ...(image ? { image } : {})
+      ...payload.data,
+      url: `${self.location.origin}/${player || ''}`
+    }
   };
 
-  if ('Notification' in serviceWorker && 'showNotification' in serviceWorker.registration) {
-    const existingNotifications = await serviceWorker.registration.getNotifications({ tag });
+  if (image) {
+    notificationOptions.image = image;
+  }
+
+  if ('Notification' in self && 'showNotification' in self.registration) {
+    const existingNotifications = await self.registration.getNotifications({ tag });
     existingNotifications.forEach(notification => notification.close());
-    await serviceWorker.registration.showNotification(title, notificationOptions);
+    await self.registration.showNotification(title, notificationOptions);
   } else {
     console.log('Notifications are not supported in this browser.');
   }
 });
 
-serviceWorker.addEventListener('notificationclick', /** @param {NotificationEvent} event */ event => {
+self.addEventListener('notificationclick', event => {
   if (!event.notification) {
     console.log('Notification object not found in event.');
     return;
@@ -89,28 +60,28 @@ serviceWorker.addEventListener('notificationclick', /** @param {NotificationEven
   console.log('Notification clicked:', event.notification);
   event.notification.close();
 
-  const targetUrl = event.notification.data?.url || serviceWorker.location.origin;
+  const targetUrl = event.notification.data?.url || self.location.origin;
 
   event.waitUntil(
-    serviceWorker.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(windowClients => {
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(windowClients => {
       for (const client of windowClients) {
         if ((client.url === targetUrl || client.url === `${targetUrl}/`) && 'focus' in client) {
           console.log('Focusing existing window:', client.url);
           return client.focus();
         }
       }
-      if (serviceWorker.clients.openWindow) {
+      if (clients.openWindow) {
         console.log('Opening new window to:', targetUrl);
-        return serviceWorker.clients.openWindow(targetUrl);
+        return clients.openWindow(targetUrl);
       }
     })
   );
 });
 
-serviceWorker.addEventListener('activate', /** @param {ExtendableEvent} event */ event => {
+self.addEventListener('activate', event => {
   console.log('Service Worker activating...');
   event.waitUntil(
-    serviceWorker.clients.claim().then(() => {
+    self.clients.claim().then(() => {
       console.log('Service Worker: Claimed clients.');
     })
   );
