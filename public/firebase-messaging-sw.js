@@ -24,8 +24,13 @@ const messaging = firebase.messaging();
 messaging.onBackgroundMessage(async payload => {
   console.log('Received background message', payload);
 
+  const data = payload.data || {};
   const { title, body, image } = payload.notification || {};
-  const { player } = payload.data;
+  const { player } = data;
+  if (!title) {
+    console.log('Notification title missing, skipping notification.');
+    return;
+  }
   const tag = player || 'new_message';
 
   const notificationOptions = {
@@ -34,7 +39,7 @@ messaging.onBackgroundMessage(async payload => {
     tag,
     renotify: true,
     data: {
-      ...payload.data,
+      ...data,
       url: `${self.location.origin}/${player || ''}`
     }
   };
