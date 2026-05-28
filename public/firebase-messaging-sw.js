@@ -21,18 +21,25 @@ console.log('Service Worker: Firebase initialized.');
 
 const messaging = firebase.messaging();
 
-messaging.onBackgroundMessage(payload => {
+messaging.onBackgroundMessage(async payload => {
   console.log('Received background message', payload);
 
-  const { title, body, image } = payload.notification;
-  const { player } = payload.data;
+  const data = payload.data || {};
+  const { title, body, image } = payload.notification || {};
+  const { player } = data;
+  if (!title) {
+    console.log('Notification title missing, skipping notification.');
+    return;
+  }
+  const tag = player || 'new_message';
 
   const notificationOptions = {
     body: body,
     icon: '/android-chrome-512x512.png',
-    tag: player || 'new_message',
+    tag,
+    renotify: true,
     data: {
-      ...payload.data,
+      ...data,
       url: `${self.location.origin}/${player || ''}`
     }
   };
@@ -42,7 +49,9 @@ messaging.onBackgroundMessage(payload => {
   }
 
   if ('Notification' in self && 'showNotification' in self.registration) {
-    self.registration.showNotification(title, notificationOptions);
+    const existingNotifications = await self.registration.getNotifications({ tag });
+    existingNotifications.forEach(notification => notification.close());
+    await self.registration.showNotification(title, notificationOptions);
   } else {
     console.log('Notifications are not supported in this browser.');
   }
