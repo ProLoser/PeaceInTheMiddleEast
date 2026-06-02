@@ -1,0 +1,17 @@
+#dice-box-3d {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s;
+
+  &.visible {
+    opacity: 1;
+  }
+
+  canvas {
+    width: 100% !important;
+    height: 100% !important;
+  }
+}

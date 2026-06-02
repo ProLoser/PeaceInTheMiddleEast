@@ -14,6 +14,7 @@ import Point from './Board/Point';
 import Piece from './Board/Piece';
 import Toolbar from './Board/Toolbar';
 import MoveAnimation from './Board/MoveAnimation';
+import DiceBox3D, { type DiceBox3DHandle } from './Board/DiceBox3D';
 import './index.css'
 import './Board/Board.css';
 import './Board/Toolbar.css'
@@ -51,6 +52,7 @@ export function App() {
   const hadMatchRef = useRef(false);
   const gameSnapshotRef = useRef<SnapshotOrNullType>(null);
   const boardRef = useRef<HTMLDivElement>(null);
+  const diceBox3DRef = useRef<DiceBox3DHandle>(null);
 
   const load = useCallback(async (friendId?: string | false, authUserUid?: string) => {
     if (friendId === 'PeaceInTheMiddleEast' || friendId === '__' || friendId === 'preview') return;
@@ -171,6 +173,7 @@ export function App() {
     navigator.vibrate?.(Vibrations.Dice);
     setUsedDice([]);
     setSelected(null);
+    diceBox3DRef.current?.roll(dice);
     // TODO: autoselect bar, but game.color is not set yet
     // setSelected(match && game.color && game.prison[game.color] ? -1 : null);
   }, [match, game, isMyTurn, user, friend, usedDice]);
@@ -450,6 +453,7 @@ export function App() {
       chats={chats}
       gameover={winner}
     >
+      <DiceBox3D ref={diceBox3DRef} />
       <div id="board" ref={boardRef} className={game.color}>
         <Toolbar friend={friendData} />
         <Dice
