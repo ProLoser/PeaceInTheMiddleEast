@@ -310,6 +310,13 @@ export function calculate(state: Game, from: number | Color | undefined | null, 
 
 const audioCache: { [key: string]: HTMLAudioElement } = {};
 
+type AudioSessionType = 'auto' | 'ambient' | 'playback' | 'play-and-record' | 'transient' | 'transient-solo';
+type NavigatorWithAudioSession = Navigator & {
+    audioSession?: {
+        type: AudioSessionType;
+    };
+};
+
 const checkerSounds = [
   'capture.mp3',
   'castle.mp3',
@@ -327,6 +334,10 @@ checkerSounds.forEach(file => {
 });
 
 export const playAudio = (audio: HTMLAudioElement) => {
+  const audioSession = (navigator as NavigatorWithAudioSession).audioSession;
+  if (audioSession && audioSession.type !== 'ambient') {
+    audioSession.type = 'ambient';
+  }
   audio.currentTime = 0;
   (async () => {
     try {
