@@ -8,7 +8,37 @@
       ".indexOn": "search",
       "$uid": {
         // Allow write access to owner
-        ".write": "auth.uid === $uid"
+        ".write": "auth.uid === $uid",
+        "uid": {
+          ".validate": "newData.isString() && newData.val() === $uid"
+        },
+        "name": {
+          ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 64 && newData.val().matches(/\\S/)"
+        },
+        "search": {
+          ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 64"
+        },
+        "photoURL": {
+          ".validate": "newData.isString() && newData.val().length <= 500 && newData.val().matches(/^https:\\/\\/\\S+/)"
+        },
+        "language": {
+          ".validate": "newData.isString() && newData.val().length <= 35"
+        },
+        "fcmToken": {
+          ".validate": "newData.isString() && newData.val().length <= 500"
+        },
+        "fcmTokens": {
+          "$token": {
+            "ts": {
+              ".validate": "newData.isNumber()"
+            },
+            "ua": {
+              ".validate": "newData.isString() && newData.val().length <= 500"
+            },
+            "$other": { ".validate": false }
+          }
+        },
+        "$other": { ".validate": false }
       }
     },
     "matches": {
