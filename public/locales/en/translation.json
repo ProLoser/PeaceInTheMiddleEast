@@ -27,5 +27,7 @@
   "notificationsDisabled": "Notifications Disabled",
   "notificationsEnabled": "Notifications Enabled",
   "enableNotifications": "Enable Notifications",
-  "privacyPolicy": "Privacy Policy"
+  "privacyPolicy": "Privacy Policy",
+  "aiOpponent": "AI Opponent",
+  "aiComingSoon": "Coming soon — pick your model"
 }

@@ -22,6 +22,8 @@ import NotificationsOffIcon from '@material-design-icons/svg/filled/notification
 import NotificationsActiveIcon from '@material-design-icons/svg/filled/notifications_active.svg?react';
 import CircleNotificationsIcon from '@material-design-icons/svg/filled/circle_notifications.svg?react';
 import LocalIcon from '@material-design-icons/svg/filled/location_on.svg?react';
+import SmartToyIcon from '@material-design-icons/svg/filled/smart_toy.svg?react';
+import AutoAwesomeIcon from '@material-design-icons/svg/filled/auto_awesome.svg?react';
 import RestartAltIcon from '@material-design-icons/svg/filled/restart_alt.svg?react';
 import BugReportIcon from '@material-design-icons/svg/filled/bug_report.svg?react';
 import InfoIcon from '@material-design-icons/svg/filled/info.svg?react';
@@ -327,6 +329,16 @@ export default function Friends({ user, load, reset, friend }: FriendsProps) {
                     {t('local')}
                 </h3>
             </li> : null}
+            <li className="ai-opponent" aria-disabled="true">
+                <span className="ai-icon">
+                    <SmartToyIcon className="material-icons-svg notranslate" />
+                    <AutoAwesomeIcon className="material-icons-svg notranslate" />
+                </span>
+                <div>
+                    <h3>{t('aiOpponent')}</h3>
+                    <time>{t('aiComingSoon')}</time>
+                </div>
+            </li>
             {[...myTurnFriends, ...renderFriends]}
         </ul>
     </section>
