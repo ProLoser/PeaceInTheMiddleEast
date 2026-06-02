@@ -36,7 +36,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   </StrictMode>
 );
 
-const diceSound = new Audio('./shake-and-roll-dice-soundbible.mp3');
+const diceSound = './shake-and-roll-dice-soundbible.mp3';
 
 export function App() {
   const { t } = useTranslation();
