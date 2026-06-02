@@ -5,6 +5,7 @@
     --secondary-hover: rgb(128, 128, 211);
     --valid: greenyellow;
     --highlight: red;
+    --board-border: 5vmin;
     user-select: none;
     position: relative;
     display: grid;
@@ -13,7 +14,7 @@
     height: 100%;
     width: 100%;
     touch-action: none;
-    border: 5vmin solid #aaa;
+    border: var(--board-border) solid #aaa;
     transition: border-color 1s;
     box-sizing: border-box;
     .selected {
