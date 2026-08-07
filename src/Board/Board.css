@@ -157,7 +157,7 @@ order:
             border-right: 3vmax solid transparent;
             transition: border-top-width 1s ease-in-out, border-bottom-width 1s ease-in-out;
         }
-        :nth-child(-n+12 of &) {/* top */
+        &:not(.bottom) {/* top */
             flex-direction: column;
             &::before {
                 border-top: var(--point-secondary);
@@ -181,7 +181,7 @@ order:
             }
         }
     
-        :nth-child(n+13 of &) {/* bottom */
+        &.bottom {/* bottom */
             flex-direction: column-reverse;
             &::before {
                 border-bottom: var(--point-secondary);
@@ -249,17 +249,8 @@ order:
             border-bottom: 3vmax solid transparent;
             transition: border-left-width 1s ease-in-out, border-right-width 1s ease-in-out;
         }
-        :nth-child(-n+12 of &) {/* top */
+        &:not(.bottom) {/* top */
             flex-direction: column;
-            
-            &::before {
-                border-right: var(--point-primary);
-                right: 0;
-            }
-    
-            &:nth-child(odd)::before {
-                border-right-color: var(--secondary);
-            }
             /* Stack Pieces */
             .piece:nth-child(n+6) {
                 transform: translateX(450%);
@@ -275,18 +266,8 @@ order:
             }
         }
         
-        :nth-child(n+13 of &) {/* bottom */
+        &.bottom {/* bottom */
             flex-direction: column-reverse;
-            &::before {
-                border-left: var(--point-primary);
-                left: 0;
-            }
-            &:hover::before {
-                /* border-left-color: var(--primary-hover) !important; */
-            }
-            &:nth-child(even)::before {
-                border-left-color: var(--secondary);
-            }
             /* Stack Pieces */
             .piece:nth-child(n+6) {
                 transform: translateX(-450%);
@@ -301,5 +282,23 @@ order:
                 transform: translateX(-1200%);
             }
         }
+    }
+
+    .point:not(.bottom)::before {/* top */
+        border-right: var(--point-primary);
+        right: 0;
+    }
+
+    .point:not(.bottom):nth-child(odd)::before {
+        border-right-color: var(--secondary);
+    }
+
+    .point.bottom::before {/* bottom */
+        border-left: var(--point-primary);
+        left: 0;
+    }
+
+    .point.bottom:nth-child(even)::before {
+        border-left-color: var(--secondary);
     }
 }
