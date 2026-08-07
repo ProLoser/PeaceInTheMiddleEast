@@ -157,7 +157,7 @@ order:
             border-right: 3vmax solid transparent;
             transition: border-top-width 1s ease-in-out, border-bottom-width 1s ease-in-out;
         }
-        :nth-child(-n+12 of &) {/* top */
+        &:not(.bottom) {/* top */
             flex-direction: column;
             &::before {
                 border-top: var(--point-secondary);
@@ -181,7 +181,7 @@ order:
             }
         }
     
-        :nth-child(n+13 of &) {/* bottom */
+        &.bottom {/* bottom */
             flex-direction: column-reverse;
             &::before {
                 border-bottom: var(--point-secondary);
